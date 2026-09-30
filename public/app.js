@@ -1,5 +1,35 @@
-// Lọc thẻ trong trang chuyên mục
+// Bánh xe Pháp luân: 3 lớp quay ngược chiều nhau, chậm khi bình thường, nhanh khi rê chuột
 (function () {
+  var box = document.querySelector('.wheel-box');
+  if (box) {
+    var layers = [
+      { el: document.getElementById('w1'), dir: 1,  base: 5,  a: 0 },
+      { el: document.getElementById('w2'), dir: -1, base: 8,  a: 0 },
+      { el: document.getElementById('w3'), dir: 1,  base: 12, a: 0 }
+    ];
+    var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var FAST = 10, factor = 1, target = 1, last = null;
+    var fast = function () { target = FAST; }, slow = function () { target = 1; };
+    box.addEventListener('mouseenter', fast);
+    box.addEventListener('mouseleave', slow);
+    box.addEventListener('touchstart', fast, { passive: true });
+    box.addEventListener('touchend', slow);
+    box.addEventListener('touchcancel', slow);
+    function tick(t) {
+      if (last === null) last = t;
+      var dt = Math.min((t - last) / 1000, 0.1); last = t;
+      factor += (target - factor) * Math.min(dt * 3, 1); // tăng/giảm tốc mượt
+      layers.forEach(function (L) {
+        if (!L.el) return;
+        L.a = (L.a + L.dir * L.base * factor * dt) % 360;
+        L.el.setAttribute('transform', 'rotate(' + L.a.toFixed(2) + ' 200 200)');
+      });
+      requestAnimationFrame(tick);
+    }
+    if (!reduce) requestAnimationFrame(tick);
+  }
+
+  // Lọc thẻ trong trang chuyên mục
   var f = document.getElementById('filter');
   if (f) {
     var cards = document.querySelectorAll('#list .feature');

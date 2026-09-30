@@ -146,3 +146,69 @@ footer{margin-top:60px; padding-block:34px 46px; border-top:1px solid var(--line
   .post-body h1{font-size:30px;}
   .prose p{font-size:16px;}
 }
+
+/* ---------- Nền trang ---------- */
+body{
+  background:
+    radial-gradient(ellipse 900px 520px at 18% -8%, var(--glow1), transparent 60%),
+    radial-gradient(ellipse 760px 520px at 100% 6%, var(--glow2), transparent 58%),
+    linear-gradient(180deg, #0b2019 0%, var(--bg) 38%, #040b08 100%);
+  background-attachment: fixed;
+}
+body::before{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;}
+body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none;
+  background:radial-gradient(ellipse 120% 90% at 50% 40%, transparent 55%, rgba(0,0,0,.45) 100%);}
+
+/* Kiểu 1: Mạn-đà-la */
+[data-bg="mandala"] body::before{
+  background:url(images/bg-mandala.svg) no-repeat 50% -240px / min(1400px,150vw);
+  opacity:.10;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%); mask-image:linear-gradient(180deg,#000 0%,#000 55%,transparent 100%);
+}
+/* Kiểu 2: Hoa sen lặp */
+[data-bg="sen"] body::before{
+  background:url(images/bg-lotus.svg) 0 0 / 240px 240px repeat;
+  opacity:.16;
+  -webkit-mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 60%,rgba(0,0,0,.2) 100%); mask-image:linear-gradient(180deg,#000 0%,rgba(0,0,0,.55) 60%,rgba(0,0,0,.2) 100%);
+}
+/* Kiểu 3: Ánh sáng xuyên lá */
+[data-bg="anhsang"] body::before{
+  background:
+    repeating-conic-gradient(from 196deg at 92% -6%, rgba(240,220,156,.13) 0deg 3deg, transparent 3deg 9deg),
+    url(images/bg-leaves.svg) 0 0 / 480px 480px repeat;
+  background-blend-mode:normal;
+  opacity:.9;
+  -webkit-mask-image:radial-gradient(ellipse 90% 75% at 92% 0%, #000 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,.12) 100%); mask-image:radial-gradient(ellipse 90% 75% at 92% 0%, #000 0%, rgba(0,0,0,.35) 55%, rgba(0,0,0,.12) 100%);
+}
+@media (prefers-reduced-motion: no-preference){ html{scroll-behavior:smooth;} }
+
+/* ---------- Khung ảnh tạm ---------- */
+.post-cover.ph{aspect-ratio:3/4; border-radius:22px; border:1px solid var(--line); background:
+  radial-gradient(ellipse 80% 60% at 50% 35%, color-mix(in srgb, var(--accent) 22%, transparent), transparent 70%), var(--card);
+  display:flex; align-items:center; justify-content:center; box-shadow:0 24px 60px -24px rgba(0,0,0,.65);}
+.ph-art svg{width:96px; height:96px; stroke:var(--accent); stroke-width:1.1; opacity:.85;}
+
+/* ---------- Món chay ---------- */
+.post-body .lede{margin-top:10px;}
+.recipe-block{margin-top:30px;}
+.recipe-block h2{font-size:26px; color:var(--gold-soft); font-weight:600; margin-bottom:12px;}
+.ingredients{list-style:none; margin:0; padding:0; display:grid; gap:8px;}
+.ingredients li{position:relative; padding:12px 16px 12px 40px; background:var(--card); border:1px solid var(--line); border-radius:12px; font-size:16px; line-height:1.5;}
+.ingredients li::before{content:""; position:absolute; left:16px; top:50%; width:10px; height:10px; margin-top:-5px; border-radius:50%; background:var(--c4); box-shadow:0 0 0 3px color-mix(in srgb, var(--c4) 25%, transparent);}
+.steps{list-style:none; counter-reset:step; margin:0; padding:0; display:grid; gap:12px;}
+.steps li{counter-increment:step; position:relative; padding:4px 0 4px 54px; font-size:17px; line-height:1.7; min-height:40px;}
+.steps li::before{content:counter(step); position:absolute; left:0; top:0; width:38px; height:38px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--on-gold); background:linear-gradient(135deg,var(--gold-soft),var(--gold));}
+.source{margin-top:30px; font-size:13px; color:var(--muted);}
+
+/* ---------- Kinh Nhật tụng ---------- */
+.summary{margin-top:14px; padding:16px 18px; border-left:3px solid var(--gold); background:color-mix(in srgb, var(--gold) 8%, transparent); border-radius:0 12px 12px 0; font-size:16px; line-height:1.7; color:var(--fg);}
+.toc{display:flex; flex-wrap:wrap; gap:8px; margin-top:22px;}
+.toc a{font-size:12.5px; padding:6px 12px; border:1px solid var(--line); border-radius:999px; color:var(--muted); transition:color .15s,border-color .15s;}
+.toc a:hover{color:var(--gold-soft); border-color:var(--gold);}
+.kinh-sec{margin-top:34px; scroll-margin-top:16px;}
+.kinh-sec h2{font-size:26px; color:var(--gold-soft); font-weight:600; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--line);}
+.kinh-sec .verse{font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; line-height:1.75; font-style:italic; color:var(--fg); text-align:center; padding:14px 10px; margin:0 0 16px; max-width:none;}
+.chant{list-style:none; margin:0 0 16px; padding:0; display:grid; gap:8px;}
+.chant li{padding:11px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px; font-size:16.5px; line-height:1.6;}
+
+html{background:var(--bg);}

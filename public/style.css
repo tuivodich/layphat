@@ -212,3 +212,10 @@ body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none
 .chant li{padding:11px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px; font-size:16.5px; line-height:1.6;}
 
 html{background:var(--bg);}
+
+/* Chân trang */
+.foot-bottom .copyright{display:inline-flex; align-items:center; flex-wrap:wrap; gap:0 6px;}
+.fb-link{display:inline-flex; align-items:center; gap:6px; color:var(--gold-soft); border-bottom:1px solid color-mix(in srgb, var(--gold) 35%, transparent);}
+.fb-link:hover{color:var(--fg);}
+.fb-ico{width:15px; height:15px; flex:none;}
+.foot-bottom .dim{opacity:0; user-select:none;} /* tạm ẩn: bỏ dòng này để hiện lại "Nam mô A Di Đà Phật" */

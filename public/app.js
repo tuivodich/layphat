@@ -30,6 +30,10 @@
     requestAnimationFrame(tick);
   }
 
+  // Năm hiện tại ở chân trang
+  var y = new Date().getFullYear();
+  document.querySelectorAll('.yr').forEach(function (el) { el.textContent = y; });
+
   // Lọc thẻ trong trang chuyên mục
   var f = document.getElementById('filter');
   if (f) {

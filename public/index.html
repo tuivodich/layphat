@@ -1,3 +1,84 @@
 <!doctype html>
-<html lang="vi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Lạy Phật</title></head>
-<body><h1>Lạy Phật</h1><p>Trang web đang được xây dựng.</p></body></html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lạy Phật</title>
+<meta name="description" content="Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <a class="brand" href="index.html">
+      <svg class="brand-mark" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="#dcae67" stroke-width="1.4"/><circle cx="20" cy="20" r="6" stroke="#dcae67" stroke-width="1.2"/><circle cx="20" cy="20" r="2.2" fill="#dcae67"/><g stroke="#dcae67" stroke-width="1.1" opacity=".8"><line x1="20" y1="4" x2="20" y2="14"/><line x1="20" y1="26" x2="20" y2="36"/><line x1="4" y1="20" x2="14" y2="20"/><line x1="26" y1="20" x2="36" y2="20"/><line x1="8.7" y1="8.7" x2="15.8" y2="15.8"/><line x1="24.2" y1="24.2" x2="31.3" y2="31.3"/><line x1="31.3" y1="8.7" x2="24.2" y2="15.8"/><line x1="15.8" y1="24.2" x2="8.7" y2="31.3"/></g></svg>
+      Lạy&nbsp;Phật
+    </a>
+  </header>
+  <nav class="navbar"><div class="navlist"><a href="index.html" class=active>Trang chủ</a><a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="cau-nguyen.html">Lời chúc - Cầu nguyện</a><a href="mon-chay.html">Món chay</a></div></nav>
+
+  <section class="hero">
+    <div class="hero-grid">
+      <div>
+        <div class="eyebrow">Bài viết · Kinh kệ · Cầu nguyện · Món chay</div>
+        <h1>Một chốn <em>an yên</em> cho tâm hồn.</h1>
+        <p class="lede">Nơi chia sẻ những bài viết về Phật giáo, kinh kệ, lời chúc, lời cầu nguyện và món chay thanh đạm, trình bày rõ ràng, dễ đọc mỗi ngày.</p>
+        <div class="hero-stats">
+          <div class="hero-stat"><b>4</b><span>chuyên mục</span></div>
+          <div class="hero-stat"><b>24</b><span>bài mẫu ban đầu</span></div>
+          <div class="hero-stat"><b>VI</b><span>tiếng Việt</span></div>
+        </div>
+      </div>
+      <div class="wheel-box">
+        <svg viewBox="0 0 400 400" fill="none">
+          <circle cx="200" cy="200" r="150" stroke="#dcae67" stroke-width="1.2" opacity=".4"/>
+          <circle cx="200" cy="200" r="108" stroke="#dcae67" stroke-width="1" opacity=".25"/>
+          <circle cx="200" cy="200" r="34" stroke="#dcae67" stroke-width="1.2" opacity=".5"/>
+          <g stroke="#dcae67" stroke-width=".8" opacity=".5"><line x1="200" y1="200" x2="350" y2="200"/><line x1="200" y1="200" x2="306" y2="94"/><line x1="200" y1="200" x2="200" y2="50"/><line x1="200" y1="200" x2="94" y2="94"/><line x1="200" y1="200" x2="50" y2="200"/><line x1="200" y1="200" x2="94" y2="306"/><line x1="200" y1="200" x2="200" y2="350"/><line x1="200" y1="200" x2="306" y2="306"/></g><circle cx="350" cy="200" r="3.6" fill="#f1d49c"/><circle cx="306" cy="94" r="3.4" fill="#a78bfa"/><circle cx="200" cy="50" r="4.5" fill="#f1d49c"/><circle cx="94" cy="94" r="3.4" fill="#f2989a"/><circle cx="50" cy="200" r="3.6" fill="#f1d49c"/><circle cx="94" cy="306" r="3.4" fill="#5fd6ae"/><circle cx="200" cy="350" r="4.5" fill="#f1d49c"/><circle cx="306" cy="306" r="3.4" fill="#7cd0f2"/>
+          <circle cx="200" cy="200" r="6" fill="#dcae67"/>
+          <circle cx="118" cy="70" r="2" fill="#fff" opacity=".5"/><circle cx="340" cy="70" r="1.6" fill="#fff" opacity=".4"/><circle cx="60" cy="330" r="1.6" fill="#fff" opacity=".4"/><circle cx="350" cy="340" r="2" fill="#fff" opacity=".5"/>
+        </svg>
+      </div>
+    </div>
+    <form class="card search-card" onsubmit="return false">
+      <h2>Tìm bài viết</h2>
+      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tính năng tìm kiếm sẽ được nối với dữ liệu thật ở bước sau).</p>
+      <div class="field-row one">
+        <div class="field"><label>Từ khóa</label><input id="q" placeholder="Ví dụ: thiền, Vu Lan, đậu hũ..." /></div>
+      </div>
+      <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Miễn phí · Không cần đăng nhập</span></div>
+    </form>
+    <div class="quote-strip"><span>“Nội dung trích dẫn sẽ được thay bằng lời dạy có nguồn rõ ràng.”</span><span class="mark">— Ô mẫu</span></div>
+  </section>
+  <section class="section-head"><h2>Các chuyên mục</h2><span>4 chuyên mục</span></section>
+  <div class="grid four">
+    <a class="feature link" href="bai-viet.html" style="--accent:#f0b86e"><span class="tag">6 bài mẫu</span>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ><path d="M4 5h9a3 3 0 013 3v11H7a3 3 0 01-3-3V5z"/><path d="M16 8h4v11h-4"/></svg></div>
+      <h3>Bài viết về Phật giáo</h3><p>Những bài viết giới thiệu giáo lý, lịch sử và đời sống tu tập, trình bày rõ ràng, dễ đọc cho người mới bắt đầu.</p></a>
+    <a class="feature link" href="kinh-ke.html" style="--accent:#a78bfa"><span class="tag">6 bài mẫu</span>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ><path d="M6 3h9l3 3v15H6z"/><path d="M9 10h6M9 14h6M9 18h4"/></svg></div>
+      <h3>Bài kinh - kệ</h3><p>Tuyển tập các bài kinh, kệ, chú thường tụng, kèm phần chú giải ngắn gọn. Văn bản sẽ được bổ sung từ nguồn dịch được phép sử dụng.</p></a>
+    <a class="feature link" href="cau-nguyen.html" style="--accent:#f2989a"><span class="tag">6 bài mẫu</span>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ><path d="M12 21s-7-4.35-9.5-8.5C1 9 2.5 5 6.5 5c2 0 3.5 1.2 4.2 2.5.2.4.9.4 1.1 0C12.5 6.2 14 5 16 5 20 5 21.5 9 20 12.5 17.5 16.65 12 21 12 21z"/></svg></div>
+      <h3>Lời chúc - Cầu nguyện</h3><p>Những lời chúc và bài văn khấn, cầu nguyện cho các dịp lễ, giúp bạn gửi lời thăm hỏi trang nghiêm, ấm áp.</p></a>
+    <a class="feature link" href="mon-chay.html" style="--accent:#5fd6ae"><span class="tag">6 bài mẫu</span>
+      <div class="badge"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" ><path d="M5 12c0-4 3-7 7-7 0 4-3 7-7 7z"/><path d="M12 19c0-4 3-7 7-7 0 4-3 7-7 7z"/><path d="M5 12c2 0 4 1 5 3"/></svg></div>
+      <h3>Món chay</h3><p>Công thức món chay thanh đạm, dễ nấu, phù hợp cho ngày rằm, mùng một và bữa cơm gia đình.</p></a>
+  </div>
+
+  <footer>
+    <div class="foot-links">
+      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="cau-nguyen.html">Lời chúc - Cầu nguyện</a><a href="mon-chay.html">Món chay</a>
+    </div>
+    <div class="foot-bottom">
+      <span>© Lạy Phật · Nội dung mang tính chia sẻ, tham khảo.</span>
+      <span>Nam mô A Di Đà Phật</span>
+    </div>
+  </footer>
+</div>
+<script src="app.js"></script>
+</body>
+</html>

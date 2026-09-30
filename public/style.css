@@ -211,7 +211,6 @@ body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none
 .chant{list-style:none; margin:0 0 16px; padding:0; display:grid; gap:8px;}
 .chant li{padding:11px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px; font-size:16.5px; line-height:1.6;}
 
-html{background:var(--bg);}
 
 /* Chân trang */
 .foot-bottom .copyright{display:inline-flex; align-items:center; flex-wrap:wrap; gap:0 6px;}
@@ -219,3 +218,21 @@ html{background:var(--bg);}
 .fb-link:hover{color:var(--fg);}
 .fb-ico{width:15px; height:15px; flex:none;}
 .foot-bottom .dim{opacity:0; user-select:none;} /* tạm ẩn: bỏ dòng này để hiện lại "Nam mô A Di Đà Phật" */
+
+/* Sửa lỗi nền: lớp chuyển sắc ở <html> để họa tiết (body::before) hiện phía trên nó */
+html{
+  background-color:var(--bg);
+  background-image:
+    radial-gradient(ellipse 900px 520px at 18% -8%, var(--glow1), transparent 60%),
+    radial-gradient(ellipse 760px 520px at 100% 6%, var(--glow2), transparent 58%),
+    linear-gradient(180deg, #0b2019 0%, var(--bg) 38%, #040b08 100%);
+  background-attachment:fixed;
+}
+body{background:transparent;}
+/* Tia sáng và lá bồ đề rõ hơn một chút */
+[data-bg="anhsang"] body::before{
+  background:
+    repeating-conic-gradient(from 196deg at 92% -6%, rgba(240,220,156,.17) 0deg 3deg, transparent 3deg 9deg),
+    url(images/bg-leaves.svg) 0 0 / 480px 480px repeat;
+  opacity:1;
+}

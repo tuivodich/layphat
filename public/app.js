@@ -3,13 +3,13 @@
   var box = document.querySelector('.wheel-box');
   if (box) {
     var layers = [
-      { el: document.getElementById('w1'), dir: 1,  base: 8,  a: 0 },
-      { el: document.getElementById('w2'), dir: -1, base: 13, a: 0 },
-      { el: document.getElementById('w3'), dir: 1,  base: 20, a: 0 }
+      { el: document.getElementById('w1'), dir: 1,  base: 6,  a: 0 },
+      { el: document.getElementById('w2'), dir: -1, base: 10, a: 0 },
+      { el: document.getElementById('w3'), dir: 1,  base: 15, a: 0 }
     ];
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    // Nếu hệ điều hành bật "giảm chuyển động": đứng yên, chỉ quay khi người dùng rê chuột/chạm vào
-    var IDLE = reduce ? 0 : 1, FAST = reduce ? 4 : 10, factor = IDLE, target = IDLE, last = null;
+    // Luôn quay rất chậm khi bình thường; nếu hệ điều hành bật "giảm chuyển động" thì quay chậm hơn nữa
+    var IDLE = reduce ? 0.5 : 1, FAST = reduce ? 6 : 10, factor = IDLE, target = IDLE, last = null;
     var fast = function () { target = FAST; }, slow = function () { target = IDLE; };
     box.addEventListener('mouseenter', fast);
     box.addEventListener('mouseleave', slow);

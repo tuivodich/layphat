@@ -123,3 +123,26 @@ footer{margin-top:60px; padding-block:34px 46px; border-top:1px solid var(--line
 .wheel-box{cursor:pointer; -webkit-tap-highlight-color:transparent;}
 .wheel-box svg{filter:drop-shadow(0 0 28px color-mix(in srgb, var(--gold) 22%, transparent)); transition:filter .4s;}
 .wheel-box:hover svg{filter:drop-shadow(0 0 38px color-mix(in srgb, var(--gold) 45%, transparent));}
+
+/* Trang bài viết chi tiết */
+.crumb{margin:0 0 18px; font-size:13.5px;}
+.crumb a{color:var(--muted);}
+.crumb a:hover{color:var(--gold-soft);}
+.post{display:grid; grid-template-columns:minmax(260px,400px) 1fr; gap:44px; align-items:start;}
+.post-cover{margin:0; position:sticky; top:20px;}
+.post-cover img{display:block; width:100%; height:auto; border-radius:22px; border:1px solid var(--line); box-shadow:0 24px 60px -24px rgba(0,0,0,.65);}
+.post-body h1{font-size:40px; line-height:1.15; font-weight:600; color:var(--fg); margin-top:2px;}
+.prose{margin-top:26px;}
+.prose p{font-size:17px; line-height:1.8; color:color-mix(in srgb, var(--fg) 90%, transparent); margin:0 0 18px; max-width:68ch;}
+.signoff{margin-top:30px; padding:16px 18px; text-align:center; border:1px solid var(--line); border-radius:14px; color:var(--gold-soft); font-family:'Cormorant Garamond',serif; font-size:20px; font-style:italic;}
+.hashtags{margin-top:16px; font-size:12.5px; color:var(--muted); line-height:1.7; word-break:break-word;}
+.related{margin-top:32px; padding:20px 22px; border-radius:16px; background:var(--card); border:1px solid var(--line);}
+.related h2{font-size:22px; color:var(--fg); font-weight:600;}
+.related-link{display:inline-block; margin-top:10px; color:var(--gold-soft); font-size:14.5px; border-bottom:1px solid color-mix(in srgb, var(--gold) 40%, transparent);}
+.related-link:hover{color:var(--fg);}
+@media (max-width:860px){
+  .post{grid-template-columns:1fr; gap:26px;}
+  .post-cover{position:static; max-width:420px; margin:0 auto;}
+  .post-body h1{font-size:30px;}
+  .prose p{font-size:16px;}
+}

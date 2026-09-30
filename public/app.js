@@ -3,13 +3,14 @@
   var box = document.querySelector('.wheel-box');
   if (box) {
     var layers = [
-      { el: document.getElementById('w1'), dir: 1,  base: 5,  a: 0 },
-      { el: document.getElementById('w2'), dir: -1, base: 8,  a: 0 },
-      { el: document.getElementById('w3'), dir: 1,  base: 12, a: 0 }
+      { el: document.getElementById('w1'), dir: 1,  base: 8,  a: 0 },
+      { el: document.getElementById('w2'), dir: -1, base: 13, a: 0 },
+      { el: document.getElementById('w3'), dir: 1,  base: 20, a: 0 }
     ];
     var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var FAST = 10, factor = 1, target = 1, last = null;
-    var fast = function () { target = FAST; }, slow = function () { target = 1; };
+    // Nếu hệ điều hành bật "giảm chuyển động": đứng yên, chỉ quay khi người dùng rê chuột/chạm vào
+    var IDLE = reduce ? 0 : 1, FAST = reduce ? 4 : 10, factor = IDLE, target = IDLE, last = null;
+    var fast = function () { target = FAST; }, slow = function () { target = IDLE; };
     box.addEventListener('mouseenter', fast);
     box.addEventListener('mouseleave', slow);
     box.addEventListener('touchstart', fast, { passive: true });
@@ -26,7 +27,7 @@
       });
       requestAnimationFrame(tick);
     }
-    if (!reduce) requestAnimationFrame(tick);
+    requestAnimationFrame(tick);
   }
 
   // Lọc thẻ trong trang chuyên mục

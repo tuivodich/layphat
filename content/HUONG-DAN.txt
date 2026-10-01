@@ -1,0 +1,46 @@
+HƯỚNG DẪN ĐĂNG BÀI MỚI CHO TRANG LẠY PHẬT
+=========================================
+
+CÁCH LÀM (không cần dùng lệnh):
+1. Mở https://github.com/tuivodich/layphat  ->  vào thư mục "content"  ->  vào thư mục con đúng loại bài:
+     content/bai-viet/   (Bài viết Phật giáo)
+     content/kinh-ke/    (Bài kinh - kệ)
+     content/cau-nguyen/ (Lời chúc - Cầu nguyện)
+     content/mon-chay/   (Món chay)
+2. Bấm "Add file" -> "Upload files" (hoặc "Create new file" rồi dán nội dung).
+3. File là văn bản .txt, lưu dạng UTF-8, theo mẫu _MAU-*.txt ở thư mục content/.
+   Tên file chỉ dùng chữ không dấu, nối bằng dấu gạch ngang, ví dụ: bat-chanh-dao.txt
+   (tên file chính là địa chỉ trang: bai-viet-bat-chanh-dao.html)
+4. Nếu bài có ảnh: tải ảnh .jpg/.png lên content/images/ và ghi tên ảnh ở dòng "Ảnh:".
+   (Muốn ảnh chia sẻ Facebook riêng thì thêm ảnh tên <tên>-og.jpg, 1200x630.)
+5. Bấm "Commit changes". Chờ khoảng 1-2 phút, web tự dựng lại và đăng bài.
+
+Bài mới nhất (theo dòng "Ngày:") luôn hiện ở thẻ ĐẦU TIÊN của trang chuyên mục,
+và là bài hiển thị trong thẻ Danh mục tương ứng ở trang Bài viết.
+Các thẻ "Mẫu" tự biến mất khi đã đủ 6 bài thật.
+
+CẤU TRÚC FILE
+Phần đầu là các dòng "Tên: giá trị", sau đó một dòng chỉ có ba dấu gạch  ---  rồi đến nội dung.
+
+  Loại:        bai-viet | kinh-ke | cau-nguyen | mon-chay   (bắt buộc)
+  Danh mục:    Thiền Tông | Tịnh Độ Tông | Mật Tông | Phật giáo Nguyên Thủy | Phật giáo Đại Thừa | Kim Cương Thừa  (cho bài viết)
+  Tiêu đề:     tiêu đề đầy đủ hiện trong bài (bắt buộc)
+  Tên ngắn:    tên hiện trên thẻ (nếu bỏ trống sẽ lấy Tiêu đề)
+  Ngày:        2026-10-05  hoặc  05/10/2026  (có thể thêm giờ: 2026-10-05 08:30)  (bắt buộc)
+  Ảnh:         ten-anh.jpg   (không bắt buộc)
+  Mô tả ảnh:   mô tả ngắn cho ảnh
+  Nguồn:       Sưu tầm / tên tác giả
+  Tóm tắt:     1-2 câu, hiện trên thẻ và trong thẻ danh mục
+  Lời kết:     dòng kết bài (không bắt buộc)
+  Hashtag:     #PhatPhap #Buddhism
+  Bài liên quan: https://địa-chỉ | Tên hiển thị
+
+NỘI DUNG (sau dòng ---)
+  - Các đoạn cách nhau bằng một dòng trống.
+  - Dòng "## Tên mục" mở một mục mới.
+  - Mọi dòng bắt đầu bằng "> "  -> hiển thị như câu kệ/trích dẫn.
+  - Mọi dòng bắt đầu bằng "- "  -> danh sách (mục "Nguyên liệu" là nguyên liệu, mục khác là câu niệm).
+  - Mọi dòng bắt đầu bằng "1. " -> các bước đánh số.
+
+Nếu file sai mẫu, web vẫn chạy bình thường: file đó bị bỏ qua và lý do hiện ở tab "Actions" của GitHub (mục Annotations).
+Các file có tên bắt đầu bằng _ (như _MAU-...) hoặc huongdan không bao giờ được đăng.

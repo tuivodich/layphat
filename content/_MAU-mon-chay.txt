@@ -1,0 +1,15 @@
+Loại: mon-chay
+Tiêu đề: Tên món chay
+Ngày: 2026-10-05
+Nguồn: Sưu tầm
+Tóm tắt: Mô tả ngắn về món ăn.
+---
+## Nguyên liệu
+
+- 200g đậu hũ
+- 1 muỗng dầu ăn
+
+## Cách làm
+
+1. Bước một.
+2. Bước hai.

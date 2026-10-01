@@ -3,12 +3,31 @@ name: Deploy to Firebase Hosting
 on:
   push:
     branches: [main]
+  workflow_dispatch:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Tạo trang web từ thư mục content/
+        run: |
+          pip install pillow
+          python tools/gen_site.py
+
+      - name: Tạo bản PDF cho bài viết (nếu lỗi thì bỏ qua, web vẫn deploy)
+        continue-on-error: true
+        run: |
+          pip install playwright
+          playwright install --with-deps chromium
+          sudo apt-get install -y fonts-noto-color-emoji fonts-noto-cjk
+          python tools/make_pdfs.py
+
       - uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}

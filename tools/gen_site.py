@@ -1,4 +1,4 @@
-import os, html
+import os, re, html, sys, shutil, unicodedata, datetime
 import os as _os
 OUT = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "public")  # chạy: python3 tools/gen_site.py
 
@@ -15,6 +15,13 @@ ICON = {
  "kinh-ke":'<path d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/><path d="M9 9h6M9 12.5h6M9 16h3"/>',
  "cau-nguyen":'<path d="M12 4.5c2.2 2.6 2.7 5.4 0 9.5-2.7-4.1-2.2-6.9 0-9.5z"/><path d="M12 14c-3.2-.4-6.8-2.6-7.4-6.4 3.2 0 6.2 1.6 7.4 4.4"/><path d="M12 14c3.2-.4 6.8-2.6 7.4-6.4-3.2 0-6.2 1.6-7.4 4.4"/><path d="M5 17.5c4.2 3 9.8 3 14 0"/>',
  "mon-chay":'<path d="M4 12h16a8 8 0 01-16 0z"/><path d="M12 3.5c2.4 1 3.2 3.4 2 5.6-2.4-1-3.2-3.4-2-5.6z"/><path d="M8.5 5.5c-.8 1-.8 2 0 3"/>',
+ # biểu tượng danh mục
+ "enso":'<path d="M18.2 6.1A8.2 8.2 0 1 0 20.2 12.6"/><path d="M19.4 4.6l-1.4 1.8"/>',
+ "lotus":'<path d="M12 4.5c2.2 2.6 2.7 5.4 0 9.5-2.7-4.1-2.2-6.9 0-9.5z"/><path d="M12 14c-3.2-.4-6.8-2.6-7.4-6.4 3.2 0 6.2 1.6 7.4 4.4"/><path d="M12 14c3.2-.4 6.8-2.6 7.4-6.4-3.2 0-6.2 1.6-7.4 4.4"/><path d="M5 17.5c4.2 3 9.8 3 14 0"/>',
+ "mandala":'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="3.4"/><path d="M12 3.5v5.1M12 15.4v5.1M3.5 12h5.1M15.4 12h5.1M6 6l3.1 3.1M14.9 14.9L18 18M18 6l-3.1 3.1M9.1 14.9L6 18"/>',
+ "stupa":'<path d="M12 2.5v2.2"/><path d="M9.8 4.7h4.4"/><path d="M8.5 8.3c0-2.2 1.5-3.6 3.5-3.6s3.5 1.4 3.5 3.6"/><path d="M6 12.3c0-2.6 2.6-4 6-4s6 1.4 6 4"/><path d="M4.5 12.3h15"/><path d="M5.5 12.3V20M18.5 12.3V20M3.5 20h17"/><path d="M10 20v-3.2a2 2 0 014 0V20"/>',
+ "boat":'<path d="M3 15.5h18l-2.6 4.5H5.6z"/><path d="M12 3.5v12"/><path d="M12 4.6c3.2 1.6 5.2 4.8 5.2 8.9H12"/><path d="M12 7c-2.2 1.2-3.8 3.7-3.8 6.5H12"/>',
+ "vajra":'<ellipse cx="12" cy="12" rx="2" ry="2.6"/><path d="M12 9.4V5M12 14.6V19"/><path d="M12 5c-3 0-4.6 2-4.6 4.2M12 5c3 0 4.6 2 4.6 4.2M12 19c-3 0-4.6-2-4.6-4.2M12 19c3 0 4.6-2 4.6-4.2"/><path d="M12 5V2.8M12 19v2.2"/>',
 }
 
 SECTIONS = {
@@ -94,7 +101,7 @@ FOOT = '''
       <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="cau-nguyen.html">Lời chúc - Cầu nguyện</a><a href="mon-chay.html">Món chay</a>
     </div>
     <div class="foot-bottom">
-      <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg>Lạy Phật</a></span>
+      <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg><span class="fb-sep">/</span>Lạy Phật</a>. Nếu sao chép hay trích dẫn nội dung của trang xin vui lòng ghi rõ nguồn và chỉ sử dụng với mục đích phi thương mại.</span>
       <span class="dim" aria-hidden="true">Nam mô A Di Đà Phật</span>
     </div>
   </footer>
@@ -104,19 +111,24 @@ FOOT = '''
 </html>
 '''
 
-def card(key, s, item):
-    t, d = item[0], item[1]
-    href = item[2] if len(item) > 2 else None
-    if href:
-        return f'''    <a class="feature link" href="{href}" style="--accent:{s["accent"]}" data-title="{html.escape(t.lower())}"><span class="tag">{s["tag"]}</span>
-      <div class="badge">{icon(key)}</div>
-      <h3>{html.escape(t)}</h3><p>{html.escape(d)}</p></a>
-'''
-    return f'''    <article class="feature" style="--accent:{s["accent"]}" data-title="{html.escape(t.lower())}"><span class="tag">{s["tag"]} · Mẫu</span>
-      <div class="badge">{icon(key)}</div>
-      <h3>{html.escape(t)}</h3><p>{html.escape(d)}</p></article>
-'''
 
+SAMPLES = {k: [it for it in s["items"] if len(it) == 2] for k, s in SECTIONS.items()}
+LABEL = {"bai-viet": "Bài viết Phật giáo", "kinh-ke": "Bài kinh - kệ", "cau-nguyen": "Lời chúc - Cầu nguyện", "mon-chay": "Món chay"}
+PREFIX = {"bai-viet": "bai-viet-", "kinh-ke": "kinh-", "cau-nguyen": "cau-nguyen-", "mon-chay": "mon-chay-"}
+PH_ICON = {"bai-viet": "bai-viet", "kinh-ke": "cau-nguyen", "cau-nguyen": "cau-nguyen", "mon-chay": "mon-chay"}
+SITE = "https://layphatvn.web.app"
+ROOT = _os.path.abspath(_os.path.join(OUT, ".."))
+CONTENT = _os.path.join(ROOT, "content")
+
+# Danh mục của trang "Bài viết Phật giáo": (slug, tên, biểu tượng, màu, mô tả ngắn)
+CATS = [
+  ("thien-tong", "Thiền Tông", "enso", "var(--c1)", "Truyền thống nhấn mạnh tu tập thiền định, trực nhận bản tâm."),
+  ("tinh-do-tong", "Tịnh Độ Tông", "lotus", "var(--c3)", "Pháp môn niệm danh hiệu Đức Phật A Di Đà, nguyện vãng sanh cõi Tây phương Cực Lạc."),
+  ("mat-tong", "Mật Tông", "mandala", "var(--c2)", "Truyền thống tu tập với thần chú, thủ ấn và quán tưởng."),
+  ("nguyen-thuy", "Phật giáo Nguyên Thủy", "stupa", "var(--c4)", "Truyền thống lưu giữ lời dạy sớm nhất của Đức Phật, gắn với Tam tạng Pali."),
+  ("dai-thua", "Phật giáo Đại Thừa", "boat", "var(--c2)", "Truyền thống nhấn mạnh con đường Bồ Tát, hạnh từ bi và trí tuệ Bát nhã."),
+  ("kim-cuong-thua", "Kim Cương Thừa", "vajra", "var(--c1)", "Truyền thống Mật thừa, phổ biến ở Tây Tạng và vùng Himalaya."),
+]
 
 import math
 def rot(k, inner, n=8):
@@ -133,17 +145,302 @@ def build_wheel():
     stars = '<circle cx="60" cy="60" r="1.6" fill="#fff" opacity=".45"/><circle cx="345" cy="52" r="1.4" fill="#fff" opacity=".4"/><circle cx="40" cy="340" r="1.4" fill="#fff" opacity=".4"/><circle cx="360" cy="350" r="1.8" fill="#fff" opacity=".45"/>'
     return f'<svg viewBox="0 0 400 400" fill="none" role="img" aria-label="Bánh xe Pháp luân"><g id="w1">{l1}</g><g id="w2">{l2}</g><g id="w3">{l3}</g>{hub}</svg>'
 WHEEL = build_wheel()
+def post_footer(date_iso, display):
+    return f"""
+      <footer class="post-end">
+        <p class="post-date">Đăng ngày <time datetime="{date_iso}">{display}</time></p>
+        <div class="post-actions" role="group" aria-label="Chức năng bài viết">
+          <button type="button" class="act" data-act="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>In trang này</button>
+          <button type="button" class="act" data-act="download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>Tải trang này</button>
+          <div class="share-wrap">
+            <button type="button" class="act" data-act="share" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg>Chia sẻ trang</button>
+            <div class="share-menu" role="menu" hidden>
+              <button type="button" role="menuitem" data-share="copy">Sao chép liên kết</button>
+              <button type="button" role="menuitem" data-share="facebook">Chia sẻ lên Facebook</button>
+              <button type="button" role="menuitem" data-share="email">Gửi qua email</button>
+            </div>
+          </div>
+        </div>
+        <div class="toast" role="status" aria-live="polite"></div>
+      </footer>
+"""
 
-def index():
-    wheel = '<g stroke="#dcae67" stroke-width=".8" opacity=".5">' + "".join(
-      f'<line x1="200" y1="200" x2="{x}" y2="{y}"/>' for x,y in
-      [(350,200),(306,94),(200,50),(94,94),(50,200),(94,306),(200,350),(306,306)]) + '</g>'
-    dots = "".join(f'<circle cx="{x}" cy="{y}" r="{r}" fill="{c}"/>' for x,y,r,c in
-      [(350,200,3.6,"#f1d49c"),(306,94,3.4,"#a78bfa"),(200,50,4.5,"#f1d49c"),(94,94,3.4,"#f2989a"),(50,200,3.6,"#f1d49c"),(94,306,3.4,"#5fd6ae"),(200,350,4.5,"#f1d49c"),(306,306,3.4,"#7cd0f2")])
+
+# =====================================================================
+#  ĐỌC NỘI DUNG TỪ THƯ MỤC content/  (file .txt / .md)
+# =====================================================================
+def fold(s):
+    s = unicodedata.normalize("NFKD", s.replace("đ", "d").replace("Đ", "D"))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9]+", "", s.lower())
+
+def slugify(s):
+    s = unicodedata.normalize("NFKD", s.replace("đ", "d").replace("Đ", "D"))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
+
+TYPE_MAP = {"baiviet": "bai-viet", "baivietphatgiao": "bai-viet", "kinhke": "kinh-ke", "baikinhke": "kinh-ke", "kinh": "kinh-ke",
+            "caunguyen": "cau-nguyen", "loichuc": "cau-nguyen", "loichuccaunguyen": "cau-nguyen", "monchay": "mon-chay"}
+KEY_MAP = {"loai": "type", "danhmuc": "cat", "tieude": "title", "tenngan": "short", "ngay": "date", "anh": "image", "motaanh": "alt",
+           "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related"}
+CAT_BY_KEY = {}
+for _slug, _name, *_ in CATS:
+    for _k in {fold(_slug), fold(_name), fold(_name).replace("phatgiao", "")}:
+        CAT_BY_KEY[_k] = _slug
+
+WARNINGS = []
+def warn(path, msg):
+    rel = _os.path.relpath(path, ROOT)
+    WARNINGS.append(f"{rel}: {msg}")
+    print(f"::warning file={rel}::{msg}")
+
+def parse_date(s):
+    s = s.strip()
+    m = re.match(r"^(\d{4})-(\d{1,2})-(\d{1,2})(?:[ T](\d{1,2}):(\d{2}))?$", s) or None
+    if m:
+        y, mo, d, h, mi = m.groups()
+    else:
+        m2 = re.match(r"^(\d{1,2})/(\d{1,2})/(\d{4})(?:\s+(\d{1,2}):(\d{2}))?$", s)
+        if not m2: return None, False
+        d, mo, y, h, mi = m2.groups()
+    try:
+        return datetime.datetime(int(y), int(mo), int(d), int(h or 0), int(mi or 0)), bool(h)
+    except ValueError:
+        return None, False
+
+def parse_body(text):
+    items = []
+    for blk in re.split(r"\n\s*\n", text.strip()):
+        lines = [l.rstrip() for l in blk.split("\n") if l.strip()]
+        while lines and lines[0].startswith("## "):
+            items.append(("h2", lines.pop(0)[3:].strip()))
+        if not lines: continue
+        if all(l.startswith("> ") or l == ">" for l in lines): items.append(("verse", [l[2:] if l.startswith("> ") else "" for l in lines]))
+        elif all(l.startswith("- ") for l in lines): items.append(("ul", [l[2:].strip() for l in lines]))
+        elif all(re.match(r"^\d+[.)]\s+", l) for l in lines): items.append(("ol", [re.sub(r"^\d+[.)]\s+", "", l) for l in lines]))
+        else: items.append(("p", " ".join(l.strip() for l in lines)))
+    return items
+
+def load_posts():
+    posts, used = [], set()
+    if not _os.path.isdir(CONTENT): return posts
+    for dp, _dn, fns in _os.walk(CONTENT):
+        for fn in sorted(fns):
+            stem, ext = _os.path.splitext(fn)
+            if ext.lower() not in (".txt", ".md") or stem.startswith("_") or fold(stem).startswith("huongdan"): continue
+            path = _os.path.join(dp, fn)
+            raw = open(path, encoding="utf-8-sig").read().replace("\r\n", "\n").replace("\r", "\n")
+            parts = re.split(r"^\s*---\s*$", raw, maxsplit=1, flags=re.M)
+            if len(parts) != 2: warn(path, "thiếu dòng '---' ngăn giữa phần thông tin và nội dung bài. Bỏ qua file này."); continue
+            meta = {}
+            for line in parts[0].split("\n"):
+                if ":" not in line: continue
+                k, v = line.split(":", 1)
+                key = KEY_MAP.get(fold(k))
+                if key: meta[key] = v.strip()
+            ptype = TYPE_MAP.get(fold(meta.get("type", "")))
+            if not ptype: warn(path, "thiếu hoặc sai dòng 'Loại:' (bai-viet, kinh-ke, cau-nguyen hoặc mon-chay). Bỏ qua file này."); continue
+            if not meta.get("title"): warn(path, "thiếu dòng 'Tiêu đề:'. Bỏ qua file này."); continue
+            dt, has_time = parse_date(meta.get("date", ""))
+            if not dt: warn(path, "thiếu hoặc sai dòng 'Ngày:' (ví dụ 2026-10-05 hoặc 05/10/2026). Bỏ qua file này."); continue
+            slug = slugify(stem)
+            if slug.startswith(PREFIX[ptype]): slug = slug[len(PREFIX[ptype]):]
+            fname = PREFIX[ptype] + slug + ".html"
+            if fname in used: warn(path, f"trùng tên trang {fname} với một bài khác. Bỏ qua file này."); continue
+            used.add(fname)
+            cat = None
+            if meta.get("cat"):
+                cat = CAT_BY_KEY.get(fold(meta["cat"]))
+                if not cat: warn(path, f"danh mục '{meta['cat']}' không có trong danh sách (Thiền Tông, Tịnh Độ Tông, Mật Tông, Phật giáo Nguyên Thủy, Phật giáo Đại Thừa, Kim Cương Thừa).")
+            title = meta["title"]
+            short = meta.get("short") or re.sub(r"^[^\w]+|[^\w)\]\"”]+$", "", title, flags=re.U).strip() or title
+            rel_url, rel_text = None, None
+            if meta.get("related"):
+                bits = [b.strip() for b in meta["related"].split("|", 1)]
+                rel_url = bits[0]; rel_text = bits[1] if len(bits) > 1 and bits[1] else title
+            body = parse_body(parts[1])
+            first_p = next((v for k, v in body if k == "p"), "")
+            posts.append(dict(type=ptype, cat=cat, title=title, short=short, dt=dt, has_time=has_time, slug=slug, file=fname,
+                              image=meta.get("image"), alt=meta.get("alt") or short, source=meta.get("source"),
+                              summary=meta.get("summary") or first_p[:160], signoff=meta.get("signoff"), tags=meta.get("tags"),
+                              related=(rel_url, rel_text), body=body, path=path))
+    posts.sort(key=lambda p: (p["dt"], p["title"]), reverse=True)
+    return posts
+
+# ---------------- Ảnh ----------------
+def process_image(p):
+    p["img"] = p["og"] = p["size"] = None
+    if not p["image"]: return
+    src = _os.path.join(CONTENT, "images", p["image"])
+    if not _os.path.isfile(src):
+        warn(p["path"], f"không thấy ảnh '{p['image']}' trong content/images/. Bài sẽ dùng khung ảnh trang trí."); return
+    from PIL import Image
+    im = Image.open(src).convert("RGB")
+    w = min(900, im.width); h = round(im.height * w / im.width)
+    out = _os.path.join(OUT, "images"); _os.makedirs(out, exist_ok=True)
+    main_rel, og_rel = f"images/{p['slug']}.jpg", f"images/{p['slug']}-og.jpg"
+    if _os.path.abspath(src) != _os.path.abspath(_os.path.join(OUT, main_rel)):
+        im.resize((w, h), Image.LANCZOS).save(_os.path.join(OUT, main_rel), quality=82, optimize=True, progressive=True)
+    og_src = _os.path.join(CONTENT, "images", _os.path.splitext(p["image"])[0] + "-og.jpg")
+    if _os.path.isfile(og_src):
+        if _os.path.abspath(og_src) != _os.path.abspath(_os.path.join(OUT, og_rel)): shutil.copyfile(og_src, _os.path.join(OUT, og_rel))
+    else:
+        cw, ch = im.width, round(im.width * 630 / 1200)
+        im.crop((0, 0, cw, min(ch, im.height))).resize((1200, 630), Image.LANCZOS).save(_os.path.join(OUT, og_rel), quality=82, optimize=True)
+    p["img"], p["og"], p["size"] = main_rel, og_rel, (w, h)
+
+# =====================================================================
+#  TẠO TRANG
+# =====================================================================
+def fmt_date(p):
+    d = p["dt"]
+    s = f"{d.day:02d}/{d.month:02d}/{d.year}"
+    return s + (f" lúc {d.hour:02d}:{d.minute:02d}" if p["has_time"] else "")
+
+def real_card(p):
+    s = SECTIONS[p["type"]]
+    return f'''    <a class="feature link" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}"><span class="tag">{s["tag"]}</span>
+      <div class="badge">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</div>
+      <h3>{html.escape(p["short"])}</h3><p>{html.escape(p["summary"])}</p></a>
+'''
+
+def sample_card(key, s, item):
+    t, d = item
+    return f'''    <article class="feature" style="--accent:{s["accent"]}" data-title="{html.escape(t.lower())}"><span class="tag">{s["tag"]} · Mẫu</span>
+      <div class="badge">{icon(PH_ICON[key])}</div>
+      <h3>{html.escape(t)}</h3><p>{html.escape(d)}</p></article>
+'''
+
+def post_page(p):
+    t = p["type"]; s = SECTIONS[t]
+    if p["img"]:
+        wd, ht = p["size"]
+        cover = f'<figure class="post-cover"><img src="{p["img"]}" alt="{html.escape(p["alt"])}" width="{wd}" height="{ht}" decoding="async"></figure>'
+    else:
+        cover = f'<figure class="post-cover ph" style="--accent:{s["accent"]}"><div class="ph-art">{icon(PH_ICON[t])}</div></figure>'
+    # nội dung
+    heads = [v for k, v in p["body"] if k == "h2"]
+    toc = ""
+    if len(heads) >= 3:
+        toc = '<nav class="toc" aria-label="Mục lục">' + "".join(f'<a href="#muc-{i}">{html.escape(h)}</a>' for i, h in enumerate(heads)) + "</nav>"
+    out, sec_open, si, recipe = [], False, -1, False
+    for kind, val in p["body"]:
+        if kind == "h2":
+            if sec_open: out.append("</section>")
+            si += 1; hf = fold(val)
+            recipe = hf.startswith("nguyenlieu") or hf.startswith("cachlam")
+            out.append(f'<section class="{"recipe-block" if recipe else "kinh-sec"}" id="muc-{si}"><h2>{html.escape(val)}</h2>'); sec_open = True
+        elif kind == "p": out.append(f"<p>{html.escape(val)}</p>")
+        elif kind == "verse": out.append('<p class="verse">' + "<br>\n".join(html.escape(x) for x in val) + "</p>")
+        elif kind == "ul": out.append(f'<ul class="{"ingredients" if recipe else "chant"}">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ul>")
+        elif kind == "ol": out.append('<ol class="steps">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ol>")
+    if sec_open: out.append("</section>")
+    prose = "\n".join(out)
+    eyebrow = LABEL[t] + (" · " + next(c[1] for c in CATS if c[0] == p["cat"]) if p["cat"] else "")
+    intro = ""
+    if t == "mon-chay" and p["summary"]: intro = f'<p class="lede">{html.escape(p["summary"])}</p>'
+    elif t in ("kinh-ke", "cau-nguyen") and p["summary"]: intro = f'<p class="summary">{html.escape(p["summary"])}</p>'
+    extra_end = ""
+    if p["signoff"]: extra_end += f'<p class="signoff">{html.escape(p["signoff"])}</p>\n'
+    if p["tags"]: extra_end += f'<p class="hashtags">{html.escape(p["tags"])}</p>\n'
+    if p["source"]: extra_end += f'<p class="source">Nguồn: {html.escape(p["source"])}</p>\n'
+    if p["related"][0]:
+        extra_end += f'''<aside class="related"><h2>Bài liên quan</h2><a class="related-link" href="{html.escape(p["related"][0])}" target="_blank" rel="noopener noreferrer">{html.escape(p["related"][1])} <span aria-hidden="true">↗</span></a></aside>\n'''
+    iso = p["dt"].strftime("%Y-%m-%d")
+    body = f"""
+  <p class="crumb"><a href="{s["file"]}">← {LABEL[t]}</a></p>
+  <article class="post">
+    {cover}
+    <div class="post-body">
+      <div class="eyebrow">{html.escape(eyebrow)}</div>
+      <h1>{html.escape(p["title"])}</h1>
+      {intro}
+      {toc}
+      <div class="prose">
+{prose}
+      </div>
+{extra_end}{post_footer(iso, fmt_date(p))}    </div>
+  </article>
+"""
+    if p["og"]:
+        og = (f'<meta property="og:type" content="article">\n<meta property="og:title" content="{html.escape(p["short"])} · Lạy Phật">\n'
+              f'<meta property="og:description" content="{html.escape(p["summary"][:160])}">\n<meta property="og:image" content="{SITE}/{p["og"]}">\n'
+              f'<meta property="og:url" content="{SITE}/{p["file"]}">\n<meta name="twitter:card" content="summary_large_image">\n')
+    else:
+        og = ""
+    return head(p["short"] + " · Lạy Phật", p["summary"][:160], s["file"], og) + body + FOOT
+
+def list_page(title, eyebrow, lede, posts, key, active, extra_top="", head_extra="", icon_key=None):
+    s = SECTIONS[key]
+    cards = "".join(real_card(p) for p in posts)
+    n_sample = 0
+    if key and len(posts) < 6:
+        fill = SAMPLES[key][: 6 - len(posts)]
+        cards += "".join(sample_card(key, s, it) for it in fill); n_sample = len(fill)
+    note = '<p class="note">Các thẻ có nhãn "Mẫu" chỉ để giữ bố cục, sẽ tự biến mất khi có đủ bài thật.</p>' if n_sample else ""
+    empty = '<p class="empty-note">Chưa có bài viết trong danh mục này. Bài mới sẽ xuất hiện ở đây.</p>' if (not posts and not n_sample) else ""
+    body = f'''
+  <section class="page-hero">
+    <div class="eyebrow">{html.escape(eyebrow)}</div>
+    <h1>{html.escape(title)}</h1>
+    <p class="lede">{html.escape(lede)}</p>
+    <div class="filter"><input id="filter" placeholder="Lọc trong chuyên mục..." aria-label="Lọc"></div>
+  </section>
+{extra_top}  <div class="grid" id="list">
+{cards}  </div>
+  {empty}{note}
+'''
+    return head(title + " · Lạy Phật", lede, active) + body + FOOT
+
+def cat_grid(posts):
+    latest = {}
+    for p in posts:
+        if p["type"] == "bai-viet" and p["cat"] and p["cat"] not in latest: latest[p["cat"]] = p
     cards = ""
-    for k,s in SECTIONS.items():
-        cards += f'''    <a class="feature link" href="{s["file"]}" style="--accent:{s["accent"]}"><span class="tag">{len(s["items"])} bài</span>
-      <div class="badge">{icon(k)}</div>
+    for slug, name, ic, color, desc in CATS:
+        p = latest.get(slug)
+        if p:
+            title = f'<p class="cat-title">{html.escape(p["short"])}</p>'
+            summ = f'<p class="cat-sum">{html.escape(p["summary"])}</p>'
+        else:
+            title = '<p class="cat-title empty">Chưa có bài viết</p>'
+            summ = '<p class="cat-sum empty">Bài viết mới nhất của danh mục này sẽ hiển thị tại đây.</p>'
+        cards += f'''    <a class="cat-card" href="danh-muc-{slug}.html" style="--accent:{color}">
+      <div class="cat-head"><span class="cat-ico">{icon(ic)}</span><h3>{html.escape(name)}</h3></div>
+      {title}
+      {summ}
+    </a>
+'''
+    return f'''  <section class="section-head tight"><h2>Danh mục</h2><span>6 danh mục</span></section>
+  <div class="cat-grid">
+{cards}  </div>
+  <section class="section-head"><h2>Tất cả bài viết</h2><span></span></section>
+'''
+
+def category_page(slug, name, ic, color, desc, posts):
+    mine = [p for p in posts if p["type"] == "bai-viet" and p["cat"] == slug]
+    cards = "".join(real_card(p) for p in mine)
+    empty = '<p class="empty-note">Chưa có bài viết trong danh mục này. Bài mới sẽ xuất hiện ở đây.</p>' if not mine else ""
+    body = f'''
+  <p class="crumb"><a href="bai-viet.html">← Bài viết Phật giáo</a></p>
+  <section class="page-hero">
+    <div class="eyebrow">Danh mục</div>
+    <h1 class="cat-h1"><span class="cat-ico big" style="--accent:{color}">{icon(ic)}</span>{html.escape(name)}</h1>
+    <p class="lede">{html.escape(desc)}</p>
+  </section>
+  <div class="grid" id="list">
+{cards}  </div>
+  {empty}
+'''
+    return head(name + " · Lạy Phật", desc, "bai-viet.html") + body + FOOT
+
+def index_page(posts):
+    counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
+    cards = ""
+    for k, s in SECTIONS.items():
+        n = counts[k]
+        cards += f'''    <a class="feature link" href="{s["file"]}" style="--accent:{s["accent"]}"><span class="tag">{f"{n} bài" if n else "Sắp có bài"}</span>
+      <div class="badge">{icon(PH_ICON[k] if k != "bai-viet" else "bai-viet")}</div>
       <h3>{s["title"]}</h3><p>{html.escape(s["lede"])}</p></a>
 '''
     body = f'''
@@ -155,7 +452,7 @@ def index():
         <p class="lede">Nơi chia sẻ những bài viết về Phật giáo, kinh kệ, lời chúc, lời cầu nguyện và món chay thanh đạm, trình bày rõ ràng, dễ đọc mỗi ngày.</p>
         <div class="hero-stats">
           <div class="hero-stat"><b>4</b><span>chuyên mục</span></div>
-          <div class="hero-stat"><b>24</b><span>bài mẫu ban đầu</span></div>
+          <div class="hero-stat"><b>{len(posts)}</b><span>bài đã đăng</span></div>
           <div class="hero-stat"><b>VI</b><span>tiếng Việt</span></div>
         </div>
       </div>
@@ -179,187 +476,23 @@ def index():
 '''
     return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.", "index.html") + body + FOOT
 
-def section(key, s):
-    cards = "".join(card(key, s, it) for it in s["items"])
-    body = f'''
-  <section class="page-hero">
-    <div class="eyebrow">Chuyên mục</div>
-    <h1>{s["title"]}</h1>
-    <p class="lede">{html.escape(s["lede"])}</p>
-    <div class="filter"><input id="filter" placeholder="Lọc trong chuyên mục..." aria-label="Lọc"></div>
-  </section>
-  <div class="grid" id="list">
-{cards}  </div>
-  <p class="note">Đây là các thẻ mẫu để dựng khung giao diện. Nội dung thật sẽ được bổ sung sau.</p>
-'''
-    return head(s["title"]+" · Lạy Phật", s["lede"], s["file"]) + body + FOOT
+def write(name, content):
+    open(_os.path.join(OUT, name), "w", encoding="utf-8").write(content)
 
+def main():
+    _os.makedirs(OUT, exist_ok=True)
+    posts = load_posts()
+    for p in posts: process_image(p)
+    write("index.html", index_page(posts))
+    for key, s in SECTIONS.items():
+        mine = [p for p in posts if p["type"] == key]
+        top = cat_grid(posts) if key == "bai-viet" else ""
+        write(s["file"], list_page(s["title"], "Chuyên mục", s["lede"], mine, key, s["file"], extra_top=top))
+    for c in CATS:
+        write(f"danh-muc-{c[0]}.html", category_page(*c, posts))
+    for p in posts:
+        write(p["file"], post_page(p))
+    print(f"Đã tạo {len(posts)} bài, {len(WARNINGS)} cảnh báo.")
 
-def post_footer(date_iso):
-    y,m,d = date_iso.split("-")
-    return f"""
-      <footer class="post-end">
-        <p class="post-date">Đăng ngày <time datetime="{date_iso}">{d}/{m}/{y}</time></p>
-        <div class="post-actions" role="group" aria-label="Chức năng bài viết">
-          <button type="button" class="act" data-act="print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9V3h12v6"/><rect x="4" y="9" width="16" height="8" rx="2"/><path d="M7 14h10v7H7z"/></svg>In trang này</button>
-          <button type="button" class="act" data-act="download"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 20h16"/></svg>Tải trang này</button>
-          <div class="share-wrap">
-            <button type="button" class="act" data-act="share" aria-haspopup="true" aria-expanded="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="M8.3 10.8l7.4-4.4M8.3 13.2l7.4 4.4"/></svg>Chia sẻ trang</button>
-            <div class="share-menu" role="menu" hidden>
-              <button type="button" role="menuitem" data-share="copy">Sao chép liên kết</button>
-              <button type="button" role="menuitem" data-share="facebook">Chia sẻ lên Facebook</button>
-              <button type="button" role="menuitem" data-share="email">Gửi qua email</button>
-            </div>
-          </div>
-        </div>
-        <div class="toast" role="status" aria-live="polite"></div>
-      </footer>
-"""
-
-# ---------------- Bài viết chi tiết ----------------
-SITE = "https://layphatvn.web.app"
-ARTICLE = dict(
-  file="bai-viet-kho-dau-diet-kho.html", date="2026-10-01",
-  title="🌸 KHỔ ĐAU VÀ CON ĐƯỜNG ĐỂ DIỆT TRỪ KHỔ 🌸",
-  plain="Khổ đau và con đường để diệt trừ khổ",
-  img="images/kho-dau-diet-kho.jpg", og="images/kho-dau-diet-kho-og.jpg",
-  alt="Tượng Phật bằng đá trắng dưới ánh nắng xuyên qua tán lá, hai bàn tay ngửa mở ra",
-  paras=[
-    "🌿 Tại tịnh xá, Đức Phật ôn tồn nhìn chư Tăng rồi đặt một câu hỏi: \"Này các Tỳ-kheo, vị bác sĩ giỏi là vị bác sĩ thế nào?\".",
-    "Một đệ tử liền chắp tay bạch: \"Bạch Đức Thế Tôn, là người biết rõ bệnh, biết nguyên nhân gây bệnh, biết phương thuốc chữa và biết bệnh đã chữa khỏi hẳn\".",
-    "Đức Phật gật đầu khen ngợi: \"Đúng vậy. Như Lai cũng như thế: Biết rõ Khổ, biết Nguyên nhân của khổ, biết Sự chấm dứt khổ và chỉ ra Con đường dẫn đến hết khổ\".",
-    "Lời so sánh giản dị mà sâu sắc ấy đã giúp các đệ tử thấu hiểu sứ mệnh cứu độ chúng sinh cao cả của bậc Đạo sư.",
-    "🌿 Ví như vị Y vương đại tài, Đức Phật không chỉ chẩn đoán căn bệnh khổ đau phiền não của kiếp người mà còn chỉ dạy phương thuốc điều trị triệt để.",
-    "Tứ Diệu Đế giúp chỉ rõ thực trạng Khổ đau, vạch ra Nguyên nhân khổ do tham sân si và chỉ dạy Con đường thực hành Bát Chánh Đạo để diệt khổ.",
-    "Mọi nỗi đau trong cuộc đời đều có thể được chữa lành nhờ ánh sáng trí tuệ của việc thực hành Bát Chánh Đạo.",
-    "🌿 Mỗi chúng ta hãy chủ động làm vị bác sĩ cho chính tâm trí mình. Thay vì trốn chạy hay oán trách nghịch cảnh, hãy dũng cảm quay về nhận diện Tứ Diệu Đế và kiên trì thực hành Bát Chánh Đạo qua từng suy nghĩ, lời nói, hành động.",
-    "Việc siêng năng tu tập Chánh kiến, Chánh niệm và Chánh định mỗi ngày sẽ giúp ta loại bỏ gốc rễ mầm mống của khổ đau, nuôi dưỡng sự bình an nội tại và tiến tới giác ngộ giải thoát trọn vẹn!",
-  ],
-  signoff="❤️ Trang Lạy Phật: Lan tỏa Từ Bi - Sống đời Tỉnh Thức ❤️",
-  tags="#PhatPhap #Buddhism #Compassion #Mindfulness #Awakening #佛教教義 #仏教の教え #불교가르침 #EnseignementsBouddhistes",
-  related="https://www.facebook.com/share/p/1JouUGk8Em/",
-)
-
-def article_page():
-    a = ARTICLE
-    og = (f'<meta property="og:type" content="article">\n<meta property="og:title" content="{html.escape(a["plain"])} · Lạy Phật">\n'
-          f'<meta property="og:description" content="{html.escape(a["paras"][0][:160])}">\n'
-          f'<meta property="og:image" content="{SITE}/{a["og"]}">\n<meta property="og:url" content="{SITE}/{a["file"]}">\n'
-          f'<meta name="twitter:card" content="summary_large_image">\n')
-    paras = "".join(f"<p>{html.escape(x)}</p>\n" for x in a["paras"])
-    body = f"""
-  <p class="crumb"><a href="bai-viet.html">← Bài viết Phật giáo</a></p>
-  <article class="post">
-    <figure class="post-cover"><img src="{a["img"]}" alt="{html.escape(a["alt"])}" width="900" height="1348" decoding="async"></figure>
-    <div class="post-body">
-      <div class="eyebrow">Bài viết Phật giáo</div>
-      <h1>{html.escape(a["title"])}</h1>
-      <div class="prose">
-{paras}      </div>
-      <p class="signoff">{html.escape(a["signoff"])}</p>
-      <p class="hashtags">{html.escape(a["tags"])}</p>
-      <aside class="related">
-        <h2>Bài liên quan</h2>
-        <a class="related-link" href="{a["related"]}" target="_blank" rel="noopener noreferrer">{html.escape(a["title"])} <span aria-hidden="true">↗</span></a>
-      </aside>
-{post_footer(a["date"])}    </div>
-  </article>
-"""
-    return head(a["plain"]+" · Lạy Phật", a["paras"][0][:160], "bai-viet.html", og) + body + FOOT
-
-
-# ---------------- Trang Món chay ----------------
-def placeholder_cover(key, accent):
-    return f'<figure class="post-cover ph" style="--accent:{accent}"><div class="ph-art">{icon(key)}</div></figure>'
-
-RECIPE = dict(
-  file="mon-chay-tom-dau-hu-kho-ca-chua.html", date="2026-10-01", title="Tôm đậu hũ kho cà chua",
-  intro="Món kho đậm đà, dễ nấu, hợp cho bữa cơm chay gia đình.",
-  ingredients=["1 bịch tôm chay","4 miếng đậu hũ chiên sẵn (cắt khối)","3 trái cà chua (cắt hạt lựu)","2 - 3 muỗng dầu hào","Dầu ăn","Mè"],
-  steps=["Cho dầu ăn vào xào mềm cà chua.","Sau đó cho dầu hào vào đảo đều.","Thêm tôm và đậu hũ vào. Đậy nắp kho chừng 10 phút. Nếu bạn thích sốt sệt nước thì thêm nước.","Rắc mè và thưởng thức."],
-  source="Sưu tầm", img=None,
-)
-def recipe_page():
-    r=RECIPE; s=SECTIONS["mon-chay"]
-    cover = f'<figure class="post-cover"><img src="{r["img"]}" alt="{html.escape(r["title"])}" decoding="async"></figure>' if r["img"] else placeholder_cover("mon-chay", s["accent"])
-    ing="".join(f"<li>{html.escape(x)}</li>" for x in r["ingredients"])
-    stp="".join(f"<li>{html.escape(x)}</li>" for x in r["steps"])
-    body=f"""
-  <p class="crumb"><a href="mon-chay.html">← Món chay</a></p>
-  <article class="post">
-    {cover}
-    <div class="post-body">
-      <div class="eyebrow">Món chay</div>
-      <h1>{html.escape(r["title"])}</h1>
-      <p class="lede">{html.escape(r["intro"])}</p>
-      <section class="recipe-block"><h2>Nguyên liệu</h2><ul class="ingredients">{ing}</ul></section>
-      <section class="recipe-block"><h2>Cách làm</h2><ol class="steps">{stp}</ol></section>
-      <p class="source">Nguồn: {html.escape(r["source"])}</p>
-{post_footer(r["date"])}    </div>
-  </article>
-"""
-    return head(r["title"]+" · Món chay · Lạy Phật", r["intro"], "mon-chay.html") + body + FOOT
-
-# ---------------- Trang Kinh Nhật tụng ----------------
-KINH = dict(
-  file="kinh-nhat-tung.html", date="2026-10-01", title="Kinh Nhật tụng",
-  summary="Đây là nghi thức niệm phật hàng ngày. Y phục ngay thẳng đứng hướng về bàn thờ Phật. Nếu nhà không có nơi thờ phượng có thể xoay mặt về hướng Tây (hướng mặt trời lặn).",
-  sections=[
-    ("1. ĐẢNH LỄ", [("p","Chí tâm đảnh lễ: Nam mô tận hư không biến pháp giới quá, hiện, vị lai thập phương chư Phật, Tôn Pháp Hiền Thánh Tăng thường trụ Tam Bảo. (1 lạy)"),
-                    ("p","Chí tâm đảnh lễ: Nam mô Ta Bà Giáo Chủ Bổn Sư Thích Ca Mâu Ni Phật, Đương Lai Hạ Sanh Di Lặc Tôn Phật, Đại Trí Văn Thù Sư Lợi Bồ Tát, Đại Hạnh Phổ Hiền Bồ Tát, Hộ Pháp Chư Tôn Bồ Tát, Linh Sơn Hội Thượng Phật Bồ Tát. (1 lạy)"),
-                    ("p","Chí tâm đảnh lễ: Nam mô Tây Phương Cực Lạc Thế Giới Đại Từ Đại Bi A Di Đà Phật, Đại Bi Quán Thế Âm Bồ Tát, Đại Thế Chí Bồ Tát, Đại Nguyện Địa Tạng Vương Bồ Tát, Thanh Tịnh Đại Hải Chúng Bồ Tát. (1 lạy)")]),
-    ("2. TÁN PHẬT", [("verse",["Phật A Di Đà thân kim sắc","Tướng tốt quang minh tự trang nghiêm","Năm Tu Di uyển chuyển bạch hào","Bốn biển lớn trong ngần mắt biếc","Trong hào quang hóa vô số Phật","Vô số Bồ Tát hiện ở trong","Bốn mươi tám nguyện độ chúng sanh","Chín phẩm sen vàng lên giải thoát"]),
-                     ("p","Nam-mô Tây phương Cực lạc thế giới đại từ đại bi A Di Đà Phật.")]),
-    ("3. NIỆM PHẬT", [("lines",["Nam-mô A Di Đà Phật hoặc A Di Đà Phật (Tùy niệm càng nhiều càng tốt)","Nam-mô Quán Thế Âm Bồ Tát (3 lần)","Nam-mô Đại Thế Chí Bồ Tát (3 lần)","Nam-mô Địa Tạng Vương Bồ Tát (3 lần)","Nam-mô Thanh Tịnh Đại Hải Chúng Bồ Tát (3 lần)"])]),
-    ("4. SÁM HỐI", [("verse",["Con xưa đã tạo bao ác nghiệp","Đều do vô thủy tham sân si","Bởi thân khẩu ý phát sinh ra","Hết thảy con nay nguyện sám hối. (3 lần)"]),
-                    ("p","Rồi đứng lên lạy xuống, thường thường là 108 lạy hoặc càng nhiều càng tốt, nếu bận bịu công việc thì có thể lạy ít nhất là 50 lạy.")]),
-    ("5. PHÁT NGUYỆN", [("verse",["Nguyện sanh Tịnh Độ ở Tây Phương","Chín phẩm hoa sen là cha mẹ","Hoa nở thấy Phật chứng vô sanh","Bồ Tát bất thối là bạn lữ."])]),
-    ("6. TAM TỰ QUY Y", [("p","Tự quy y Phật. Nguyện cho chúng sanh hiểu sâu đạo cả, phát tâm vô thượng.(1 lạy)"),
-                         ("p","Tự quy y Pháp. Nguyện cho chúng sanh thấu rõ kinh tạng, trí tuệ như biển.(1 lạy)"),
-                         ("p","Tự quy y Tăng. Nguyện cho chúng sanh tâm ý hòa hợp, biết thương mến nhau.(1 lạy)")]),
-    ("7. HỒI HƯỚNG", [("verse",["Nguyện đem công đức này","Trang nghiêm Phật Tịnh Độ","Trên đền bốn ân nặng","Dưới cứu khổ ba đường","Nếu có ai thấy nghe","Đều phát lòng bồ đề","Hết một báo thân này","Đồng sanh cõi Cực Lạc."])]),
-    ("LỜI DẶN THÊM", [("p","A Di Đà Phật. Mọi người nếu bận rộn có ít thời gian niệm Phật thì nên áp dụng phương pháp niệm 10 danh hiệu A Di Đà Phật này, lợi ích nhất vẫn là buổi tối khi kết thúc mọi việc nên làm theo nghi thức ở trên."),
-                      ("p","Phương pháp niệm 10 danh hiệu A-Di-Đà Phật là phương pháp đơn giản, lợi ích thiết thực trong việc hành trì pháp môn niệm Phật. Đặc biệt thích hợp với những người ít có thời gian tu tập. Hành trì theo phương pháp này sẽ giúp cho chúng ta nhất tâm chánh niệm A-Di-Đà Phật và giúp cho chúng ta an lạc thanh thản ngay trong giây phút hiện tại."),
-                      ("p","Thời khóa hành trì được bắt đầu khi chúng ta thức giấc vào sáng sớm. Chúng ta ngồi thẳng người và niệm rõ ràng danh hiệu A-Di-Đà Phật 10 lần với tâm chánh niệm, niệm lớn tiếng hay niệm thầm tùy theo ý muốn từng người. Chúng ta lặp lại công phu này 8 lần nữa trong một ngày. Như vậy, chúng ta công phu theo phương pháp nầy 9 lần trong mỗi ngày. Thời gian tùy ta sắp xếp sao cho phù hợp."),
-                      ("p","Quan trọng nhất là hành trì đều đặn. Sự gián đoạn, không kiên nhẫn khi hành trì sẽ làm giảm hiệu lực tác dụng. Nếu hành trì liên tục, tinh cần thì người tu sẽ thấy càng ngày thân tâm càng gia tăng niềm an lạc."),
-                      ("p","Tinh tấn hành trì phương pháp niệm 10 danh hiệu A-Di-Đà Phật kết hợp với niềm tin và bản nguyện chân chính không thay đổi, chắc chắn bảo đảm tâm nguyện vãng sinh cõi Tây phương Cực Lạc, cõi Vô lượng thọ, Vô lượng quang sẽ được thành tựu.")]),
-  ],
-  source="Sưu tầm", img=None,
-)
-def kinh_page():
-    k=KINH; s=SECTIONS["kinh-ke"]
-    cover = f'<figure class="post-cover"><img src="{k["img"]}" alt="{html.escape(k["title"])}" decoding="async"></figure>' if k["img"] else placeholder_cover("cau-nguyen", s["accent"])
-    toc="".join(f'<a href="#muc-{i}">{html.escape(h)}</a>' for i,(h,_) in enumerate(k["sections"]))
-    secs=""
-    for i,(h,blocks) in enumerate(k["sections"]):
-        inner=""
-        for kind,val in blocks:
-            if kind=="p": inner+=f"<p>{html.escape(val)}</p>\n"
-            elif kind=="lines": inner+='<ul class="chant">'+"".join(f"<li>{html.escape(x)}</li>" for x in val)+"</ul>\n"
-            else: inner+='<p class="verse">'+"<br>\n".join(html.escape(x) for x in val)+"</p>\n"
-        secs+=f'<section class="kinh-sec" id="muc-{i}"><h2>{html.escape(h)}</h2>\n{inner}</section>\n'
-    body=f"""
-  <p class="crumb"><a href="kinh-ke.html">← Bài kinh - kệ</a></p>
-  <article class="post">
-    {cover}
-    <div class="post-body">
-      <div class="eyebrow">Bài kinh - kệ</div>
-      <h1>{html.escape(k["title"])}</h1>
-      <p class="summary">{html.escape(k["summary"])}</p>
-      <nav class="toc" aria-label="Mục lục">{toc}</nav>
-      <div class="prose kinh">
-{secs}      </div>
-      <p class="source">Nguồn: {html.escape(k["source"])}</p>
-{post_footer(k["date"])}    </div>
-  </article>
-"""
-    return head(k["title"]+" · Lạy Phật", k["summary"], "kinh-ke.html") + body + FOOT
-
-os.makedirs(OUT, exist_ok=True)
-open(f"{OUT}/index.html","w",encoding="utf-8").write(index())
-for k,s in SECTIONS.items():
-    open(f"{OUT}/{s['file']}","w",encoding="utf-8").write(section(k,s))
-open(f"{OUT}/{ARTICLE['file']}","w",encoding="utf-8").write(article_page())
-open(f"{OUT}/{RECIPE['file']}","w",encoding="utf-8").write(recipe_page())
-open(f"{OUT}/{KINH['file']}","w",encoding="utf-8").write(kinh_page())
-print("ok")
+if __name__ == "__main__":
+    main()

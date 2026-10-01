@@ -1,0 +1,17 @@
+Loại: kinh-ke
+Tiêu đề: Tên bài kinh
+Ngày: 2026-10-05
+Nguồn: Sưu tầm
+Tóm tắt: Một câu giới thiệu bài kinh.
+---
+## 1. MỞ ĐẦU
+
+Đoạn hướng dẫn.
+
+> Câu kệ dòng một
+> Câu kệ dòng hai
+
+## 2. CÂU NIỆM
+
+- Nam mô A Di Đà Phật
+- Nam mô Quán Thế Âm Bồ Tát

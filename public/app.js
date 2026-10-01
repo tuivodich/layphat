@@ -75,6 +75,17 @@
     // Tải trang: một file .html tự đủ (CSS + ảnh nhúng sẵn), mở được cả khi không có mạng
     var downloadPage = function () {
       say('Đang chuẩn bị tệp...');
+      // Ưu tiên bản PDF dựng sẵn khi deploy; nếu chưa có thì tải bản .html tự đủ
+      var pdfUrl = 'pdf/' + fileBase() + '.pdf';
+      fetch(pdfUrl, { method: 'HEAD' }).then(function (r) {
+        var ct = r.headers.get('content-type') || '';
+        if (!r.ok || ct.indexOf('pdf') === -1) throw new Error('nopdf');
+        var a = document.createElement('a'); a.href = pdfUrl; a.download = fileBase() + '.pdf';
+        document.body.appendChild(a); a.click(); a.remove();
+        say('Đã tải bản PDF');
+      }).catch(downloadHtml);
+    };
+    var downloadHtml = function () {
       var origImgs = Array.prototype.slice.call(document.querySelectorAll('img'));
       var origLinks = Array.prototype.slice.call(document.querySelectorAll('a[href]'));
       Promise.all([
@@ -120,8 +131,12 @@
       if (act === 'print') { window.print(); }
       else if (act === 'download') { downloadPage(); }
       else if (act === 'share') {
-        if (navigator.share) { navigator.share({ title: document.title, url: location.href }).catch(function () {}); }
-        else { var open = menu.hidden; menu.hidden = !open; b.setAttribute('aria-expanded', String(open)); }
+        // Hộp chia sẻ hệ thống chỉ dùng trên điện thoại/máy tính bảng; máy tính dùng menu riêng (hộp của Windows hay báo lỗi)
+        var touch = window.matchMedia && window.matchMedia('(pointer:coarse)').matches;
+        var showMenu = function () { var open = menu.hidden; menu.hidden = !open; b.setAttribute('aria-expanded', String(open)); };
+        if (navigator.share && touch) {
+          navigator.share({ title: document.title, url: location.href }).catch(function (err) { if (!err || err.name !== 'AbortError') showMenu(); });
+        } else { showMenu(); }
       } else if (sh) {
         closeMenu();
         if (sh === 'copy') copyLink();

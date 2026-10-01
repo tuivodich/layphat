@@ -213,8 +213,9 @@ body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none
 
 
 /* Chân trang */
-.foot-bottom .copyright{display:inline-flex; align-items:center; flex-wrap:wrap; gap:0 6px;}
-.fb-link{display:inline-flex; align-items:center; gap:6px; color:var(--gold-soft); border-bottom:1px solid color-mix(in srgb, var(--gold) 35%, transparent);}
+.foot-bottom .copyright{display:block; line-height:1.7; flex:1 1 420px;}
+.fb-link{display:inline-flex; align-items:center; gap:1px; color:var(--gold-soft); border-bottom:0; text-decoration:none; vertical-align:bottom;}
+.fb-sep{opacity:.7;}
 .fb-link:hover{color:var(--fg);}
 .fb-ico{width:15px; height:15px; flex:none;}
 .foot-bottom .dim{opacity:0; user-select:none;} /* tạm ẩn: bỏ dòng này để hiện lại "Nam mô A Di Đà Phật" */
@@ -279,3 +280,23 @@ body{background:transparent;}
   h1,h2{break-after:avoid;}
   .post-end{border-top-color:#bbb;}
 }
+
+/* ---------- Danh mục (trang Bài viết) ---------- */
+.section-head.tight{margin:34px 0 18px;}
+.cat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
+.cat-card{display:flex; flex-direction:column; gap:10px; padding:20px 22px; border-radius:18px; background:var(--card); border:1px solid var(--line); position:relative; overflow:hidden; transition:transform .15s, border-color .15s;}
+.cat-card::before{content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--accent, var(--gold)); opacity:.85;}
+.cat-card:hover{transform:translateY(-2px); border-color:var(--accent);}
+.cat-head{display:flex; align-items:center; gap:12px;}
+.cat-ico{width:40px; height:40px; border-radius:12px; flex:none; display:flex; align-items:center; justify-content:center; background:color-mix(in srgb, var(--accent, var(--gold)) 16%, transparent);}
+.cat-ico svg{width:22px; height:22px; stroke:var(--accent, var(--gold));}
+.cat-ico.big{width:52px; height:52px; margin-right:14px; vertical-align:middle;}
+.cat-ico.big svg{width:28px; height:28px;}
+.cat-head h3{font-family:'Be Vietnam Pro',sans-serif; font-size:16px; font-weight:600; color:var(--fg);}
+.cat-title{font-size:14.5px; font-weight:600; color:var(--gold-soft); line-height:1.45;}
+.cat-sum{font-size:13px; color:var(--muted); line-height:1.55; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;}
+.cat-title.empty,.cat-sum.empty{color:var(--muted); font-weight:400; opacity:.75;}
+.cat-h1{display:flex; align-items:center;}
+.empty-note{color:var(--muted); font-size:14px; margin:8px 0 24px;}
+@media (max-width:1000px){ .cat-grid{grid-template-columns:repeat(2,1fr);} }
+@media (max-width:520px){ .cat-grid{grid-template-columns:1fr;} }

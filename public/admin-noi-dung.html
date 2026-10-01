@@ -34,6 +34,11 @@
   .qt-path{font-size:12.5px; color:var(--muted); word-break:break-all; flex:1 1 200px;}
   textarea.qt-text{width:100%; min-height:62vh; resize:vertical; font:14px/1.6 ui-monospace,Consolas,monospace; color:var(--fg); background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:12px; padding:14px; box-sizing:border-box;}
   .qt-msg{font-size:13.5px; margin-top:10px; min-height:20px;}
+  .pr-item{border:1px solid var(--line); border-radius:14px; background:var(--card); padding:14px; margin-bottom:12px;}
+  .pr-item .meta{font-size:12.5px; color:var(--muted); margin-bottom:8px; word-break:break-all;}
+  .pr-item textarea{width:100%; min-height:80px; font:14px/1.6 inherit; color:var(--fg); background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:10px; padding:10px; box-sizing:border-box;}
+  .pr-item .acts{display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;}
+  .pr-item .st{font-weight:600;} .pr-item .st.pending{color:var(--gold-soft);} .pr-item .st.approved{color:#6fc39a;} .pr-item .st.rejected,.pr-item .st.removed{color:#e59ab0;}
   .qt-msg.ok{color:#6fc39a;} .qt-msg.err{color:#e59ab0;}
   .qt-tok{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
   .qt-tok input{flex:1 1 240px; font:inherit; font-size:14px; color:var(--fg); background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:10px; padding:8px 10px;}
@@ -45,7 +50,7 @@
   <h1>Quản trị nội dung</h1>
   <p class="sub">Sửa các file .txt của bài viết. Mỗi lần lưu, web tự deploy lại sau khoảng 1–2 phút.</p>
 
-  <section id="v-load" class="qt-box"><span id="load-msg">Đang tải trang quản trị… (bản 4)</span></section>
+  <section id="v-load" class="qt-box"><span id="load-msg">Đang tải trang quản trị… (bản 5)</span></section>
 
   <section id="v-cfg" class="qt-box" hidden>
     <p>Chưa lấy được cấu hình Firebase của web. Dán đoạn cấu hình web (firebaseConfig) vào ô dưới đây. Cách lấy: Firebase console → ⚙ Project settings → General → Your apps → ứng dụng Web (nếu chưa có, bấm biểu tượng &lt;/&gt; để thêm) → mục SDK setup and configuration → chọn "Config" → sao chép đoạn <code>{ apiKey: "...", authDomain: "...", ... }</code>.</p>
@@ -75,12 +80,14 @@
     <div class="qt-top">
       <span class="qt-user">Đăng nhập: <b id="me"></b></span>
       <span>
+        <button id="tab-files" class="qt-btn primary" type="button">Bài viết</button>
+        <button id="tab-pray" class="qt-btn" type="button">Lời cầu nguyện</button>
         <button id="btn-new" class="qt-btn" type="button">+ Bài mới</button>
         <button id="btn-reload" class="qt-btn" type="button">Tải lại danh sách</button>
         <button id="btn-out2" class="qt-btn" type="button">Đăng xuất</button>
       </span>
     </div>
-    <div class="qt-grid">
+    <div class="qt-grid" id="pane-files">
       <div class="qt-list" id="list">Đang tải danh sách…</div>
       <div class="qt-edit" id="edit" hidden>
         <div class="qt-bar">
@@ -106,6 +113,33 @@
         <div id="msg" class="qt-msg"></div>
       </div>
     </div>
+
+    <div id="pane-pray" hidden>
+      <div class="qt-edit" style="margin-bottom:18px">
+        <h2 style="font-size:20px;margin-bottom:10px">Cài đặt lời cầu nguyện</h2>
+        <div class="qt-bar">
+          <label>Số lời tối đa mỗi người mỗi ngày <input id="pr-max" type="number" min="1" max="50" style="width:90px"></label>
+          <button id="pr-set-save" class="qt-btn primary" type="button">Lưu cài đặt</button>
+          <span id="pr-set-msg" class="qt-msg" style="margin:0"></span>
+        </div>
+        <label style="font-size:13px;color:var(--muted)">Từ ngữ cần che (mỗi dòng một từ hoặc cụm từ; được thay bằng *** trước khi lưu. Khớp đúng dấu, không phân biệt hoa/thường. Muốn che cả dạng không dấu thì thêm cả dạng không dấu.)</label>
+        <textarea id="pr-words" class="qt-text" style="min-height:120px;margin-top:6px" spellcheck="false"></textarea>
+      </div>
+      <div class="qt-bar">
+        <label>Hiển thị
+          <select id="pr-filter">
+            <option value="pending">Chờ duyệt</option>
+            <option value="approved">Đã đăng</option>
+            <option value="rejected">Đã từ chối</option>
+            <option value="removed">Đã gỡ</option>
+            <option value="all">Tất cả</option>
+          </select>
+        </label>
+        <button id="pr-reload" class="qt-btn" type="button">Tải lại</button>
+        <span id="pr-list-msg" class="qt-msg" style="margin:0"></span>
+      </div>
+      <div id="pr-items"></div>
+    </div>
   </section>
 </main>
 
@@ -123,6 +157,7 @@ const $ = id => document.getElementById(id);
 const show = id => { for (const v of ['v-load','v-cfg','v-login','v-deny','v-token','v-app']) $(v).hidden = v !== id; };
 
 let token = '', cur = null, dirty = false, files = [];
+let FB = null; // { db, F } sau khi khởi tạo Firebase
 
 // ---------- GitHub ----------
 async function gh(path, opts = {}) {
@@ -267,6 +302,7 @@ async function boot() {
   const F = await within(import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js'), 15000, 'tải firebase-firestore');
   step('(3/4) khởi tạo đăng nhập');
   const app = initializeApp(initCfg), auth = A.getAuth(app), db = F.getFirestore(app);
+  FB = { db, F };
 
   $('btn-login').onclick = async () => {
     $('login-msg').textContent = '';
@@ -294,6 +330,77 @@ async function boot() {
     if (!v) { $('tok-msg').textContent = 'Hãy dán khóa vào ô.'; return; }
     localStorage.setItem('lp_gh_token', v); token = v; show('v-app'); loadList();
   };
+}
+
+// ---------- Lời cầu nguyện (Firestore) ----------
+const tab = which => {
+  $('pane-files').hidden = which !== 'files'; $('pane-pray').hidden = which !== 'pray';
+  $('tab-files').classList.toggle('primary', which === 'files'); $('tab-pray').classList.toggle('primary', which === 'pray');
+  if (which === 'pray') { loadPraySettings(); loadPrayers(); }
+};
+$('tab-files').onclick = () => tab('files'); $('tab-pray').onclick = () => tab('pray');
+
+async function loadPraySettings() {
+  const { db, F } = FB;
+  try {
+    const s = await F.getDoc(F.doc(db, 'settings', 'prayer'));
+    const d = s.exists() ? s.data() : { maxPerDay: 3, badWords: [] };
+    $('pr-max').value = d.maxPerDay || 3; $('pr-words').value = (d.badWords || []).join('\n');
+    $('pr-set-msg').textContent = s.exists() ? '' : 'Chưa lưu lần nào: người đọc chưa gửi được lời cho đến khi bạn bấm Lưu cài đặt.';
+  } catch (e) { $('pr-set-msg').textContent = 'Không đọc được cài đặt: ' + (e.code || e.message); }
+}
+$('pr-set-save').onclick = async () => {
+  const { db, F } = FB;
+  const max = parseInt($('pr-max').value, 10);
+  if (!(max >= 1 && max <= 50)) { $('pr-set-msg').className = 'qt-msg err'; $('pr-set-msg').textContent = 'Số lời mỗi ngày phải từ 1 đến 50.'; return; }
+  const words = [...new Set($('pr-words').value.split('\n').map(w => w.trim()).filter(Boolean))];
+  try {
+    await F.setDoc(F.doc(db, 'settings', 'prayer'), { maxPerDay: max, badWords: words, updatedAt: F.serverTimestamp() });
+    $('pr-set-msg').className = 'qt-msg ok'; $('pr-set-msg').textContent = 'Đã lưu cài đặt.';
+  } catch (e) { $('pr-set-msg').className = 'qt-msg err'; $('pr-set-msg').textContent = 'Không lưu được: ' + (e.code || e.message); }
+};
+
+const STATUS_VN = { pending: 'Chờ duyệt', approved: 'Đã đăng', rejected: 'Đã từ chối', removed: 'Đã gỡ' };
+let banned = new Set();
+
+async function loadPrayers() {
+  const { db, F } = FB; const box = $('pr-items'); $('pr-list-msg').textContent = 'Đang tải…'; box.textContent = '';
+  try {
+    banned = new Set(); (await F.getDocs(F.collection(db, 'bannedUsers'))).forEach(d => banned.add(d.id));
+    const snap = await F.getDocs(F.query(F.collection(db, 'prayers'), F.limit(300)));
+    let items = []; snap.forEach(d => items.push({ id: d.id, ...d.data() }));
+    const f = $('pr-filter').value; if (f !== 'all') items = items.filter(i => i.status === f);
+    items.sort((a, b) => (b.createdAt && b.createdAt.seconds || 0) - (a.createdAt && a.createdAt.seconds || 0));
+    $('pr-list-msg').textContent = items.length + ' lời';
+    items.forEach(it => box.appendChild(prayerItem(it)));
+  } catch (e) { $('pr-list-msg').textContent = 'Lỗi tải: ' + (e.code || e.message); }
+}
+$('pr-reload').onclick = loadPrayers; $('pr-filter').onchange = loadPrayers;
+
+function prayerItem(it) {
+  const { db, F } = FB;
+  const box = document.createElement('div'); box.className = 'pr-item';
+  const meta = document.createElement('div'); meta.className = 'meta';
+  const when = it.createdAt ? new Date(it.createdAt.seconds * 1000).toLocaleString('vi-VN') : '';
+  const st = document.createElement('span'); st.className = 'st ' + it.status; st.textContent = STATUS_VN[it.status] || it.status;
+  meta.append(st, ' · ' + when + ' · ' + (it.email || '') + ' · hiển thị: ' + (it.anonymous ? 'ẩn danh' : (it.name || '(không tên)')) + (banned.has(it.uid) ? ' · ĐÃ CHẶN' : ''));
+  const ta = document.createElement('textarea'); ta.value = it.text || '';
+  const acts = document.createElement('div'); acts.className = 'acts';
+  const done = m => { $('pr-list-msg').textContent = m; loadPrayers(); };
+  const btn = (label, fn, cls) => { const b = document.createElement('button'); b.type = 'button'; b.className = 'qt-btn' + (cls ? ' ' + cls : ''); b.textContent = label; b.onclick = async () => { b.disabled = true; try { await fn(); } catch (e) { $('pr-list-msg').textContent = 'Lỗi: ' + (e.code || e.message); b.disabled = false; } }; acts.appendChild(b); };
+  const text = () => ta.value.trim();
+  const pubRef = () => F.doc(db, 'publicPrayers', it.publicId);
+  btn('Lưu chỉnh sửa', async () => { await F.updateDoc(F.doc(db, 'prayers', it.id), { text: text() }); if (it.publicId) await F.updateDoc(pubRef(), { text: text() }); done('Đã lưu chỉnh sửa.'); });
+  if (it.status !== 'approved') btn('Duyệt và đăng', async () => {
+    const ref = await F.addDoc(F.collection(db, 'publicPrayers'), { text: text(), anonymous: !!it.anonymous, name: it.anonymous ? '' : (it.name || ''), photo: it.anonymous ? '' : (it.photo || ''), createdAt: F.serverTimestamp() });
+    await F.updateDoc(F.doc(db, 'prayers', it.id), { status: 'approved', publicId: ref.id, text: text() }); done('Đã đăng.');
+  }, 'primary');
+  if (it.status === 'approved') btn('Gỡ khỏi trang', async () => { if (it.publicId) await F.deleteDoc(pubRef()); await F.updateDoc(F.doc(db, 'prayers', it.id), { status: 'removed', publicId: F.deleteField() }); done('Đã gỡ.'); });
+  if (it.status === 'pending') btn('Từ chối', async () => { await F.updateDoc(F.doc(db, 'prayers', it.id), { status: 'rejected' }); done('Đã từ chối.'); });
+  btn('Xóa hẳn', async () => { if (!confirm('Xóa hẳn lời này?')) throw new Error('đã hủy'); if (it.publicId) await F.deleteDoc(pubRef()); await F.deleteDoc(F.doc(db, 'prayers', it.id)); done('Đã xóa.'); });
+  if (banned.has(it.uid)) btn('Bỏ chặn người này', async () => { await F.deleteDoc(F.doc(db, 'bannedUsers', it.uid)); done('Đã bỏ chặn.'); });
+  else btn('Chặn người này', async () => { if (!confirm('Chặn tài khoản này gửi lời cầu nguyện?')) throw new Error('đã hủy'); await F.setDoc(F.doc(db, 'bannedUsers', it.uid), { email: it.email || '', at: F.serverTimestamp() }); done('Đã chặn.'); });
+  box.append(meta, ta, acts); return box;
 }
 
 $('btn-new').onclick = newFile;

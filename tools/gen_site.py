@@ -9,6 +9,7 @@ NAV = [
   ("kinh-ke.html","Bài kinh - kệ"),
   ("cau-nguyen.html","Lời chúc - Cầu nguyện"),
   ("mon-chay.html","Món chay"),
+  ("loi-cau-nguyen.html","Gửi lời cầu nguyện"),
 ]
 
 ICON = {
@@ -111,7 +112,7 @@ def head(title, desc, active, extra='', crumbs=None):
 FOOT = '''
   <footer>
     <div class="foot-links">
-      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="cau-nguyen.html">Lời chúc - Cầu nguyện</a><a href="mon-chay.html">Món chay</a>
+      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="cau-nguyen.html">Lời chúc - Cầu nguyện</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
     </div>
     <div class="foot-bottom">
       <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg><span class="fb-sep">/</span>Lạy Phật</a>. Nếu sao chép hay trích dẫn nội dung của trang xin vui lòng ghi rõ nguồn và chỉ sử dụng với mục đích phi thương mại.</span>
@@ -558,6 +559,48 @@ def quote_block():
 def write(name, content):
     open(_os.path.join(OUT, name), "w", encoding="utf-8").write(content)
 
+def prayer_page():
+    body = '''
+  <section class="page-hero">
+    <div class="eyebrow">Cộng đồng</div>
+    <h1>Gửi lời cầu nguyện</h1>
+    <p class="lede">Chia sẻ một lời nguyện lành. Lời của bạn sẽ được kiểm duyệt trước khi hiển thị công khai để mọi người cùng hồi hướng.</p>
+  </section>
+
+  <section class="pr-box" id="pr-form-box">
+    <div id="pr-state">Đang tải…</div>
+    <div id="pr-login" hidden>
+      <p>Bạn cần đăng nhập bằng tài khoản Google để gửi lời cầu nguyện (giúp tránh lời lẽ rác).</p>
+      <button type="button" class="pr-btn primary" id="pr-signin">Đăng nhập với Google</button>
+    </div>
+    <form id="pr-form" hidden>
+      <div class="pr-who"><img id="pr-me-photo" alt="" referrerpolicy="no-referrer" width="36" height="36"><span id="pr-me-name"></span> <button type="button" class="pr-link" id="pr-signout">Đăng xuất</button></div>
+      <label class="pr-lab" for="pr-text">Lời cầu nguyện của bạn</label>
+      <textarea id="pr-text" maxlength="500" rows="5" placeholder="Nguyện cho ..."></textarea>
+      <div class="pr-opts" role="radiogroup" aria-label="Cách hiển thị">
+        <label><input type="radio" name="pr-show" value="name" checked> Hiển thị tên và ảnh của tôi</label>
+        <label><input type="radio" name="pr-show" value="anon"> Đăng ẩn danh</label>
+      </div>
+      <div class="pr-row"><button type="submit" class="pr-btn primary" id="pr-send">Gửi lời cầu nguyện</button><span id="pr-quota" class="pr-quota"></span></div>
+      <p class="pr-note">Lời của bạn sẽ chờ quản trị viên duyệt. Những từ ngữ không phù hợp sẽ được thay bằng ***. Quản trị viên có thể chỉnh sửa nội dung trước khi đăng. Đừng ghi thông tin cá nhân nhạy cảm (số điện thoại, địa chỉ...).</p>
+    </form>
+    <div id="pr-msg" class="pr-msg" role="status"></div>
+  </section>
+
+  <section id="pr-mine-box" hidden>
+    <div class="section-head tight"><h2>Lời của bạn</h2><span>trạng thái duyệt</span></div>
+    <div id="pr-mine"></div>
+  </section>
+
+  <section>
+    <div class="section-head tight"><h2>Lời cầu nguyện</h2><span>mới nhất</span></div>
+    <div id="pr-list" class="pr-list">Đang tải…</div>
+  </section>
+'''
+    page = head("Gửi lời cầu nguyện · Lạy Phật", "Gửi lời cầu nguyện và đọc những lời nguyện lành từ cộng đồng.", "loi-cau-nguyen.html",
+                crumbs=[("Trang chủ", "index.html"), ("Gửi lời cầu nguyện", None)]) + body + FOOT
+    return page.replace('<script src="app.js"></script>', '<script src="app.js"></script>\n<script type="module" src="prayer.js"></script>')
+
 def remove_stale(keep):
     """Xóa trang bài viết cũ không còn được tạo (bài bị ẩn hoặc đã xóa file .txt), kèm ảnh và PDF của nó."""
     pat = re.compile(r"^(bai-viet|kinh|cau-nguyen|mon-chay)-(.+)\.html$")
@@ -576,6 +619,7 @@ def main():
     posts = load_posts()
     for p in posts: process_image(p)
     write("index.html", index_page(posts))
+    write("loi-cau-nguyen.html", prayer_page())
     for key, s in SECTIONS.items():
         mine = [p for p in posts if p["type"] == key]
         top = '  <section class="section-head tight"><h2>Tất cả bài viết</h2><span>9 bài mới nhất</span></section>\n' if key == "bai-viet" else ""

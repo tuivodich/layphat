@@ -1,13 +1,93 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Chỉ 2 quản trị viên (đã xác minh email) được ĐỌC khóa GitHub; không ai được ghi từ web.
+
+    function admins() { return ['xinloi@gmail.com', 'bachoc@gmail.com']; }
+    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function isAdmin() { return signedIn() && request.auth.token.email in admins(); }
+    function notBanned() { return !exists(/databases/$(database)/documents/bannedUsers/$(request.auth.uid)); }
+    function maxPerDay() { return get(/databases/$(database)/documents/settings/prayer).data.maxPerDay; }
+    // Số ngày theo giờ Việt Nam (UTC+7), dạng 20261001
+    function today() {
+      let t = request.time + duration.value(7, 'h');
+      return t.year() * 10000 + t.month() * 100 + t.day();
+    }
+
+    // Khóa GitHub cho trang quản trị: chỉ 2 quản trị viên được ĐỌC
     match /admin/github {
-      allow read: if request.auth != null
-                  && request.auth.token.email_verified == true
-                  && request.auth.token.email in ['xinloi@gmail.com', 'bachoc@gmail.com'];
+      allow read: if isAdmin();
       allow write: if false;
     }
+
+    // Cài đặt lời cầu nguyện (số lời tối đa mỗi ngày, danh sách từ cần che): ai cũng đọc được, chỉ admin sửa
+    match /settings/prayer {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Lời cầu nguyện đã được duyệt và đăng công khai (chỉ admin ghi)
+    match /publicPrayers/{id} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Tài khoản bị chặn gửi lời
+    match /bannedUsers/{uid} {
+      allow read, write: if isAdmin();
+    }
+
+    // Bộ đếm lượt gửi trong ngày của từng người (mỗi người một tài liệu, id = uid)
+    match /prayerCounts/{uid} {
+      allow read: if signedIn() && (uid == request.auth.uid || isAdmin());
+      allow create: if signedIn() && notBanned()
+        && uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'day', 'count', 'lastId'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.day == today()
+        && request.resource.data.count == 1
+        && request.resource.data.lastId is string
+        && maxPerDay() >= 1;
+      allow update: if signedIn() && notBanned()
+        && resource.data.uid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['uid', 'day', 'count', 'lastId'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.day == today()
+        && request.resource.data.lastId is string
+        && (
+          (resource.data.day == today()
+            && request.resource.data.count == resource.data.count + 1
+            && request.resource.data.count <= maxPerDay())
+          ||
+          (resource.data.day < today()
+            && request.resource.data.count == 1
+            && maxPerDay() >= 1)
+        );
+      allow update, delete: if isAdmin();
+    }
+
+    // Lời cầu nguyện người dùng gửi (chờ duyệt). Chỉ chủ nhân và admin đọc được.
+    // Mỗi lời mới phải đi cùng một lần tăng bộ đếm trong CÙNG lô ghi, và id của lời = lastId của bộ đếm.
+    match /prayers/{id} {
+      allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
+      allow create: if signedIn() && notBanned()
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'text', 'anonymous', 'name', 'photo', 'status', 'day', 'createdAt'])
+        && request.resource.data.uid == request.auth.uid
+        && request.resource.data.email == request.auth.token.email
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.text is string
+        && request.resource.data.text.size() >= 3
+        && request.resource.data.text.size() <= 500
+        && request.resource.data.anonymous is bool
+        && request.resource.data.name is string && request.resource.data.name.size() <= 100
+        && request.resource.data.photo is string && request.resource.data.photo.size() <= 500
+        && (request.resource.data.anonymous == false
+            || (request.resource.data.name == '' && request.resource.data.photo == ''))
+        && getAfter(/databases/$(database)/documents/prayerCounts/$(request.auth.uid)).data.lastId == id
+        && getAfter(/databases/$(database)/documents/prayerCounts/$(request.auth.uid)).data.day == request.resource.data.day;
+      allow update, delete: if isAdmin();
+    }
+
     match /{document=**} { allow read, write: if false; }
   }
 }

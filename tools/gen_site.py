@@ -187,6 +187,16 @@ def fold(s):
     s = "".join(c for c in s if not unicodedata.combining(c))
     return re.sub(r"[^a-z0-9]+", "", s.lower())
 
+def sfold(s):
+    """Chữ thường, bỏ dấu, ký tự lạ -> khoảng trắng (dùng cho tìm kiếm)."""
+    s = unicodedata.normalize("NFKD", s.replace("đ", "d").replace("Đ", "D"))
+    s = "".join(c for c in s if not unicodedata.combining(c))
+    return re.sub(r"[^a-z0-9]+", " ", s.lower()).strip()
+
+def search_key(p):
+    cat = next((c[1] for c in CATS if c[0] == p["cat"]), "") if p.get("cat") else ""
+    return sfold(" ".join([p["title"], p["short"], p["summary"], p["slug"].replace("-", " "), LABEL[p["type"]], cat]))
+
 def slugify(s):
     s = unicodedata.normalize("NFKD", s.replace("đ", "d").replace("Đ", "D"))
     s = "".join(c for c in s if not unicodedata.combining(c))
@@ -312,14 +322,14 @@ def fmt_date(p):
 
 def real_card(p):
     s = SECTIONS[p["type"]]
-    return f'''    <a class="feature link" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}"><span class="tag">{s["tag"]}</span>
+    return f'''    <a class="feature link" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}" data-search="{html.escape(search_key(p))}"><span class="tag">{s["tag"]}</span>
       <div class="badge">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</div>
       <h3>{html.escape(p["short"])}</h3><p>{html.escape(p["summary"])}</p></a>
 '''
 
 def sample_card(key, s, item):
     t, d = item
-    return f'''    <article class="feature" style="--accent:{s["accent"]}" data-title="{html.escape(t.lower())}"><span class="tag">{s["tag"]} · Mẫu</span>
+    return f'''    <article class="feature" style="--accent:{s["accent"]}" data-title="{html.escape(t.lower())}" data-search="{html.escape(sfold(t + " " + d))}"><span class="tag">{s["tag"]} · Mẫu</span>
       <div class="badge">{icon(PH_ICON[key])}</div>
       <h3>{html.escape(t)}</h3><p>{html.escape(d)}</p></article>
 '''
@@ -360,12 +370,16 @@ def post_page(p):
     if p["related"][0]:
         extra_end += f'''<aside class="related"><h2>Bài liên quan</h2><a class="related-link" href="{html.escape(p["related"][0])}" target="_blank" rel="noopener noreferrer">{html.escape(p["related"][1])} <span aria-hidden="true">↗</span></a></aside>\n'''
     iso = p["dt"].strftime("%Y-%m-%d")
+    h1_title = p["title"]
+    if t == "bai-viet":
+        core = re.sub(r"^[\s🌸]+|[\s🌸]+$", "", p["title"])
+        h1_title = f"🌸 {core} 🌸"
     body = f"""
   <article class="post">
     {cover}
     <div class="post-body">
       <div class="eyebrow">{html.escape(eyebrow)}</div>
-      <h1>{html.escape(p["title"])}</h1>
+      <h1>{html.escape(h1_title)}</h1>
       {intro}
       {toc}
       <div class="prose">
@@ -453,6 +467,7 @@ def category_page(slug, name, ic, color, desc, posts):
     return head(name + " · Lạy Phật", desc, "bai-viet.html", crumbs=[("Trang chủ", "index.html"), ("Bài viết Phật giáo", "bai-viet.html"), (name, None)]) + body + FOOT
 
 def index_page(posts):
+    search_json = json.dumps([{"t": p["title"], "f": p["file"], "l": LABEL[p["type"]], "d": f'{p["dt"].day:02d}/{p["dt"].month:02d}/{p["dt"].year}', "k": search_key(p)} for p in posts], ensure_ascii=False).replace("<", "\\u003c")
     rows = []
     for p in posts[:10]:
         d = p["dt"]
@@ -487,11 +502,12 @@ def index_page(posts):
     </div>
     <form class="card search-card" onsubmit="return false">
       <h2>Tìm bài viết</h2>
-      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tính năng tìm kiếm sẽ được nối với dữ liệu thật ở bước sau).</p>
+      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tìm theo tiêu đề, tóm tắt, tên file, có dấu hoặc không dấu).</p>
       <div class="field-row one">
         <div class="field"><label>Từ khóa</label><input id="q" placeholder="Ví dụ: thiền, Vu Lan, đậu hũ..." /></div>
       </div>
-      <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Miễn phí · Không cần đăng nhập</span></div>
+      <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Gõ có dấu hoặc không dấu, ví dụ: kho dau, tom chay</span></div>
+      <div id="search-results" aria-live="polite"></div>
     </form>
     <div class="latest">
       <h2 class="latest-h">Các bài viết</h2>
@@ -500,7 +516,8 @@ def index_page(posts):
   <section class="section-head"><h2>Các chuyên mục</h2><span>4 chuyên mục</span></section>
   <div class="grid four">
 {cards}  </div>
-{quote_block()}'''
+{quote_block()}  <script type="application/json" id="search-data">{search_json}</script>
+'''
     return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.", "index.html", crumbs=[("Trang chủ", None)]) + body + FOOT
 
 def parse_quotes():

@@ -48,18 +48,45 @@
   var y = new Date().getFullYear();
   document.querySelectorAll('.yr').forEach(function (el) { el.textContent = y; });
 
+  // Bỏ dấu, chữ thường, ký tự lạ -> khoảng trắng (tìm có dấu hay không dấu đều được)
+  function plain(s) {
+    return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'd').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  }
+
   // Lọc thẻ trong trang chuyên mục
   var f = document.getElementById('filter');
   if (f) {
     var cards = document.querySelectorAll('#list .feature');
     f.addEventListener('input', function () {
       var q = f.value.trim().toLowerCase();
-      cards.forEach(function (c) { c.hidden = q && c.dataset.title.indexOf(q) === -1; });
+      var toks = plain(q).split(' ').filter(Boolean);
+      cards.forEach(function (c) {
+        var hay = c.dataset.search || plain(c.dataset.title || '');
+        c.hidden = !toks.every(function (t) { return hay.indexOf(t) !== -1; });
+      });
     });
   }
   // Ô tìm kiếm trang chủ: tạm chuyển đến trang bài viết
   var go = document.getElementById('go');
-  if (go) go.addEventListener('click', function () { window.location.href = 'bai-viet.html'; });
+  var qIn = document.getElementById('q'), resBox = document.getElementById('search-results'), sData = document.getElementById('search-data');
+  if (go && qIn && resBox && sData) {
+    var items = [];
+    try { items = JSON.parse(sData.textContent); } catch (e) {}
+    var esc = function (s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+    var run = function () {
+      var toks = plain(qIn.value).split(' ').filter(Boolean);
+      if (!toks.length) { resBox.innerHTML = ''; return; }
+      var hits = items.filter(function (it) { return toks.every(function (t) { return it.k.indexOf(t) !== -1; }); });
+      resBox.innerHTML = hits.length
+        ? '<p class="sr-count">Tìm thấy ' + hits.length + ' bài</p>' + hits.map(function (it) {
+            return '<div class="latest-row"><a class="latest-title" href="' + it.f + '">' + esc(it.t) + '</a><span class="latest-date">' + it.l + ' · ' + it.d + '</span></div>';
+          }).join('')
+        : '<p class="sr-count">Không tìm thấy bài nào phù hợp.</p>';
+    };
+    go.addEventListener('click', run);
+    qIn.addEventListener('input', run);
+    qIn.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); run(); } });
+  }
 
   // ---------- Chức năng cuối bài viết: In / Tải / Chia sẻ ----------
   var actions = document.querySelector('.post-actions');

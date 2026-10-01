@@ -49,11 +49,12 @@
     </div>
     <form class="card search-card" onsubmit="return false">
       <h2>Tìm bài viết</h2>
-      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tính năng tìm kiếm sẽ được nối với dữ liệu thật ở bước sau).</p>
+      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tìm theo tiêu đề, tóm tắt, tên file, có dấu hoặc không dấu).</p>
       <div class="field-row one">
         <div class="field"><label>Từ khóa</label><input id="q" placeholder="Ví dụ: thiền, Vu Lan, đậu hũ..." /></div>
       </div>
-      <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Miễn phí · Không cần đăng nhập</span></div>
+      <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Gõ có dấu hoặc không dấu, ví dụ: kho dau, tom chay</span></div>
+      <div id="search-results" aria-live="polite"></div>
     </form>
     <div class="latest">
       <h2 class="latest-h">Các bài viết</h2>
@@ -81,6 +82,7 @@
   </div>
   <figure class="quote-card" id="quote"><blockquote>Hận thù không thể diệt được hận thù, chỉ có từ bi mới diệt được hận thù.</blockquote><figcaption>— Kinh Pháp Cú</figcaption></figure>
   <script type="application/json" id="quote-data">[{"text": "Hận thù không thể diệt được hận thù, chỉ có từ bi mới diệt được hận thù.", "author": "Kinh Pháp Cú"}, {"text": "Tâm là chủ, tâm dẫn đầu mọi việc; nói hay làm với tâm trong sạch, hạnh phúc sẽ theo ta như bóng không rời hình.", "author": "Kinh Pháp Cú"}, {"text": "Tự mình là nơi nương tựa của chính mình, ngoài mình ra còn ai có thể làm nơi nương tựa?", "author": "Kinh Pháp Cú"}, {"text": "Quá khứ đã qua, tương lai chưa đến, hãy sống trọn vẹn trong giây phút hiện tại - an lạc nằm ngay ở đó.", "author": "Lời dạy về sống tỉnh thức"}, {"text": "Hãy sống như thể mỗi hơi thở đều là món quà - biết ơn - tỉnh thức - an nhiên.", "author": "Lạy Phật"}]</script>
+  <script type="application/json" id="search-data">[{"t": "🌸 KHỔ ĐAU VÀ CON ĐƯỜNG ĐỂ DIỆT TRỪ KHỔ 🌸", "f": "bai-viet-kho-dau-diet-kho.html", "l": "Bài viết Phật giáo", "d": "01/10/2026", "k": "kho dau va con duong de diet tru kho kho dau va con duong de diet tru kho duc phat nhu vi thay thuoc gioi biet benh biet nguyen nhan biet thuoc chua va biet benh da khoi kho dau diet kho bai viet phat giao phat giao nguyen thuy"}, {"t": "Tôm đậu hũ kho cà chua", "f": "mon-chay-tom-dau-hu-kho-ca-chua.html", "l": "Món chay", "d": "01/10/2026", "k": "tom dau hu kho ca chua tom dau hu kho ca chua mon kho dam da voi tom chay dau hu chien va ca chua nau trong khoang 10 phut tom dau hu kho ca chua mon chay"}, {"t": "Kinh Nhật tụng", "f": "kinh-nhat-tung.html", "l": "Bài kinh - kệ", "d": "01/10/2026", "k": "kinh nhat tung kinh nhat tung day la nghi thuc niem phat hang ngay y phuc ngay thang dung huong ve ban tho phat neu nha khong co noi tho phuong co the xoay mat ve huong tay huong mat troi lan nhat tung bai kinh ke"}]</script>
 
   <footer>
     <div class="foot-links">

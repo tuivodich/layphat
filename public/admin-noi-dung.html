@@ -45,7 +45,7 @@
   <h1>Quản trị nội dung</h1>
   <p class="sub">Sửa các file .txt của bài viết. Mỗi lần lưu, web tự deploy lại sau khoảng 1–2 phút.</p>
 
-  <section id="v-load" class="ad-box"><span id="load-msg">Đang tải trang quản trị…</span></section>
+  <section id="v-load" class="ad-box"><span id="load-msg">Đang tải trang quản trị… (bản 3)</span></section>
 
   <section id="v-cfg" class="ad-box" hidden>
     <p>Chưa lấy được cấu hình Firebase của web. Dán đoạn cấu hình web (firebaseConfig) vào ô dưới đây. Cách lấy: Firebase console → ⚙ Project settings → General → Your apps → ứng dụng Web (nếu chưa có, bấm biểu tượng &lt;/&gt; để thêm) → mục SDK setup and configuration → chọn "Config" → sao chép đoạn <code>{ apiKey: "...", authDomain: "...", ... }</code>.</p>
@@ -230,6 +230,8 @@ async function save() {
 }
 
 // ---------- Firebase ----------
+const step = t => { const m = $('load-msg'); if (m && !$('v-load').hidden) m.textContent = 'Đang tải trang quản trị… ' + t; };
+const within = (pr, ms, label) => Promise.race([pr, new Promise((_, rej) => setTimeout(() => rej(new Error('Quá thời gian chờ ở bước: ' + label + '. Kiểm tra mạng hoặc trình chặn quảng cáo/VPN có chặn gstatic.com, googleapis.com không.')), ms))]);
 function fail(e) { show('v-load'); $('load-msg').innerHTML = ''; const d = document.createElement('div'); d.style.color = '#e59ab0'; d.textContent = 'Lỗi tải trang quản trị: ' + (e && (e.code || e.message) || e); $('load-msg').appendChild(d); console.error(e); }
 window.addEventListener('unhandledrejection', ev => fail(ev.reason));
 window.addEventListener('error', ev => fail(ev.error || ev.message));
@@ -247,6 +249,7 @@ async function getConfig() {
 }
 
 async function boot() {
+  step('(1/4) lấy cấu hình Firebase');
   const initCfg = await getConfig();
   if (!initCfg) {
     show('v-cfg');
@@ -258,9 +261,11 @@ async function boot() {
     return;
   }
   const V = '10.14.1';
-  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
-  const A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');
-  const F = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js');
+  step('(2/4) tải thư viện Firebase');
+  const { initializeApp } = await within(import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js'), 15000, 'tải firebase-app');
+  const A = await within(import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js'), 15000, 'tải firebase-auth');
+  const F = await within(import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js'), 15000, 'tải firebase-firestore');
+  step('(3/4) khởi tạo đăng nhập');
   const app = initializeApp(initCfg), auth = A.getAuth(app), db = F.getFirestore(app);
 
   $('btn-login').onclick = async () => {
@@ -271,7 +276,9 @@ async function boot() {
   const out = () => A.signOut(auth);
   $('btn-out1').onclick = out; $('btn-out2').onclick = out;
 
+  const watchdog = setTimeout(() => fail(new Error('Quá thời gian chờ ở bước: kiểm tra trạng thái đăng nhập (4/4). Có thể thiếu domain trong Authentication > Settings > Authorized domains hoặc đã chặn cookie/bộ nhớ của trang.')), 15000);
   A.onAuthStateChanged(auth, async user => {
+    clearTimeout(watchdog);
     if (!user) { token = ''; show('v-login'); return; }
     const mail = (user.email || '').toLowerCase();
     if (!user.emailVerified || !ADMINS.includes(mail)) { $('deny-mail').textContent = mail; show('v-deny'); return; }

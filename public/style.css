@@ -125,9 +125,13 @@ footer{margin-top:60px; padding-block:34px 46px; border-top:1px solid var(--line
 .wheel-box:hover svg{filter:drop-shadow(0 0 38px color-mix(in srgb, var(--gold) 45%, transparent));}
 
 /* Trang bài viết chi tiết */
-.crumb{margin:0 0 18px; font-size:13.5px;}
+.crumb{margin:-8px 0 22px; font-size:13px;}
+.crumb ol{list-style:none; display:flex; flex-wrap:wrap; align-items:center; gap:4px 0; padding:0; margin:0;}
+.crumb li{display:inline-flex; align-items:center; color:var(--muted);}
+.crumb li+li::before{content:"›"; margin:0 9px; color:var(--gold); opacity:.7;}
 .crumb a{color:var(--muted);}
 .crumb a:hover{color:var(--gold-soft);}
+.crumb [aria-current]{color:var(--gold-soft);}
 .post{display:grid; grid-template-columns:minmax(260px,400px) 1fr; gap:44px; align-items:start;}
 .post-cover{margin:0; position:sticky; top:20px;}
 .post-cover img{display:block; width:100%; height:auto; border-radius:22px; border:1px solid var(--line); box-shadow:0 24px 60px -24px rgba(0,0,0,.65);}
@@ -304,3 +308,26 @@ body{background:transparent;}
 .empty-note{color:var(--muted); font-size:14px; margin:8px 0 24px;}
 @media (max-width:1000px){ .cat-grid{grid-template-columns:repeat(2,1fr);} }
 @media (max-width:520px){ .cat-grid{grid-template-columns:1fr;} .cat-zone{padding:4px 14px 20px;} }
+
+/* Bánh xe nhỏ ở logo: quay thuận chiều kim đồng hồ, cùng tốc độ vòng ngoài của bánh xe lớn (6°/giây) */
+.brand-mark.spin{animation:brand-spin 60s linear infinite;}
+@keyframes brand-spin{to{transform:rotate(360deg);}}
+@media (prefers-reduced-motion:reduce){.brand-mark.spin{animation-duration:120s;}}
+
+/* Ô trích dẫn trang chủ */
+.quote-card{position:relative; margin:40px 0 0; padding:78px 100px 66px; border-radius:26px; overflow:hidden; text-align:center;
+  border:1px solid color-mix(in srgb, var(--gold) 30%, transparent);
+  background:radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--gold) 14%, var(--bg)), color-mix(in srgb, var(--c3) 8%, var(--bg)) 75%);
+  box-shadow:0 18px 40px rgba(0,0,0,.28), inset 0 0 0 6px color-mix(in srgb, var(--bg) 70%, transparent), inset 0 0 0 7px color-mix(in srgb, var(--gold) 18%, transparent);}
+.quote-card::before{content:""; position:absolute; left:50%; top:50%; width:440px; height:440px; transform:translate(-50%,-50%); background:url(images/bg-mandala.svg) center/contain no-repeat; opacity:.09; pointer-events:none;}
+.quote-card::after{content:"”"; position:absolute; right:34px; bottom:-62px; font:600 190px/1 'Cormorant Garamond',serif; color:var(--gold); opacity:.35; pointer-events:none;}
+.quote-card blockquote{position:static; margin:0; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:clamp(25px,3.6vw,38px); line-height:1.4; color:var(--gold-soft); text-wrap:balance;}
+.quote-card blockquote::before{content:"“"; position:absolute; left:34px; top:6px; font:600 190px/1 'Cormorant Garamond',serif; font-style:normal; color:var(--gold); opacity:.35;}
+.quote-card figcaption{position:relative; z-index:1; margin-top:20px; font-size:13px; letter-spacing:.5px; color:var(--muted);}
+.quote-card figcaption::before{content:""; display:block; width:56px; height:1px; margin:0 auto 14px; background:linear-gradient(90deg,transparent,var(--gold),transparent);}
+@media (max-width:640px){
+  .quote-card{padding:84px 24px 64px;}
+  .quote-card::after,.quote-card blockquote::before{font-size:130px;}
+  .quote-card blockquote::before{left:14px; top:8px;}
+  .quote-card::after{right:14px; bottom:-46px;}
+}

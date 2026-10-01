@@ -68,7 +68,16 @@ def icon(k, extra=""):
 BG = "anhsang"
 DEFAULT_OG = '<meta property="og:type" content="website">\n<meta property="og:title" content="{t}">\n<meta property="og:description" content="{d}">\n<meta property="og:image" content="https://layphatvn.web.app/images/og-default.jpg">\n<meta name="twitter:card" content="summary_large_image">\n'
 
-def head(title, desc, active, extra=''):
+def crumbs_html(items):
+    # items: [(tên, đường dẫn hoặc None)]; mục cuối là trang hiện tại
+    li = []
+    for i, (name, href) in enumerate(items):
+        last = i == len(items) - 1
+        inner = f'<span aria-current="page">{html.escape(name)}</span>' if last else f'<a href="{href}">{html.escape(name)}</a>'
+        li.append(f'<li>{inner}</li>')
+    return '  <nav class="crumb" aria-label="Vị trí trang"><ol>' + "".join(li) + '</ol></nav>\n'
+
+def head(title, desc, active, extra='', crumbs=None):
     nav = "".join(f'<a href="{f}"{" class=active" if f==active else ""}>{html.escape(t)}</a>' for f,t in NAV)
     return f'''<!doctype html>
 <html lang="vi" data-theme="sen" data-bg="{BG}">
@@ -91,12 +100,12 @@ def head(title, desc, active, extra=''):
 <div class="wrap">
   <header class="topbar">
     <a class="brand" href="index.html">
-      <svg class="brand-mark" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="var(--gold)" stroke-width="1.4"/><circle cx="20" cy="20" r="6" stroke="var(--gold)" stroke-width="1.2"/><circle cx="20" cy="20" r="2.2" fill="var(--gold)"/><g stroke="var(--gold)" stroke-width="1.3" stroke-linecap="round"><line x1="20" y1="4" x2="20" y2="14"/><line x1="20" y1="26" x2="20" y2="36"/><line x1="4" y1="20" x2="14" y2="20"/><line x1="26" y1="20" x2="36" y2="20"/><line x1="8.7" y1="8.7" x2="15.8" y2="15.8"/><line x1="24.2" y1="24.2" x2="31.3" y2="31.3"/><line x1="31.3" y1="8.7" x2="24.2" y2="15.8"/><line x1="15.8" y1="24.2" x2="8.7" y2="31.3"/></g></svg>
+      <svg class="brand-mark spin" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="var(--gold)" stroke-width="1.4"/><circle cx="20" cy="20" r="6" stroke="var(--gold)" stroke-width="1.2"/><circle cx="20" cy="20" r="2.2" fill="var(--gold)"/><g stroke="var(--gold)" stroke-width="1.3" stroke-linecap="round"><line x1="20" y1="4" x2="20" y2="14"/><line x1="20" y1="26" x2="20" y2="36"/><line x1="4" y1="20" x2="14" y2="20"/><line x1="26" y1="20" x2="36" y2="20"/><line x1="8.7" y1="8.7" x2="15.8" y2="15.8"/><line x1="24.2" y1="24.2" x2="31.3" y2="31.3"/><line x1="31.3" y1="8.7" x2="24.2" y2="15.8"/><line x1="15.8" y1="24.2" x2="8.7" y2="31.3"/></g></svg>
       Lạy&nbsp;Phật
     </a>
   </header>
   <nav class="navbar"><div class="navlist">{nav}</div></nav>
-'''
+{crumbs_html(crumbs) if crumbs else ""}'''
 
 FOOT = '''
   <footer>
@@ -351,7 +360,6 @@ def post_page(p):
         extra_end += f'''<aside class="related"><h2>Bài liên quan</h2><a class="related-link" href="{html.escape(p["related"][0])}" target="_blank" rel="noopener noreferrer">{html.escape(p["related"][1])} <span aria-hidden="true">↗</span></a></aside>\n'''
     iso = p["dt"].strftime("%Y-%m-%d")
     body = f"""
-  <p class="crumb"><a href="{s["file"]}">← {LABEL[t]}</a></p>
   <article class="post">
     {cover}
     <div class="post-body">
@@ -371,7 +379,11 @@ def post_page(p):
               f'<meta property="og:url" content="{SITE}/{p["file"]}">\n<meta name="twitter:card" content="summary_large_image">\n')
     else:
         og = ""
-    return head(p["short"] + " · Lạy Phật", p["summary"][:160], s["file"], og) + body + FOOT
+    cr = [("Trang chủ", "index.html"), (LABEL[t], s["file"])]
+    if t == "bai-viet" and p["cat"]:
+        cr.append((next(c[1] for c in CATS if c[0] == p["cat"]), f"danh-muc-{p['cat']}.html"))
+    cr.append((p["short"], None))
+    return head(p["short"] + " · Lạy Phật", p["summary"][:160], s["file"], og, cr) + body + FOOT
 
 def list_page(title, eyebrow, lede, posts, key, active, extra_top="", extra_bottom=""):
     s = SECTIONS[key]
@@ -395,7 +407,7 @@ def list_page(title, eyebrow, lede, posts, key, active, extra_top="", extra_bott
 {cards}  </div>
   {empty}{note}
 {extra_bottom}'''
-    return head(title + " · Lạy Phật", lede, active) + body + FOOT
+    return head(title + " · Lạy Phật", lede, active, crumbs=[("Trang chủ", "index.html"), (LABEL[key], None)]) + body + FOOT
 
 def cat_grid(posts):
     latest = {}
@@ -428,7 +440,6 @@ def category_page(slug, name, ic, color, desc, posts):
     cards = "".join(real_card(p) for p in mine)
     empty = '<p class="empty-note">Chưa có bài viết trong danh mục này. Bài mới sẽ xuất hiện ở đây.</p>' if not mine else ""
     body = f'''
-  <p class="crumb"><a href="bai-viet.html">← Bài viết Phật giáo</a></p>
   <section class="page-hero">
     <div class="eyebrow">Danh mục</div>
     <h1 class="cat-h1"><span class="cat-ico big" style="--accent:{color}">{icon(ic)}</span>{html.escape(name)}</h1>
@@ -438,7 +449,7 @@ def category_page(slug, name, ic, color, desc, posts):
 {cards}  </div>
   {empty}
 '''
-    return head(name + " · Lạy Phật", desc, "bai-viet.html") + body + FOOT
+    return head(name + " · Lạy Phật", desc, "bai-viet.html", crumbs=[("Trang chủ", "index.html"), ("Bài viết Phật giáo", "bai-viet.html"), (name, None)]) + body + FOOT
 
 def index_page(posts):
     counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
@@ -474,13 +485,13 @@ def index_page(posts):
       </div>
       <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Miễn phí · Không cần đăng nhập</span></div>
     </form>
-    <div class="quote-strip"><span>“Nội dung trích dẫn sẽ được thay bằng lời dạy có nguồn rõ ràng.”</span><span class="mark">— Ô mẫu</span></div>
+    <figure class="quote-card"><blockquote>Nội dung trích dẫn sẽ được thay bằng lời dạy có nguồn rõ ràng.</blockquote><figcaption>— Ô mẫu</figcaption></figure>
   </section>
   <section class="section-head"><h2>Các chuyên mục</h2><span>4 chuyên mục</span></section>
   <div class="grid four">
 {cards}  </div>
 '''
-    return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.", "index.html") + body + FOOT
+    return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.", "index.html", crumbs=[("Trang chủ", None)]) + body + FOOT
 
 def write(name, content):
     open(_os.path.join(OUT, name), "w", encoding="utf-8").write(content)

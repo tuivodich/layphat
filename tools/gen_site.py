@@ -32,7 +32,10 @@ SECTIONS = {
           ("Ngũ giới cho người tại gia","Năm điều học giúp đời sống thanh tịnh, hài hòa."),
           ("Từ, bi, hỷ, xả","Bốn tâm vô lượng và cách vun trồng trong đời thường."),
           ("Thiền cho người mới bắt đầu","Những bước đầu tiên để ngồi thiền và quan sát hơi thở."),
-          ("Ý nghĩa ngày rằm và mùng một","Vì sao nhiều người đi chùa, ăn chay vào những ngày này.")]),
+          ("Ý nghĩa ngày rằm và mùng một","Vì sao nhiều người đi chùa, ăn chay vào những ngày này."),
+          ("Tứ diệu đế","Bốn chân lý cao quý: khổ, nguyên nhân của khổ, sự diệt khổ và con đường diệt khổ."),
+          ("Nhân quả và nghiệp","Hiểu đúng về nhân quả để sống có trách nhiệm với từng việc làm."),
+          ("Quy y Tam bảo","Ý nghĩa của việc nương tựa Phật, Pháp, Tăng trong đời sống.")]),
  "kinh-ke": dict(file="kinh-ke.html", title="Bài kinh - kệ", accent="var(--c2)", tag="Kinh kệ",
    lede="Tuyển tập các bài kinh, kệ, chú thường tụng, kèm phần chú giải ngắn gọn. Văn bản sẽ được bổ sung từ nguồn dịch được phép sử dụng.",
    items=[("Kinh Nhật tụng","Nghi thức niệm Phật hằng ngày: đảnh lễ, tán Phật, niệm Phật, sám hối, phát nguyện, quy y, hồi hướng.","kinh-nhat-tung.html"),
@@ -370,12 +373,14 @@ def post_page(p):
         og = ""
     return head(p["short"] + " · Lạy Phật", p["summary"][:160], s["file"], og) + body + FOOT
 
-def list_page(title, eyebrow, lede, posts, key, active, extra_top="", head_extra="", icon_key=None):
+def list_page(title, eyebrow, lede, posts, key, active, extra_top="", extra_bottom=""):
     s = SECTIONS[key]
+    cap = 9 if key == "bai-viet" else 6
+    posts = posts[:cap]
     cards = "".join(real_card(p) for p in posts)
     n_sample = 0
-    if key and len(posts) < 6:
-        fill = SAMPLES[key][: 6 - len(posts)]
+    if key and len(posts) < cap:
+        fill = SAMPLES[key][: cap - len(posts)]
         cards += "".join(sample_card(key, s, it) for it in fill); n_sample = len(fill)
     note = '<p class="note">Các thẻ có nhãn "Mẫu" chỉ để giữ bố cục, sẽ tự biến mất khi có đủ bài thật.</p>' if n_sample else ""
     empty = '<p class="empty-note">Chưa có bài viết trong danh mục này. Bài mới sẽ xuất hiện ở đây.</p>' if (not posts and not n_sample) else ""
@@ -389,7 +394,7 @@ def list_page(title, eyebrow, lede, posts, key, active, extra_top="", head_extra
 {extra_top}  <div class="grid" id="list">
 {cards}  </div>
   {empty}{note}
-'''
+{extra_bottom}'''
     return head(title + " · Lạy Phật", lede, active) + body + FOOT
 
 def cat_grid(posts):
@@ -411,10 +416,11 @@ def cat_grid(posts):
       {summ}
     </a>
 '''
-    return f'''  <section class="section-head tight"><h2>Danh mục</h2><span>6 danh mục</span></section>
-  <div class="cat-grid">
-{cards}  </div>
-  <section class="section-head"><h2>Tất cả bài viết</h2><span></span></section>
+    return f'''  <section class="cat-zone">
+    <div class="section-head"><h2>Danh mục</h2><span>6 danh mục</span></div>
+    <div class="cat-grid">
+{cards}    </div>
+  </section>
 '''
 
 def category_page(slug, name, ic, color, desc, posts):
@@ -486,8 +492,9 @@ def main():
     write("index.html", index_page(posts))
     for key, s in SECTIONS.items():
         mine = [p for p in posts if p["type"] == key]
-        top = cat_grid(posts) if key == "bai-viet" else ""
-        write(s["file"], list_page(s["title"], "Chuyên mục", s["lede"], mine, key, s["file"], extra_top=top))
+        top = '  <section class="section-head tight"><h2>Tất cả bài viết</h2><span>9 bài mới nhất</span></section>\n' if key == "bai-viet" else ""
+        bottom = cat_grid(posts) if key == "bai-viet" else ""
+        write(s["file"], list_page(s["title"], "Chuyên mục", s["lede"], mine, key, s["file"], extra_top=top, extra_bottom=bottom))
     for c in CATS:
         write(f"danh-muc-{c[0]}.html", category_page(*c, posts))
     for p in posts:

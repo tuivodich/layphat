@@ -283,8 +283,12 @@ body{background:transparent;}
 
 /* ---------- Danh mục (trang Bài viết) ---------- */
 .section-head.tight{margin:34px 0 18px;}
+.cat-zone{margin-top:56px; padding:6px 28px 30px; border-radius:26px; border:1px solid color-mix(in srgb, var(--gold) 22%, transparent); position:relative; overflow:hidden; background:linear-gradient(160deg, color-mix(in srgb, var(--gold) 9%, var(--bg)), color-mix(in srgb, var(--c3) 7%, var(--bg)) 70%);}
+.cat-zone::before{content:""; position:absolute; right:-70px; top:-70px; width:300px; height:300px; background:url(images/bg-mandala.svg) center/contain no-repeat; opacity:.13; pointer-events:none;}
+.cat-zone>*{position:relative;}
+.cat-zone .section-head{margin:26px 0 22px;}
 .cat-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:18px;}
-.cat-card{display:flex; flex-direction:column; gap:10px; padding:20px 22px; border-radius:18px; background:var(--card); border:1px solid var(--line); position:relative; overflow:hidden; transition:transform .15s, border-color .15s;}
+.cat-card{display:flex; flex-direction:column; gap:10px; padding:20px 22px; border-radius:18px; background:linear-gradient(135deg, color-mix(in srgb, var(--accent) 16%, var(--bg)), color-mix(in srgb, var(--accent) 4%, var(--bg))); border:1px solid color-mix(in srgb, var(--accent) 38%, transparent); box-shadow:0 8px 22px rgba(0,0,0,.25); position:relative; overflow:hidden; transition:transform .15s, border-color .15s;}
 .cat-card::before{content:""; position:absolute; inset:0 auto 0 0; width:3px; background:var(--accent, var(--gold)); opacity:.85;}
 .cat-card:hover{transform:translateY(-2px); border-color:var(--accent);}
 .cat-head{display:flex; align-items:center; gap:12px;}
@@ -299,4 +303,4 @@ body{background:transparent;}
 .cat-h1{display:flex; align-items:center;}
 .empty-note{color:var(--muted); font-size:14px; margin:8px 0 24px;}
 @media (max-width:1000px){ .cat-grid{grid-template-columns:repeat(2,1fr);} }
-@media (max-width:520px){ .cat-grid{grid-template-columns:1fr;} }
+@media (max-width:520px){ .cat-grid{grid-template-columns:1fr;} .cat-zone{padding:4px 14px 20px;} }

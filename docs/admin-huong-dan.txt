@@ -39,3 +39,9 @@ LƯU Ý
 4. Lời gửi lên ở trạng thái "Chờ duyệt". Admin có thể sửa nội dung (kể cả lời đã đăng), rồi bấm
    "Duyệt và đăng", "Gỡ khỏi trang", "Từ chối", "Xóa hẳn", hoặc "Chặn" người gửi.
 5. Từ trong danh sách che sẽ được đổi thành *** trước khi lưu (lọc ở trình duyệt; admin duyệt là lớp chặn cuối).
+
+==== REACTIONS (Thích / Thả tim / Cười / Không thích) ====
+- Dán lại firestore.rules mới (có thêm phần "reactions") > Publish. Không cần cài đặt gì khác.
+- Thành viên phải đăng nhập Google để chọn; mỗi người 1 lựa chọn/bài, bấm loại khác để đổi, bấm lại để bỏ.
+- Bật cho loại nội dung khác: trong tools/gen_site.py sửa REACTION_TYPES = {"bai-viet", "kinh-ke", ...}.
+- Tự đặt ở chỗ bất kỳ: <section class="rx" data-rx="khoa-duy-nhat"></section> + <script type="module" src="reactions.js"></script>.

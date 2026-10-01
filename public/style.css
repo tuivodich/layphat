@@ -375,3 +375,17 @@ body{background:transparent;}
 .pr-status{font-size:12px; margin-bottom:8px; color:var(--gold-soft);}
 .pr-status.rejected,.pr-status.removed{color:#e59ab0;} .pr-status.approved{color:#6fc39a;}
 [hidden]{display:none !important;}
+
+/* Reactions (dùng chung) */
+.rx{margin:30px 0 6px;padding:2px 0 14px}
+.rx-row{display:flex;flex-wrap:wrap;gap:8px}
+.rx-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 13px;border-radius:999px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.04);color:inherit;font:inherit;font-size:15px;cursor:pointer;transition:background .15s,border-color .15s,transform .1s}
+.rx-btn:hover:not(:disabled){background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.rx-btn:disabled{opacity:.6;cursor:wait}
+.rx-btn.on{border-color:var(--gold,#e6c875);background:rgba(230,200,117,.18);color:var(--gold,#e6c875)}
+.rx-ic{font-size:18px;line-height:1}
+.rx-n{min-width:1.2em;text-align:center;font-variant-numeric:tabular-nums;opacity:.85}
+.rx-info{margin-top:10px;font-size:14px;opacity:.8}
+.rx-login{background:none;border:0;padding:0;color:var(--gold,#e6c875);font:inherit;text-decoration:underline;cursor:pointer}
+@media (max-width:520px){.rx-btn{padding:8px 12px;font-size:14px}.rx-lb{display:none}.rx-btn.on .rx-lb{display:inline}}
+@media print{.rx{display:none}}

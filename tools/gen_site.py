@@ -159,6 +159,14 @@ def build_wheel():
     stars = '<circle cx="60" cy="60" r="1.6" fill="#fff" opacity=".45"/><circle cx="345" cy="52" r="1.4" fill="#fff" opacity=".4"/><circle cx="40" cy="340" r="1.4" fill="#fff" opacity=".4"/><circle cx="360" cy="350" r="1.8" fill="#fff" opacity=".45"/>'
     return f'<svg viewBox="0 0 400 400" fill="none" role="img" aria-label="Bánh xe Pháp luân"><g id="w1">{l1}</g><g id="w2">{l2}</g><g id="w3">{l3}</g>{hub}</svg>'
 WHEEL = build_wheel()
+# Các loại nội dung có bộ reactions (thêm "kinh-ke", "cau-nguyen", "mon-chay" để bật cho loại đó)
+REACTION_TYPES = {"bai-viet"}
+
+def reactions_block(key):
+    """Khối reactions dùng chung; script reactions.js tự nhận mọi phần tử có data-rx."""
+    return f'''      <section class="rx" data-rx="{key}" aria-label="Cảm nhận về bài viết"></section>
+'''
+
 def post_footer(date_iso, display):
     return f"""
       <footer class="post-end">
@@ -390,7 +398,7 @@ def post_page(p):
       <div class="prose">
 {prose}
       </div>
-{extra_end}{post_footer(iso, fmt_date(p))}    </div>
+{extra_end}{reactions_block(_os.path.splitext(p["file"])[0]) if t in REACTION_TYPES else ""}{post_footer(iso, fmt_date(p))}    </div>
   </article>
 """
     if p["og"]:
@@ -403,7 +411,10 @@ def post_page(p):
     if t == "bai-viet" and p["cat"]:
         cr.append((next(c[1] for c in CATS if c[0] == p["cat"]), f"danh-muc-{p['cat']}.html"))
     cr.append((p["short"], None))
-    return head(p["short"] + " · Lạy Phật", p["summary"][:160], s["file"], og, cr) + body + FOOT
+    page = head(p["short"] + " · Lạy Phật", p["summary"][:160], s["file"], og, cr) + body + FOOT
+    if t in REACTION_TYPES:
+        page = page.replace('<script src="app.js"></script>', '<script src="app.js"></script>\n<script type="module" src="reactions.js"></script>')
+    return page
 
 def list_page(title, eyebrow, lede, posts, key, active, extra_top="", extra_bottom=""):
     s = SECTIONS[key]

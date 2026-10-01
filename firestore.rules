@@ -88,6 +88,20 @@ service cloud.firestore {
       allow update, delete: if isAdmin();
     }
 
+    // Reactions (Thích / Thả tim / Cười / Không thích): mỗi người một tài liệu cho mỗi mục, id = "<mục>__<uid>".
+    // Ai cũng đọc/đếm được; chỉ chủ nhân ghi/đổi/xóa phiếu của mình. Muốn thêm loại mới: thêm vào danh sách bên dưới.
+    match /reactions/{rid} {
+      allow read: if true;
+      allow create, update: if signedIn() && notBanned()
+        && request.resource.data.keys().hasOnly(['item', 'type', 'updatedAt'])
+        && request.resource.data.item is string
+        && request.resource.data.item.size() >= 1 && request.resource.data.item.size() <= 100
+        && rid == request.resource.data.item + '__' + request.auth.uid
+        && request.resource.data.type in ['like', 'love', 'laugh', 'dislike']
+        && request.resource.data.updatedAt == request.time;
+      allow delete: if (signedIn() && rid.matches('.*__' + request.auth.uid)) || isAdmin();
+    }
+
     match /{document=**} { allow read, write: if false; }
   }
 }

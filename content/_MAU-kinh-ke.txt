@@ -3,6 +3,7 @@ Tiêu đề: Tên bài kinh
 Ngày: 2026-10-05
 Nguồn: Sưu tầm
 Tóm tắt: Một câu giới thiệu bài kinh.
+Hiển thị: Có
 ---
 ## 1. MỞ ĐẦU
 

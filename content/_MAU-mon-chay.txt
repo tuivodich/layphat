@@ -3,6 +3,7 @@ Tiêu đề: Tên món chay
 Ngày: 2026-10-05
 Nguồn: Sưu tầm
 Tóm tắt: Mô tả ngắn về món ăn.
+Hiển thị: Có
 ---
 ## Nguyên liệu
 

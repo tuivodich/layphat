@@ -205,12 +205,14 @@ def slugify(s):
 TYPE_MAP = {"baiviet": "bai-viet", "baivietphatgiao": "bai-viet", "kinhke": "kinh-ke", "baikinhke": "kinh-ke", "kinh": "kinh-ke",
             "caunguyen": "cau-nguyen", "loichuc": "cau-nguyen", "loichuccaunguyen": "cau-nguyen", "monchay": "mon-chay"}
 KEY_MAP = {"loai": "type", "danhmuc": "cat", "tieude": "title", "tenngan": "short", "ngay": "date", "anh": "image", "motaanh": "alt",
-           "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related"}
+           "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related", "hienthi": "show"}
 CAT_BY_KEY = {}
 for _slug, _name, *_ in CATS:
     for _k in {fold(_slug), fold(_name), fold(_name).replace("phatgiao", "")}:
         CAT_BY_KEY[_k] = _slug
 
+HIDE_VALUES = {"khong", "no", "false", "0", "an", "off"}
+HIDDEN = []
 WARNINGS = []
 def warn(path, msg):
     rel = _os.path.relpath(path, ROOT)
@@ -261,6 +263,8 @@ def load_posts():
                 k, v = line.split(":", 1)
                 key = KEY_MAP.get(fold(k))
                 if key: meta[key] = v.strip()
+            if fold(meta.get("show", "co")) in HIDE_VALUES:
+                print(f"Ẩn (Hiển thị: Không): {_os.path.relpath(path, ROOT)}"); HIDDEN.append(path); continue
             ptype = TYPE_MAP.get(fold(meta.get("type", "")))
             if not ptype: warn(path, "thiếu hoặc sai dòng 'Loại:' (bai-viet, kinh-ke, cau-nguyen hoặc mon-chay). Bỏ qua file này."); continue
             if not meta.get("title"): warn(path, "thiếu dòng 'Tiêu đề:'. Bỏ qua file này."); continue
@@ -554,6 +558,19 @@ def quote_block():
 def write(name, content):
     open(_os.path.join(OUT, name), "w", encoding="utf-8").write(content)
 
+def remove_stale(keep):
+    """Xóa trang bài viết cũ không còn được tạo (bài bị ẩn hoặc đã xóa file .txt), kèm ảnh và PDF của nó."""
+    pat = re.compile(r"^(bai-viet|kinh|cau-nguyen|mon-chay)-(.+)\.html$")
+    listing = {s["file"] for s in SECTIONS.values()} | {f"danh-muc-{c[0]}.html" for c in CATS}
+    for f in sorted(_os.listdir(OUT)):
+        m = pat.match(f)
+        if not m or f in keep or f in listing: continue
+        slug = m.group(2)
+        for rel in (f, f"images/{slug}.jpg", f"images/{slug}-og.jpg", f"pdf/{f[:-5]}.pdf"):
+            fp = _os.path.join(OUT, rel)
+            if _os.path.isfile(fp): _os.remove(fp)
+        print(f"Đã gỡ trang không còn hiển thị: {f}")
+
 def main():
     _os.makedirs(OUT, exist_ok=True)
     posts = load_posts()
@@ -568,6 +585,7 @@ def main():
         write(f"danh-muc-{c[0]}.html", category_page(*c, posts))
     for p in posts:
         write(p["file"], post_page(p))
+    remove_stale({p["file"] for p in posts})
     print(f"Đã tạo {len(posts)} bài, {len(WARNINGS)} cảnh báo.")
 
 if __name__ == "__main__":

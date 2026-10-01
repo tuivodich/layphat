@@ -1,0 +1,271 @@
+<!doctype html>
+<html lang="vi" data-theme="sen" data-bg="none">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>Quản trị nội dung · Lạy Phật</title>
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="style.css">
+<style>
+  .ad{max-width:1200px; margin:0 auto; padding:28px 20px 60px;}
+  .ad h1{font-size:30px; margin-bottom:6px;}
+  .ad .sub{color:var(--muted); font-size:13.5px; margin-bottom:22px;}
+  .ad-box{padding:26px; border:1px solid var(--line); border-radius:18px; background:var(--card); max-width:560px;}
+  .ad-btn{font:inherit; font-size:14px; padding:9px 16px; border-radius:999px; border:1px solid var(--line); background:transparent; color:var(--fg); cursor:pointer;}
+  .ad-btn:hover{border-color:var(--gold);}
+  .ad-btn.primary{background:linear-gradient(135deg,var(--gold-soft),var(--gold)); color:var(--on-gold); border-color:transparent; font-weight:600;}
+  .ad-btn:disabled{opacity:.5; cursor:default;}
+  .ad-top{display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:18px;}
+  .ad-user{font-size:13px; color:var(--muted);}
+  .ad-grid{display:grid; grid-template-columns:320px 1fr; gap:20px; align-items:start;}
+  @media (max-width:900px){.ad-grid{grid-template-columns:1fr;}}
+  .ad-list{border:1px solid var(--line); border-radius:16px; background:var(--card); padding:10px; max-height:75vh; overflow:auto;}
+  .ad-grp{font-size:12px; letter-spacing:.6px; text-transform:uppercase; color:var(--gold-soft); padding:12px 8px 6px;}
+  .ad-item{display:block; width:100%; text-align:left; font:inherit; font-size:13.5px; color:var(--fg); background:transparent; border:0; border-radius:10px; padding:8px 10px; cursor:pointer;}
+  .ad-item:hover{background:rgba(255,255,255,.05);}
+  .ad-item.on{background:color-mix(in srgb,var(--gold) 16%,transparent);}
+  .ad-item small{display:block; color:var(--muted); font-size:11.5px; margin-top:2px;}
+  .ad-item .off{color:#e59ab0;}
+  .ad-edit{border:1px solid var(--line); border-radius:16px; background:var(--card); padding:16px;}
+  .ad-bar{display:flex; flex-wrap:wrap; gap:10px; align-items:center; margin-bottom:12px;}
+  .ad-bar label{font-size:13px; color:var(--muted);}
+  .ad-bar select,.ad-bar input{font:inherit; font-size:14px; color:var(--fg); background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:10px; padding:7px 10px;}
+  .ad-path{font-size:12.5px; color:var(--muted); word-break:break-all; flex:1 1 200px;}
+  textarea.ad-text{width:100%; min-height:62vh; resize:vertical; font:14px/1.6 ui-monospace,Consolas,monospace; color:var(--fg); background:rgba(0,0,0,.3); border:1px solid var(--line); border-radius:12px; padding:14px; box-sizing:border-box;}
+  .ad-msg{font-size:13.5px; margin-top:10px; min-height:20px;}
+  .ad-msg.ok{color:#6fc39a;} .ad-msg.err{color:#e59ab0;}
+  .ad-tok{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
+  .ad-tok input{flex:1 1 240px; font:inherit; font-size:14px; color:var(--fg); background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:10px; padding:8px 10px;}
+  [hidden]{display:none !important;}
+</style>
+</head>
+<body>
+<main class="ad">
+  <h1>Quản trị nội dung</h1>
+  <p class="sub">Sửa các file .txt của bài viết. Mỗi lần lưu, web tự deploy lại sau khoảng 1–2 phút.</p>
+
+  <section id="v-login" class="ad-box" hidden>
+    <p style="margin-bottom:14px">Đăng nhập bằng tài khoản Google của quản trị viên.</p>
+    <button id="btn-login" class="ad-btn primary" type="button">Đăng nhập với Google</button>
+    <div id="login-msg" class="ad-msg err"></div>
+  </section>
+
+  <section id="v-deny" class="ad-box" hidden>
+    <p>Tài khoản <b id="deny-mail"></b> không có quyền quản trị trang này.</p>
+    <p style="margin-top:12px"><button id="btn-out1" class="ad-btn" type="button">Đăng xuất</button></p>
+  </section>
+
+  <section id="v-token" class="ad-box" hidden>
+    <p>Chưa lấy được khóa truy cập GitHub (mã token) từ Firebase. Dán khóa vào ô dưới đây (chỉ lưu trong trình duyệt này), hoặc xem file hướng dẫn để lưu khóa vào Firebase.</p>
+    <div class="ad-tok"><input id="tok-in" type="password" placeholder="github_pat_..." autocomplete="off"><button id="tok-ok" class="ad-btn primary" type="button">Dùng khóa này</button></div>
+    <div id="tok-msg" class="ad-msg err"></div>
+  </section>
+
+  <section id="v-app" hidden>
+    <div class="ad-top">
+      <span class="ad-user">Đăng nhập: <b id="me"></b></span>
+      <span>
+        <button id="btn-new" class="ad-btn" type="button">+ Bài mới</button>
+        <button id="btn-reload" class="ad-btn" type="button">Tải lại danh sách</button>
+        <button id="btn-out2" class="ad-btn" type="button">Đăng xuất</button>
+      </span>
+    </div>
+    <div class="ad-grid">
+      <div class="ad-list" id="list">Đang tải danh sách…</div>
+      <div class="ad-edit" id="edit" hidden>
+        <div class="ad-bar">
+          <span class="ad-path" id="path"></span>
+          <label>Hiển thị
+            <select id="sel-show"><option value="Có">Có</option><option value="Không">Không</option></select>
+          </label>
+          <button id="btn-save" class="ad-btn primary" type="button">Lưu (Ctrl+S)</button>
+        </div>
+        <div class="ad-bar" id="newbar" hidden>
+          <label>Loại
+            <select id="new-type">
+              <option value="bai-viet">Bài viết Phật giáo</option>
+              <option value="kinh-ke">Bài kinh - kệ</option>
+              <option value="cau-nguyen">Lời chúc - Cầu nguyện</option>
+              <option value="mon-chay">Món chay</option>
+            </select>
+          </label>
+          <label>Tên file (không dấu, nối bằng gạch ngang) <input id="new-name" placeholder="vi-du-ten-bai"></label>
+          <span style="color:var(--muted);font-size:12.5px">.txt</span>
+        </div>
+        <textarea id="txt" class="ad-text" spellcheck="false"></textarea>
+        <div id="msg" class="ad-msg"></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<script type="module">
+const OWNER = 'tuivodich', REPO = 'layphat', BRANCH = 'main';
+const ADMINS = ['xinloi@gmail.com', 'bachoc@gmail.com'];
+const DIRS = { 'bai-viet': 'Bài viết Phật giáo', 'kinh-ke': 'Bài kinh - kệ', 'cau-nguyen': 'Lời chúc - Cầu nguyện', 'mon-chay': 'Món chay' };
+const TEMPLATES = {
+  'bai-viet': 'Loại: bai-viet\nDanh mục: Thiền Tông\nTiêu đề: \nTên ngắn: \nNgày: {today}\nẢnh: \nMô tả ảnh: \nNguồn: \nTóm tắt: \nLời kết: \nHashtag: \nHiển thị: Có\n---\nĐoạn văn thứ nhất.\n\nĐoạn văn thứ hai.\n',
+  'kinh-ke': 'Loại: kinh-ke\nTiêu đề: \nNgày: {today}\nNguồn: \nTóm tắt: \nHiển thị: Có\n---\n## 1. MỞ ĐẦU\n\nĐoạn hướng dẫn.\n\n> Câu kệ dòng một\n> Câu kệ dòng hai\n',
+  'cau-nguyen': 'Loại: cau-nguyen\nTiêu đề: \nNgày: {today}\nTóm tắt: \nHiển thị: Có\n---\n## Lời nguyện\n\n> Nguyện cho chúng sinh bình an\n',
+  'mon-chay': 'Loại: mon-chay\nTiêu đề: \nNgày: {today}\nNguồn: Sưu tầm\nTóm tắt: \nHiển thị: Có\n---\n## Nguyên liệu\n\n- 200g đậu hũ\n\n## Cách làm\n\n1. Bước một.\n'
+};
+const $ = id => document.getElementById(id);
+const show = id => { for (const v of ['v-login','v-deny','v-token','v-app']) $(v).hidden = v !== id; };
+
+let token = '', cur = null, dirty = false, files = [];
+
+// ---------- GitHub ----------
+async function gh(path, opts = {}) {
+  const r = await fetch('https://api.github.com/repos/' + OWNER + '/' + REPO + path, {
+    ...opts,
+    headers: { 'Authorization': 'Bearer ' + token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json', ...(opts.headers || {}) }
+  });
+  if (!r.ok) { const e = new Error('GitHub ' + r.status); e.status = r.status; try { e.body = await r.json(); } catch (_) {} throw e; }
+  return r.json();
+}
+const dec = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, '')), c => c.charCodeAt(0)));
+const enc = s => { const b = new TextEncoder().encode(s); let t = ''; b.forEach(c => t += String.fromCharCode(c)); return btoa(t); };
+const meta = (txt, re) => { const m = txt.match(re); return m ? m[1].trim() : ''; };
+const isHidden = txt => /^(khong|no|false|0|an|off)$/i.test(meta(txt, /^[ \t]*Hi[eể]n\s*th[iị][ \t]*:(.*)$/im).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'));
+
+function msg(t, cls) { const m = $('msg'); m.textContent = t || ''; m.className = 'ad-msg ' + (cls || ''); }
+
+async function loadList() {
+  $('list').textContent = 'Đang tải danh sách…';
+  files = [];
+  try {
+    for (const d of Object.keys(DIRS)) {
+      let arr = [];
+      try { arr = await gh('/contents/content/' + d + '?ref=' + BRANCH); } catch (e) { if (e.status !== 404) throw e; }
+      const items = arr.filter(f => f.type === 'file' && /\.(txt|md)$/i.test(f.name) && !f.name.startsWith('_'));
+      const full = await Promise.all(items.map(f => gh('/contents/' + f.path + '?ref=' + BRANCH)));
+      full.forEach((f, i) => { const t = dec(f.content); files.push({ dir: d, path: items[i].path, name: items[i].name, sha: f.sha, text: t, title: meta(t, /^[ \t]*Ti[eê]u\s*đ[eề][ \t]*:(.*)$/im) || items[i].name, date: meta(t, /^[ \t]*Ng[aà]y[ \t]*:(.*)$/im), off: isHidden(t) }); });
+    }
+    renderList();
+  } catch (e) {
+    $('list').textContent = e.status === 401 || e.status === 403 ? 'Khóa GitHub không hợp lệ hoặc thiếu quyền (cần Contents: Read and write).' : 'Lỗi tải danh sách: ' + e.message;
+    if (e.status === 401) { localStorage.removeItem('lp_gh_token'); }
+  }
+}
+
+function renderList() {
+  const box = $('list'); box.textContent = '';
+  for (const d of Object.keys(DIRS)) {
+    const g = document.createElement('div'); g.className = 'ad-grp'; g.textContent = DIRS[d]; box.appendChild(g);
+    const mine = files.filter(f => f.dir === d).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    if (!mine.length) { const p = document.createElement('div'); p.style.cssText = 'color:var(--muted);font-size:13px;padding:4px 10px'; p.textContent = '(chưa có file)'; box.appendChild(p); }
+    for (const f of mine) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'ad-item' + (cur && cur.path === f.path ? ' on' : '');
+      const t = document.createElement('span'); t.textContent = f.title;
+      const s = document.createElement('small'); s.textContent = f.name + ' · ' + (f.date || '—') + ' · ';
+      const st = document.createElement('span'); st.textContent = f.off ? 'ĐANG ẨN' : 'đang hiển thị'; if (f.off) st.className = 'off'; s.appendChild(st);
+      b.append(t, s); b.onclick = () => openFile(f); box.appendChild(b);
+    }
+  }
+}
+
+function confirmLeave() { return !dirty || confirm('Bạn có thay đổi chưa lưu. Bỏ thay đổi và tiếp tục?'); }
+
+function openFile(f) {
+  if (!confirmLeave()) return;
+  cur = { ...f, isNew: false };
+  $('edit').hidden = false; $('newbar').hidden = true;
+  $('path').textContent = f.path; $('txt').value = f.text; $('sel-show').value = f.off ? 'Không' : 'Có';
+  dirty = false; msg(''); renderList();
+}
+
+function newFile() {
+  if (!confirmLeave()) return;
+  cur = { isNew: true, path: '' };
+  $('edit').hidden = false; $('newbar').hidden = false;
+  $('new-type').value = 'bai-viet'; $('new-name').value = '';
+  $('txt').value = TEMPLATES['bai-viet'].replace('{today}', new Date().toISOString().slice(0, 10));
+  $('path').textContent = '(file mới)'; $('sel-show').value = 'Có'; dirty = false; msg(''); renderList();
+}
+
+// đổi "Hiển thị" ngay trong nội dung file
+function setShow(val) {
+  let t = $('txt').value;
+  const re = /^[ \t]*Hi[eể]n\s*th[iị][ \t]*:.*$/im;
+  if (re.test(t)) t = t.replace(re, 'Hiển thị: ' + val);
+  else if (/^\s*---\s*$/m.test(t)) t = t.replace(/^\s*---\s*$/m, 'Hiển thị: ' + val + '\n---');
+  else t = 'Hiển thị: ' + val + '\n' + t;
+  $('txt').value = t; dirty = true;
+}
+
+async function save() {
+  const text = $('txt').value.replace(/\r\n/g, '\n');
+  if (!/^\s*---\s*$/m.test(text)) { msg('Thiếu dòng --- ngăn giữa phần thông tin và nội dung. Hãy kiểm tra lại trước khi lưu.', 'err'); return; }
+  let path = cur.path;
+  if (cur.isNew) {
+    const name = $('new-name').value.trim().toLowerCase();
+    if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(name)) { msg('Tên file chỉ dùng chữ thường không dấu, số, và gạch ngang (ví dụ: bat-chanh-dao).', 'err'); return; }
+    path = 'content/' + $('new-type').value + '/' + name + '.txt';
+    if (files.some(f => f.path === path)) { msg('Đã có file trùng tên này.', 'err'); return; }
+  }
+  $('btn-save').disabled = true; msg('Đang lưu…');
+  try {
+    const body = { message: (cur.isNew ? 'Thêm bài: ' : 'Sửa bài: ') + path, content: enc(text), branch: BRANCH };
+    if (!cur.isNew) body.sha = cur.sha;
+    const r = await gh('/contents/' + path, { method: 'PUT', body: JSON.stringify(body) });
+    dirty = false;
+    const f = { dir: path.split('/')[1], path, name: path.split('/').pop(), sha: r.content.sha, text,
+      title: meta(text, /^[ \t]*Ti[eê]u\s*đ[eề][ \t]*:(.*)$/im) || path.split('/').pop(), date: meta(text, /^[ \t]*Ng[aà]y[ \t]*:(.*)$/im), off: isHidden(text) };
+    files = files.filter(x => x.path !== path); files.push(f);
+    cur = { ...f, isNew: false }; $('path').textContent = path; $('newbar').hidden = true; renderList();
+    msg('Đã lưu. Web sẽ cập nhật sau khoảng 1–2 phút (xem tiến trình ở tab Actions của GitHub).', 'ok');
+  } catch (e) {
+    msg(e.status === 409 || e.status === 422 ? 'File đã bị thay đổi ở nơi khác. Bấm "Tải lại danh sách" rồi mở lại file.' : 'Không lưu được: ' + e.message + (e.body && e.body.message ? ' – ' + e.body.message : ''), 'err');
+  } finally { $('btn-save').disabled = false; }
+}
+
+// ---------- Firebase ----------
+async function boot() {
+  let initCfg;
+  try { initCfg = await (await fetch('/__/firebase/init.json')).json(); }
+  catch (e) { show('v-login'); $('login-msg').textContent = 'Không đọc được cấu hình Firebase. Trang này chỉ chạy trên https://layphatvn.web.app.'; return; }
+  const V = '10.14.1';
+  const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
+  const A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');
+  const F = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js');
+  const app = initializeApp(initCfg), auth = A.getAuth(app), db = F.getFirestore(app);
+
+  $('btn-login').onclick = async () => {
+    $('login-msg').textContent = '';
+    try { await A.signInWithPopup(auth, new A.GoogleAuthProvider()); }
+    catch (e) { $('login-msg').textContent = 'Đăng nhập không thành công: ' + (e.code || e.message); }
+  };
+  const out = () => A.signOut(auth);
+  $('btn-out1').onclick = out; $('btn-out2').onclick = out;
+
+  A.onAuthStateChanged(auth, async user => {
+    if (!user) { token = ''; show('v-login'); return; }
+    const mail = (user.email || '').toLowerCase();
+    if (!user.emailVerified || !ADMINS.includes(mail)) { $('deny-mail').textContent = mail; show('v-deny'); return; }
+    $('me').textContent = mail;
+    token = '';
+    try { const s = await F.getDoc(F.doc(db, 'admin', 'github')); if (s.exists()) token = s.data().token || ''; } catch (e) { /* chưa cấu hình Firestore */ }
+    if (!token) token = localStorage.getItem('lp_gh_token') || '';
+    if (!token) { show('v-token'); return; }
+    show('v-app'); loadList();
+  });
+  $('tok-ok').onclick = () => {
+    const v = $('tok-in').value.trim();
+    if (!v) { $('tok-msg').textContent = 'Hãy dán khóa vào ô.'; return; }
+    localStorage.setItem('lp_gh_token', v); token = v; show('v-app'); loadList();
+  };
+}
+
+$('btn-new').onclick = newFile;
+$('btn-reload').onclick = () => { if (confirmLeave()) loadList(); };
+$('btn-save').onclick = save;
+$('sel-show').onchange = e => setShow(e.target.value);
+$('txt').oninput = () => { dirty = true; };
+$('new-type').onchange = e => { if (!dirty || confirm('Đổi loại sẽ thay nội dung mẫu. Tiếp tục?')) { $('txt').value = TEMPLATES[e.target.value].replace('{today}', new Date().toISOString().slice(0, 10)); dirty = false; } else { /* giữ nguyên */ } };
+document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !$('v-app').hidden && !$('edit').hidden) { e.preventDefault(); save(); } });
+window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
+boot();
+</script>
+</body>
+</html>

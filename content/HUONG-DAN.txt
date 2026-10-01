@@ -27,6 +27,7 @@ Phần đầu là các dòng "Tên: giá trị", sau đó một dòng chỉ có 
   Tiêu đề:     tiêu đề đầy đủ hiện trong bài (bắt buộc)
   Tên ngắn:    tên hiện trên thẻ (nếu bỏ trống sẽ lấy Tiêu đề)
   Ngày:        2026-10-05  hoặc  05/10/2026  (có thể thêm giờ: 2026-10-05 08:30)  (bắt buộc)
+  Hiển thị:    Có | Không   (Không = ẩn bài khỏi danh sách, tìm kiếm, và trang bài bị gỡ; giữ file để bật lại sau. Bỏ trống = Có)
   Ảnh:         ten-anh.jpg   (không bắt buộc)
   Mô tả ảnh:   mô tả ngắn cho ảnh
   Nguồn:       Sưu tầm / tên tác giả

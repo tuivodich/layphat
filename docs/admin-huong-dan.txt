@@ -1,0 +1,31 @@
+THIẾT LẬP TRANG QUẢN TRỊ  (public/admin-noi-dung.html)  -  làm MỘT LẦN
+
+Địa chỉ: https://layphatvn.web.app/admin-noi-dung.html
+Chỉ xinloi@gmail.com và bachoc@gmail.com vào được (đăng nhập Google).
+Trang sửa file .txt trong thư mục content/ của GitHub; mỗi lần Lưu là một commit, web tự deploy lại sau 1-2 phút.
+
+BƯỚC 1 - Bật đăng nhập Google
+  Firebase console -> dự án layphatvn -> Build -> Authentication -> Get started -> Sign-in method -> Google -> Enable -> Save.
+  (Domain layphatvn.web.app thường đã có sẵn trong Settings -> Authorized domains; nếu chưa, thêm vào.)
+
+BƯỚC 2 - Tạo Firestore và dán luật bảo mật
+  Build -> Firestore Database -> Create database (chọn vị trí gần nhất, chế độ production).
+  Tab Rules -> xóa nội dung cũ, dán toàn bộ file firestore.rules ở thư mục gốc dự án -> Publish.
+
+BƯỚC 3 - Tạo khóa GitHub (token) chỉ cho kho này
+  GitHub -> ảnh đại diện -> Settings -> Developer settings -> Personal access tokens -> Fine-grained tokens -> Generate new token.
+  Repository access: Only select repositories -> tuivodich/layphat.
+  Permissions -> Repository permissions -> Contents: Read and write.  (Không cấp quyền nào khác.)
+  Chọn thời hạn (ví dụ 1 năm) -> Generate -> sao chép chuỗi github_pat_...
+
+BƯỚC 4 - Lưu khóa vào Firestore (để 2 quản trị viên dùng được trên mọi máy)
+  Firestore Database -> Data -> Start collection -> Collection ID: admin
+  Document ID: github      Field: token  (kiểu string)  Value: dán chuỗi github_pat_...
+  Luật ở bước 2 chỉ cho 2 email quản trị ĐỌC tài liệu này.
+
+  Cách đơn giản hơn (không dùng Firestore): bỏ qua bước 2 và 4; lần đầu vào trang, trang sẽ hỏi khóa và lưu trong trình duyệt đó.
+
+LƯU Ý
+  - Ai có khóa GitHub này đều sửa được file trong kho. Đừng gửi khóa qua tin nhắn; khi hết hạn hoặc nghi lộ, tạo khóa mới và sửa lại giá trị token.
+  - Muốn ẩn bài: mở bài -> Hiển thị: Không -> Lưu. Muốn hiện lại: Hiển thị: Có.
+  - Trang không có đường dẫn từ menu và có thẻ noindex; nhưng ai biết địa chỉ vẫn thấy màn hình đăng nhập (không xem được nội dung nếu không phải quản trị viên).

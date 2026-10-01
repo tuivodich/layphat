@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Chỉ 2 quản trị viên (đã xác minh email) được ĐỌC khóa GitHub; không ai được ghi từ web.
+    match /admin/github {
+      allow read: if request.auth != null
+                  && request.auth.token.email_verified == true
+                  && request.auth.token.email in ['xinloi@gmail.com', 'bachoc@gmail.com'];
+      allow write: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}

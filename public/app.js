@@ -46,4 +46,90 @@
   // Ô tìm kiếm trang chủ: tạm chuyển đến trang bài viết
   var go = document.getElementById('go');
   if (go) go.addEventListener('click', function () { window.location.href = 'bai-viet.html'; });
+
+  // ---------- Chức năng cuối bài viết: In / Tải / Chia sẻ ----------
+  var actions = document.querySelector('.post-actions');
+  if (actions) {
+    var toast = document.querySelector('.toast');
+    var toastTimer;
+    var say = function (msg) {
+      if (!toast) return;
+      toast.textContent = msg; toast.classList.add('show');
+      clearTimeout(toastTimer); toastTimer = setTimeout(function () { toast.classList.remove('show'); }, 2200);
+    };
+    var saveBlob = function (blob, name) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = name;
+      document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { URL.revokeObjectURL(a.href); }, 4000);
+    };
+    var fileBase = function () {
+      var seg = location.pathname.split('/').pop().replace(/\.html?$/, '');
+      return seg || 'lay-phat';
+    };
+    var toDataUrl = function (src) {
+      return fetch(src).then(function (r) { return r.blob(); }).then(function (b) {
+        return new Promise(function (res, rej) { var fr = new FileReader(); fr.onload = function () { res(fr.result); }; fr.onerror = rej; fr.readAsDataURL(b); });
+      });
+    };
+    // Tải trang: một file .html tự đủ (CSS + ảnh nhúng sẵn), mở được cả khi không có mạng
+    var downloadPage = function () {
+      say('Đang chuẩn bị tệp...');
+      var origImgs = Array.prototype.slice.call(document.querySelectorAll('img'));
+      var origLinks = Array.prototype.slice.call(document.querySelectorAll('a[href]'));
+      Promise.all([
+        fetch('style.css').then(function (r) { if (!r.ok) throw new Error('css'); return r.text(); }),
+        Promise.all(origImgs.map(function (im) { return toDataUrl(im.currentSrc || im.src); }))
+      ]).then(function (res) {
+        var css = res[0].replace(/url\((['"]?)images\//g, 'url($1' + new URL('images/', location.href).href);
+        var clone = document.documentElement.cloneNode(true);
+        clone.querySelectorAll('script, .post-actions, .toast, link[rel="stylesheet"][href="style.css"], link[rel*="icon"], link[rel="apple-touch-icon"]').forEach(function (n) { n.remove(); });
+        var st = document.createElement('style'); st.textContent = css; clone.querySelector('head').appendChild(st);
+        clone.setAttribute('data-bg', 'none');
+        clone.querySelectorAll('img').forEach(function (im, i) { im.setAttribute('src', res[1][i]); im.removeAttribute('srcset'); });
+        clone.querySelectorAll('a[href]').forEach(function (a, i) { if (origLinks[i]) a.setAttribute('href', origLinks[i].href); });
+        var html = '<!doctype html>\n' + clone.outerHTML;
+        saveBlob(new Blob([html], { type: 'text/html;charset=utf-8' }), fileBase() + '.html');
+        say('Đã tải trang về máy');
+      }).catch(function () {
+        // Dự phòng: tải nội dung bài dạng văn bản thuần
+        var body = document.querySelector('.post-body');
+        var txt = (body ? body.innerText : document.body.innerText) + '\n\n' + location.href + '\n';
+        saveBlob(new Blob([txt], { type: 'text/plain;charset=utf-8' }), fileBase() + '.txt');
+        say('Đã tải nội dung bài (văn bản)');
+      });
+    };
+    // Chia sẻ
+    var menu = document.querySelector('.share-menu');
+    var shareBtn = document.querySelector('[data-act="share"]');
+    var closeMenu = function () { if (menu) { menu.hidden = true; shareBtn.setAttribute('aria-expanded', 'false'); } };
+    var copyLink = function () {
+      var url = location.href;
+      var fallback = function () {
+        var t = document.createElement('textarea'); t.value = url; t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select();
+        try { document.execCommand('copy'); say('Đã sao chép liên kết'); } catch (e) { say('Không sao chép được, hãy copy từ thanh địa chỉ'); }
+        t.remove();
+      };
+      if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(url).then(function () { say('Đã sao chép liên kết'); }, fallback);
+      else fallback();
+    };
+    actions.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return;
+      var act = b.getAttribute('data-act'), sh = b.getAttribute('data-share');
+      if (act === 'print') { window.print(); }
+      else if (act === 'download') { downloadPage(); }
+      else if (act === 'share') {
+        if (navigator.share) { navigator.share({ title: document.title, url: location.href }).catch(function () {}); }
+        else { var open = menu.hidden; menu.hidden = !open; b.setAttribute('aria-expanded', String(open)); }
+      } else if (sh) {
+        closeMenu();
+        if (sh === 'copy') copyLink();
+        else if (sh === 'facebook') window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(location.href), '_blank', 'noopener,noreferrer');
+        else if (sh === 'email') window.location.href = 'mailto:?subject=' + encodeURIComponent(document.title) + '&body=' + encodeURIComponent(location.href);
+      }
+    });
+    document.addEventListener('click', function (e) { if (menu && !menu.hidden && !e.target.closest('.share-wrap')) closeMenu(); });
+    document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeMenu(); });
+  }
 })();

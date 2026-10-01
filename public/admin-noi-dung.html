@@ -45,6 +45,15 @@
   <h1>Quản trị nội dung</h1>
   <p class="sub">Sửa các file .txt của bài viết. Mỗi lần lưu, web tự deploy lại sau khoảng 1–2 phút.</p>
 
+  <section id="v-load" class="ad-box"><span id="load-msg">Đang tải trang quản trị…</span></section>
+
+  <section id="v-cfg" class="ad-box" hidden>
+    <p>Chưa lấy được cấu hình Firebase của web. Dán đoạn cấu hình web (firebaseConfig) vào ô dưới đây. Cách lấy: Firebase console → ⚙ Project settings → General → Your apps → ứng dụng Web (nếu chưa có, bấm biểu tượng &lt;/&gt; để thêm) → mục SDK setup and configuration → chọn "Config" → sao chép đoạn <code>{ apiKey: "...", authDomain: "...", ... }</code>.</p>
+    <textarea id="cfg-in" class="ad-text" style="min-height:150px;margin-top:12px" placeholder='{ apiKey: "AIza...", authDomain: "layphatvn.firebaseapp.com", projectId: "layphatvn", ... }'></textarea>
+    <p style="margin-top:12px"><button id="cfg-ok" class="ad-btn primary" type="button">Lưu cấu hình và tiếp tục</button></p>
+    <div id="cfg-msg" class="ad-msg err"></div>
+  </section>
+
   <section id="v-login" class="ad-box" hidden>
     <p style="margin-bottom:14px">Đăng nhập bằng tài khoản Google của quản trị viên.</p>
     <button id="btn-login" class="ad-btn primary" type="button">Đăng nhập với Google</button>
@@ -111,7 +120,7 @@ const TEMPLATES = {
   'mon-chay': 'Loại: mon-chay\nTiêu đề: \nNgày: {today}\nNguồn: Sưu tầm\nTóm tắt: \nHiển thị: Có\n---\n## Nguyên liệu\n\n- 200g đậu hũ\n\n## Cách làm\n\n1. Bước một.\n'
 };
 const $ = id => document.getElementById(id);
-const show = id => { for (const v of ['v-login','v-deny','v-token','v-app']) $(v).hidden = v !== id; };
+const show = id => { for (const v of ['v-load','v-cfg','v-login','v-deny','v-token','v-app']) $(v).hidden = v !== id; };
 
 let token = '', cur = null, dirty = false, files = [];
 
@@ -221,10 +230,33 @@ async function save() {
 }
 
 // ---------- Firebase ----------
+function fail(e) { show('v-load'); $('load-msg').innerHTML = ''; const d = document.createElement('div'); d.style.color = '#e59ab0'; d.textContent = 'Lỗi tải trang quản trị: ' + (e && (e.code || e.message) || e); $('load-msg').appendChild(d); console.error(e); }
+window.addEventListener('unhandledrejection', ev => fail(ev.reason));
+window.addEventListener('error', ev => fail(ev.error || ev.message));
+
+function parseCfg(txt) {
+  const cfg = {};
+  for (const m of txt.matchAll(/["']?(apiKey|authDomain|projectId|storageBucket|messagingSenderId|appId|measurementId)["']?\s*:\s*["']([^"']+)["']/g)) cfg[m[1]] = m[2];
+  return cfg;
+}
+
+async function getConfig() {
+  try { const c = JSON.parse(localStorage.getItem('lp_fb_cfg') || 'null'); if (c && c.apiKey) return c; } catch (_) {}
+  try { const r = await fetch('/__/firebase/init.json'); if (r.ok) { const c = await r.json(); if (c && c.apiKey) return c; } } catch (_) {}
+  return null;
+}
+
 async function boot() {
-  let initCfg;
-  try { initCfg = await (await fetch('/__/firebase/init.json')).json(); }
-  catch (e) { show('v-login'); $('login-msg').textContent = 'Không đọc được cấu hình Firebase. Trang này chỉ chạy trên https://layphatvn.web.app.'; return; }
+  const initCfg = await getConfig();
+  if (!initCfg) {
+    show('v-cfg');
+    $('cfg-ok').onclick = () => {
+      const c = parseCfg($('cfg-in').value);
+      if (!c.apiKey || !c.projectId) { $('cfg-msg').textContent = 'Không đọc được apiKey/projectId. Hãy dán đủ đoạn cấu hình.'; return; }
+      localStorage.setItem('lp_fb_cfg', JSON.stringify(c)); location.reload();
+    };
+    return;
+  }
   const V = '10.14.1';
   const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
   const A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');
@@ -265,7 +297,7 @@ $('txt').oninput = () => { dirty = true; };
 $('new-type').onchange = e => { if (!dirty || confirm('Đổi loại sẽ thay nội dung mẫu. Tiếp tục?')) { $('txt').value = TEMPLATES[e.target.value].replace('{today}', new Date().toISOString().slice(0, 10)); dirty = false; } else { /* giữ nguyên */ } };
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !$('v-app').hidden && !$('edit').hidden) { e.preventDefault(); save(); } });
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
-boot();
+boot().catch(fail);
 </script>
 </body>
 </html>

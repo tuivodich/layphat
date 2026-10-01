@@ -30,6 +30,20 @@
     requestAnimationFrame(tick);
   }
 
+  // Câu trích dẫn ngẫu nhiên (dữ liệu từ content/quote.txt, nhúng sẵn trong trang)
+  var qBox = document.getElementById('quote'), qData = document.getElementById('quote-data');
+  if (qBox && qData) {
+    try {
+      var qs = JSON.parse(qData.textContent);
+      if (qs.length > 1) {
+        var q = qs[Math.floor(Math.random() * qs.length)];
+        var bq = qBox.querySelector('blockquote'), cap = qBox.querySelector('figcaption');
+        bq.textContent = q.text;
+        if (q.author) { cap.textContent = '— ' + q.author; cap.hidden = false; } else { cap.hidden = true; }
+      }
+    } catch (e) { /* giữ câu mặc định */ }
+  }
+
   // Năm hiện tại ở chân trang
   var y = new Date().getFullYear();
   document.querySelectorAll('.yr').forEach(function (el) { el.textContent = y; });

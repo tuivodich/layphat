@@ -44,3 +44,18 @@ NỘI DUNG (sau dòng ---)
 
 Nếu file sai mẫu, web vẫn chạy bình thường: file đó bị bỏ qua và lý do hiện ở tab "Actions" của GitHub (mục Annotations).
 Các file có tên bắt đầu bằng _ (như _MAU-...) hoặc huongdan không bao giờ được đăng.
+
+ẢNH BÀI VIẾT VÀ ẢNH CHIA SẺ FACEBOOK
+  - "ten-anh.jpg" là ảnh hiện TRONG bài viết (web tự thu nhỏ còn tối đa 900px chiều rộng).
+  - "ten-anh-og.jpg" là ảnh hiện khi dán link bài lên Facebook/Zalo (khung xem trước, tỉ lệ ngang 1200x630).
+    Không làm cũng được: web tự cắt giữa ảnh chính thành 1200x630. Chỉ làm khi cắt tự động bị mất phần quan trọng.
+
+TÊN NGẮN vs TIÊU ĐỀ
+  - "Tiêu đề": tiêu đề đầy đủ, hiện lớn đầu bài viết (có thể dài, có biểu tượng).
+  - "Tên ngắn": tên gọn hiện trên thẻ, trên thanh breadcrumb và tab trình duyệt. Bỏ trống thì dùng Tiêu đề.
+
+CÂU TRÍCH DẪN NGẪU NHIÊN Ở TRANG CHỦ (file content/quote.txt)
+  Mỗi câu một mục, kết thúc bằng <hr>:   Nội dung câu trích dẫn - Tác giả <hr>
+  Nếu câu có nhiều dấu "-" thì dấu "-" CUỐI CÙNG tách nội dung và tác giả
+  (tác giả có gạch nối như Jean-Paul vẫn đúng nếu trước và sau dấu "-" tách có khoảng trắng).
+  Mỗi lần mở trang chủ sẽ hiện ngẫu nhiên một câu. Sửa file rồi Commit là web tự cập nhật.

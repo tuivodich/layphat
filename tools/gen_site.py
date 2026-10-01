@@ -1,5 +1,6 @@
 import os, re, html, sys, shutil, unicodedata, datetime
 import os as _os
+import json
 OUT = _os.path.join(_os.path.dirname(_os.path.abspath(__file__)), "..", "public")  # chạy: python3 tools/gen_site.py
 
 NAV = [
@@ -239,7 +240,7 @@ def load_posts():
     for dp, _dn, fns in _os.walk(CONTENT):
         for fn in sorted(fns):
             stem, ext = _os.path.splitext(fn)
-            if ext.lower() not in (".txt", ".md") or stem.startswith("_") or fold(stem).startswith("huongdan"): continue
+            if ext.lower() not in (".txt", ".md") or stem.startswith("_") or fold(stem).startswith("huongdan") or fold(stem) == "quote": continue
             path = _os.path.join(dp, fn)
             raw = open(path, encoding="utf-8-sig").read().replace("\r\n", "\n").replace("\r", "\n")
             parts = re.split(r"^\s*---\s*$", raw, maxsplit=1, flags=re.M)
@@ -499,9 +500,39 @@ def index_page(posts):
   <section class="section-head"><h2>Các chuyên mục</h2><span>4 chuyên mục</span></section>
   <div class="grid four">
 {cards}  </div>
-  <figure class="quote-card"><blockquote>Nội dung trích dẫn sẽ được thay bằng lời dạy có nguồn rõ ràng.</blockquote><figcaption>— Ô mẫu</figcaption></figure>
-'''
+{quote_block()}'''
     return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.", "index.html", crumbs=[("Trang chủ", None)]) + body + FOOT
+
+def parse_quotes():
+    """Đọc content/quote.txt. Mỗi câu kết thúc bằng <hr>; dạng: Nội dung - Tác giả <hr>.
+    Nếu có nhiều dấu '-', dấu CUỐI CÙNG tách nội dung và tác giả (ưu tiên dấu có khoảng trắng hai bên)."""
+    path = _os.path.join(CONTENT, "quote.txt")
+    if not _os.path.exists(path): return []
+    raw = open(path, encoding="utf-8-sig").read()
+    out = []
+    for chunk in re.split(r"<hr\s*/?>", raw, flags=re.I):
+        lines = [l.strip() for l in chunk.splitlines() if l.strip() and not l.strip().startswith("#")]
+        t = " ".join(lines).strip()
+        if not t: continue
+        m = list(re.finditer(r"\s[-–—]\s", t)) or list(re.finditer(r"-", t))
+        if m:
+            k = m[-1]; text, author = t[:k.start()], t[k.end():]
+        else:
+            text, author = t, ""
+        text = text.strip().strip("“”\"").strip(); author = author.strip()
+        if not text:
+            warn(path, f"bỏ qua câu trích dẫn rỗng gần: {t[:40]}"); continue
+        out.append({"text": text, "author": author})
+    return out
+
+def quote_block():
+    qs = parse_quotes()
+    if not qs: return ""
+    q = qs[0]
+    cap = f'<figcaption>— {html.escape(q["author"])}</figcaption>' if q["author"] else '<figcaption hidden></figcaption>'
+    data = json.dumps(qs, ensure_ascii=False).replace("<", "\\u003c")
+    return (f'  <figure class="quote-card" id="quote"><blockquote>{html.escape(q["text"])}</blockquote>{cap}</figure>\n'
+            f'  <script type="application/json" id="quote-data">{data}</script>\n')
 
 def write(name, content):
     open(_os.path.join(OUT, name), "w", encoding="utf-8").write(content)

@@ -452,6 +452,13 @@ def category_page(slug, name, ic, color, desc, posts):
     return head(name + " · Lạy Phật", desc, "bai-viet.html", crumbs=[("Trang chủ", "index.html"), ("Bài viết Phật giáo", "bai-viet.html"), (name, None)]) + body + FOOT
 
 def index_page(posts):
+    latest_rows = ""
+    for p in posts[:10]:
+        d = p["dt"]
+        latest_rows += (f'      <div class="latest-row"><a class="latest-title" href="{p["file"]}">{html.escape(p["title"])}</a>'
+                        f'<span class="latest-cat">{LABEL[p["type"]]}</span>'
+                        f'<time class="latest-date" datetime="{d.strftime("%Y-%m-%d")}">{d.day:02d}/{d.month:02d}/{d.year}</time></div>\n')
+    if not latest_rows: latest_rows = '      <p class="empty-note">Chưa có bài viết nào.</p>\n'
     counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
     cards = ""
     for k, s in SECTIONS.items():
@@ -485,6 +492,9 @@ def index_page(posts):
       </div>
       <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Miễn phí · Không cần đăng nhập</span></div>
     </form>
+    <div class="latest">
+      <h2 class="latest-h">Các bài viết</h2>
+{latest_rows}    </div>
     <figure class="quote-card"><blockquote>Nội dung trích dẫn sẽ được thay bằng lời dạy có nguồn rõ ràng.</blockquote><figcaption>— Ô mẫu</figcaption></figure>
   </section>
   <section class="section-head"><h2>Các chuyên mục</h2><span>4 chuyên mục</span></section>

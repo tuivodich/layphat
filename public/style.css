@@ -309,25 +309,39 @@ body{background:transparent;}
 @media (max-width:1000px){ .cat-grid{grid-template-columns:repeat(2,1fr);} }
 @media (max-width:520px){ .cat-grid{grid-template-columns:1fr;} .cat-zone{padding:4px 14px 20px;} }
 
-/* Bánh xe nhỏ ở logo: quay thuận chiều kim đồng hồ, cùng tốc độ vòng ngoài của bánh xe lớn (6°/giây) */
-.brand-mark.spin{animation:brand-spin 60s linear infinite;}
+/* Bánh xe nhỏ ở logo: quay thuận chiều kim đồng hồ, 24°/giây (15 giây một vòng) */
+.brand-mark.spin{animation:brand-spin 15s linear infinite;}
 @keyframes brand-spin{to{transform:rotate(360deg);}}
-@media (prefers-reduced-motion:reduce){.brand-mark.spin{animation-duration:120s;}}
+@media (prefers-reduced-motion:reduce){.brand-mark.spin{animation-duration:30s;}}
 
 /* Ô trích dẫn trang chủ */
-.quote-card{position:relative; margin:40px 0 0; padding:78px 100px 66px; border-radius:26px; overflow:hidden; text-align:center;
+.quote-card{position:relative; margin:40px 0 0; padding:50px 76px 42px; border-radius:26px; overflow:hidden; text-align:center;
   border:1px solid color-mix(in srgb, var(--gold) 30%, transparent);
   background:radial-gradient(120% 140% at 50% 0%, color-mix(in srgb, var(--gold) 14%, var(--bg)), color-mix(in srgb, var(--c3) 8%, var(--bg)) 75%);
   box-shadow:0 18px 40px rgba(0,0,0,.28), inset 0 0 0 6px color-mix(in srgb, var(--bg) 70%, transparent), inset 0 0 0 7px color-mix(in srgb, var(--gold) 18%, transparent);}
-.quote-card::before{content:""; position:absolute; left:50%; top:50%; width:440px; height:440px; transform:translate(-50%,-50%); background:url(images/bg-mandala.svg) center/contain no-repeat; opacity:.09; pointer-events:none;}
-.quote-card::after{content:"”"; position:absolute; right:34px; bottom:-62px; font:600 190px/1 'Cormorant Garamond',serif; color:var(--gold); opacity:.35; pointer-events:none;}
-.quote-card blockquote{position:static; margin:0; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:clamp(25px,3.6vw,38px); line-height:1.4; color:var(--gold-soft); text-wrap:balance;}
-.quote-card blockquote::before{content:"“"; position:absolute; left:34px; top:6px; font:600 190px/1 'Cormorant Garamond',serif; font-style:normal; color:var(--gold); opacity:.35;}
-.quote-card figcaption{position:relative; z-index:1; margin-top:20px; font-size:13px; letter-spacing:.5px; color:var(--muted);}
+.quote-card::before{content:""; position:absolute; left:50%; top:50%; width:320px; height:320px; transform:translate(-50%,-50%); background:url(images/bg-mandala.svg) center/contain no-repeat; opacity:.09; pointer-events:none;}
+.quote-card::after{content:"”"; position:absolute; right:26px; bottom:-34px; font:600 96px/1 'Cormorant Garamond',serif; color:var(--gold); opacity:.35; pointer-events:none;}
+.quote-card blockquote{position:static; margin:0; font-family:'Cormorant Garamond',serif; font-style:italic; font-weight:500; font-size:clamp(20px,2.4vw,26px); line-height:1.4; color:var(--gold-soft); text-wrap:balance;}
+.quote-card blockquote::before{content:"“"; position:absolute; left:26px; top:4px; font:600 96px/1 'Cormorant Garamond',serif; font-style:normal; color:var(--gold); opacity:.35;}
+.quote-card figcaption{position:relative; z-index:1; margin-top:16px; font-size:13px; letter-spacing:.5px; color:var(--muted);}
 .quote-card figcaption::before{content:""; display:block; width:56px; height:1px; margin:0 auto 14px; background:linear-gradient(90deg,transparent,var(--gold),transparent);}
 @media (max-width:640px){
-  .quote-card{padding:84px 24px 64px;}
-  .quote-card::after,.quote-card blockquote::before{font-size:130px;}
-  .quote-card blockquote::before{left:14px; top:8px;}
-  .quote-card::after{right:14px; bottom:-46px;}
+  .quote-card{padding:56px 22px 44px;}
+  .quote-card::after,.quote-card blockquote::before{font-size:70px;}
+  .quote-card blockquote::before{left:12px; top:6px;}
+  .quote-card::after{right:12px; bottom:-26px;}
+}
+
+/* Danh sách bài viết mới nhất ở trang chủ */
+.latest{margin-top:40px;}
+.latest-h{font-size:30px; font-weight:600; color:var(--fg); margin-bottom:14px;}
+.latest-row{display:grid; grid-template-columns:minmax(0,1fr) auto auto; gap:6px 22px; align-items:baseline; padding:13px 4px; border-bottom:1px solid var(--line);}
+.latest-row:first-of-type{border-top:1px solid var(--line);}
+.latest-title{font-size:15.5px; font-weight:500; color:var(--fg); overflow-wrap:anywhere;}
+.latest-title:hover{color:var(--gold-soft); text-decoration:underline; text-underline-offset:3px;}
+.latest-cat{font-size:12.5px; color:var(--gold-soft); white-space:nowrap;}
+.latest-date{font-size:12.5px; color:var(--muted); white-space:nowrap; min-width:78px; text-align:right;}
+@media (max-width:640px){
+  .latest-row{grid-template-columns:1fr auto;}
+  .latest-title{grid-column:1 / -1;}
 }

@@ -39,17 +39,25 @@ function maskWords(text, words) {
 const fmtDate = ts => { try { const d = ts.toDate(); return d.toLocaleDateString('vi-VN') + ' ' + d.toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' }); } catch (_) { return ''; } };
 const safePhoto = u => (typeof u === 'string' && u.startsWith('https://')) ? u : '';
 
-function card(item, words) {
+const LOTUS = '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M32 4c6 6 8 14 0 28-8-14-6-22 0-28z"/><path d="M32 32C22 30 14 22 12 12c10 0 18 6 20 20z"/><path d="M32 32c10-2 18-10 20-20-10 0-18 6-20 20z"/></svg>';
+
+function card(item, words, rxKey) {
   const c = document.createElement('article'); c.className = 'pr-card';
-  const p = document.createElement('p'); p.className = 'pr-text'; p.textContent = maskWords(item.text || '', words); c.appendChild(p);
-  const f = document.createElement('div'); f.className = 'pr-by';
+  const by = document.createElement('div'); by.className = 'pr-by';
+  const av = document.createElement('span'); av.className = 'pr-av';
+  const who = document.createElement('div'); who.className = 'pr-who2';
+  const n = document.createElement('span'); n.className = 'pr-name';
   if (!item.anonymous && item.name) {
     const ph = safePhoto(item.photo);
-    if (ph) { const im = document.createElement('img'); im.src = ph; im.alt = ''; im.width = 28; im.height = 28; im.referrerPolicy = 'no-referrer'; f.appendChild(im); }
-    const n = document.createElement('span'); n.textContent = item.name; f.appendChild(n);
-  } else { const n = document.createElement('span'); n.className = 'pr-anon'; n.textContent = 'Ẩn danh'; f.appendChild(n); }
-  const t = document.createElement('time'); t.textContent = fmtDate(item.createdAt); f.appendChild(t);
-  c.appendChild(f); return c;
+    if (ph) { const im = document.createElement('img'); im.src = ph; im.alt = ''; im.width = 40; im.height = 40; im.loading = 'lazy'; im.referrerPolicy = 'no-referrer'; av.appendChild(im); }
+    else av.textContent = (item.name.trim()[0] || '🙏').toUpperCase();
+    n.textContent = item.name;
+  } else { av.innerHTML = LOTUS; av.classList.add('anon-av'); n.textContent = 'Một người ẩn danh'; n.classList.add('pr-anon'); }
+  const t = document.createElement('time'); t.textContent = fmtDate(item.createdAt);
+  who.append(n, t); by.append(av, who); c.appendChild(by);
+  const p = document.createElement('p'); p.className = 'pr-text'; p.textContent = maskWords(item.text || '', words); c.appendChild(p);
+  if (rxKey) { const rx = document.createElement('div'); rx.className = 'rx rx-mini'; rx.dataset.rx = rxKey; c.appendChild(rx); }
+  return c;
 }
 
 async function loadPublic() {
@@ -59,7 +67,9 @@ async function loadPublic() {
     const snap = await F.getDocs(q);
     box.textContent = '';
     if (snap.empty) { box.textContent = 'Chưa có lời cầu nguyện nào được đăng. Hãy là người đầu tiên.'; return; }
-    snap.forEach(d => box.appendChild(card(d.data(), settings && settings.badWords)));
+    snap.forEach(d => box.appendChild(card(d.data(), settings && settings.badWords, 'loi-' + d.id)));
+    // reactions dùng chung (reactions.js): mỗi lời cầu nguyện có bộ đếm riêng, khóa "loi-<id>"
+    await import('./reactions.js'); window.LayPhatReactions.scan();
   } catch (e) { box.textContent = 'Không tải được danh sách lời cầu nguyện.'; console.error(e); }
 }
 

@@ -160,7 +160,7 @@ def build_wheel():
     return f'<svg viewBox="0 0 400 400" fill="none" role="img" aria-label="Bánh xe Pháp luân"><g id="w1">{l1}</g><g id="w2">{l2}</g><g id="w3">{l3}</g>{hub}</svg>'
 WHEEL = build_wheel()
 # Các loại nội dung có bộ reactions (thêm "kinh-ke", "cau-nguyen", "mon-chay" để bật cho loại đó)
-REACTION_TYPES = {"bai-viet"}
+REACTION_TYPES = {"bai-viet", "kinh-ke", "cau-nguyen", "mon-chay"}
 
 def reactions_block(key):
     """Khối reactions dùng chung; script reactions.js tự nhận mọi phần tử có data-rx."""
@@ -603,8 +603,12 @@ def prayer_page():
     <div id="pr-mine"></div>
   </section>
 
-  <section>
-    <div class="section-head tight"><h2>Lời cầu nguyện</h2><span>mới nhất</span></div>
+  <section class="pr-wall">
+    <div class="pr-wall-head">
+      <svg class="pr-lotus" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M32 4c6 6 8 14 0 28-8-14-6-22 0-28z"/><path d="M32 32C22 30 14 22 12 12c10 0 18 6 20 20z"/><path d="M32 32c10-2 18-10 20-20-10 0-18 6-20 20z"/><path d="M32 32C18 34 8 28 2 20c10-2 22 0 30 12z"/><path d="M32 32c14 2 24-4 30-12-10-2-22 0-30 12z"/><path d="M14 37h36" stroke-linecap="round"/></svg>
+      <h2>Bảng cầu nguyện</h2>
+      <p>Những lời nguyện lành từ cộng đồng. Xin cùng hồi hướng công đức, nguyện chúng sinh được an lạc.</p>
+    </div>
     <div id="pr-list" class="pr-list">Đang tải…</div>
   </section>
 '''

@@ -43,5 +43,6 @@ LƯU Ý
 ==== REACTIONS (Thích / Thả tim / Cười / Không thích) ====
 - Dán lại firestore.rules mới (có thêm phần "reactions") > Publish. Không cần cài đặt gì khác.
 - Thành viên phải đăng nhập Google để chọn; mỗi người 1 lựa chọn/bài, bấm loại khác để đổi, bấm lại để bỏ.
-- Bật cho loại nội dung khác: trong tools/gen_site.py sửa REACTION_TYPES = {"bai-viet", "kinh-ke", ...}.
+- Đã bật cho: bài viết, bài kinh - kệ, lời chúc - cầu nguyện, món chay và từng lời cầu nguyện đã được duyệt (khóa "loi-<id>").
+  Muốn tắt một loại: bỏ nó khỏi REACTION_TYPES trong tools/gen_site.py rồi chạy lại.
 - Tự đặt ở chỗ bất kỳ: <section class="rx" data-rx="khoa-duy-nhat"></section> + <script type="module" src="reactions.js"></script>.

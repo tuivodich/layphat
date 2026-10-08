@@ -1,0 +1,24 @@
+Loại: chua-tinh-xa
+Tiêu đề: Chùa ... (địa danh)
+Tên ngắn: Chùa ...
+Ngày: 2026-10-05
+Ảnh: ten-anh.jpg
+Mô tả ảnh: Mô tả ngắn cho ảnh
+Nguồn: Sưu tầm / tự chụp
+Tóm tắt: Một hai câu giới thiệu vẻ đẹp, không khí thanh tịnh của ngôi chùa.
+Hiển thị: Có
+---
+## Giới thiệu
+
+Vài nét về lịch sử, kiến trúc và không gian của ngôi chùa.
+
+## Địa chỉ và giờ mở cửa
+
+- Địa chỉ: số nhà, đường, phường/xã, tỉnh/thành
+- Giờ mở cửa: 5:00 - 20:00
+- Các ngày lễ lớn: Rằm, mùng một, Phật đản, Vu Lan
+
+## Lưu ý khi đến chùa
+
+- Mặc trang phục kín đáo, lịch sự
+- Giữ yên lặng, thanh tịnh nơi chánh điện

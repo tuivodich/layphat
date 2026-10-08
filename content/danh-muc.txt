@@ -1,0 +1,20 @@
+# DANH SÁCH DANH MỤC CỦA TRANG "BÀI VIẾT PHẬT GIÁO"
+# =================================================
+# Mỗi dòng là một danh mục, theo mẫu (ngăn cách bằng dấu |):
+#   mã | Tên hiển thị | biểu tượng | màu | mô tả ngắn | tên cũ (không bắt buộc)
+#
+# * Thứ tự các dòng = thứ tự hiển thị (3 danh mục một hàng). Muốn đổi vị trí, chỉ cần cắt/dán dòng.
+# * "mã" chỉ gồm chữ không dấu, số và dấu gạch ngang. Mã là địa chỉ trang (danh-muc-<mã>.html), nên
+#   ĐỪNG đổi mã nếu chỉ muốn đổi tên hiển thị.
+# * ĐỔI TÊN: chỉ sửa cột "Tên hiển thị". Các bài cũ ghi "Danh mục: <tên cũ>" vẫn nhận đúng nếu bạn
+#   ghi tên cũ vào cột cuối (cách nhau bằng dấu ;), hoặc sửa lại dòng "Danh mục:" trong các bài đó.
+# * Bài viết có thể ghi "Danh mục:" bằng tên hiển thị hoặc bằng mã.
+# * Biểu tượng: enso | lotus | mandala | stupa | boat | vajra | wheel
+# * Màu: var(--c1) | var(--c2) | var(--c3) | var(--c4)
+# * Dòng bắt đầu bằng # là ghi chú, bị bỏ qua.
+nguyen-thuy | Phật giáo Nguyên Thủy | stupa | var(--c4) | Truyền thống lưu giữ lời dạy sớm nhất của Đức Phật, gắn với Tam tạng Pali.
+dai-thua | Phật giáo Đại Thừa | boat | var(--c2) | Truyền thống nhấn mạnh con đường Bồ Tát, hạnh từ bi và trí tuệ Bát nhã.
+phat-giao-chung | Phật giáo chung | wheel | var(--c1) | Những nội dung chung của Phật giáo: giáo lý nền tảng, lịch sử và đời sống tu tập, không riêng một truyền thống nào. | Kim Cương Thừa
+thien-tong | Thiền Tông | enso | var(--c1) | Truyền thống nhấn mạnh tu tập thiền định, trực nhận bản tâm.
+tinh-do-tong | Tịnh Độ Tông | lotus | var(--c3) | Pháp môn niệm danh hiệu Đức Phật A Di Đà, nguyện vãng sanh cõi Tây phương Cực Lạc.
+mat-tong | Mật Tông | mandala | var(--c2) | Truyền thống tu tập với thần chú, thủ ấn và quán tưởng.

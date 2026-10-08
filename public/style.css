@@ -431,3 +431,8 @@ body{background:transparent;}
 .rx-login{background:none;border:0;padding:0;color:var(--gold,#e6c875);font:inherit;text-decoration:underline;cursor:pointer}
 @media (max-width:520px){.rx-btn{padding:8px 12px;font-size:14px}.rx-lb{display:none}.rx-btn.on .rx-lb{display:inline}}
 @media print{.rx{display:none}}
+.pr-jump{margin-top:16px;}
+.pr-jump a{display:inline-block; padding:8px 18px; border-radius:999px; border:1px solid var(--line); font-size:14px; color:var(--gold-soft);}
+.pr-jump a:hover{border-color:var(--gold);}
+.pr-wall{margin-top:30px;} .pr-box{margin-top:44px;}
+.pr-box{scroll-margin-top:20px;}

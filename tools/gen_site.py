@@ -7,7 +7,7 @@ NAV = [
   ("index.html","Trang chủ"),
   ("bai-viet.html","Bài viết Phật giáo"),
   ("kinh-ke.html","Bài kinh - kệ"),
-  ("cau-nguyen.html","Lời chúc - Cầu nguyện"),
+  ("chua-tinh-xa.html","Chùa, Tịnh xá"),
   ("mon-chay.html","Món chay"),
   ("loi-cau-nguyen.html","Gửi lời cầu nguyện"),
 ]
@@ -15,7 +15,8 @@ NAV = [
 ICON = {
  "bai-viet":'<path d="M12 2.5c.6 3.2 5.6 4.6 6.6 9.2a6.6 6.6 0 01-13.2 0c1-4.6 6-6 6.6-9.2z"/><path d="M12 7v13.5"/><path d="M12 12l3-2M12 15l-3-2"/>',
  "kinh-ke":'<path d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/><path d="M9 9h6M9 12.5h6M9 16h3"/>',
- "cau-nguyen":'<path d="M12 4.5c2.2 2.6 2.7 5.4 0 9.5-2.7-4.1-2.2-6.9 0-9.5z"/><path d="M12 14c-3.2-.4-6.8-2.6-7.4-6.4 3.2 0 6.2 1.6 7.4 4.4"/><path d="M12 14c3.2-.4 6.8-2.6 7.4-6.4-3.2 0-6.2 1.6-7.4 4.4"/><path d="M5 17.5c4.2 3 9.8 3 14 0"/>',
+ "chua-tinh-xa":'<path d="M3 9.5l9-5.5 9 5.5"/><path d="M5.5 9.5h13"/><path d="M6.5 9.5V18M17.5 9.5V18M3.5 18h17"/><path d="M10 18v-3.5a2 2 0 014 0V18"/>',
+ "wheel":'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.6"/><path d="M12 3.5v6M12 14.5v6M3.5 12h6M14.5 12h6M6 6l4.2 4.2M13.8 13.8L18 18M18 6l-4.2 4.2M10.2 13.8L6 18"/>',
  "mon-chay":'<path d="M4 12h16a8 8 0 01-16 0z"/><path d="M12 3.5c2.4 1 3.2 3.4 2 5.6-2.4-1-3.2-3.4-2-5.6z"/><path d="M8.5 5.5c-.8 1-.8 2 0 3"/>',
  # biểu tượng danh mục
  "enso":'<path d="M18.2 6.1A8.2 8.2 0 1 0 20.2 12.6"/><path d="M19.4 4.6l-1.4 1.8"/>',
@@ -46,14 +47,14 @@ SECTIONS = {
           ("Kinh Pháp Cú","Những bài kệ ngắn về đạo đức và tu tập."),
           ("Phẩm Phổ Môn","Phẩm nói về Bồ Tát Quán Thế Âm."),
           ("Kinh Vu Lan Báo Hiếu","Bài kinh về lòng hiếu thảo với cha mẹ.")]),
- "cau-nguyen": dict(file="cau-nguyen.html", title="Lời chúc - Cầu nguyện", accent="var(--c3)", tag="Cầu nguyện",
-   lede="Những lời chúc và bài văn khấn, cầu nguyện cho các dịp lễ, giúp bạn gửi lời thăm hỏi trang nghiêm, ấm áp.",
-   items=[("Lời chúc mừng Phật đản","Gửi đến người thân, bạn bè nhân ngày Đản sanh."),
-          ("Lời chúc mùa Vu Lan","Lời tri ân cha mẹ và báo hiếu."),
-          ("Lời chúc đầu năm","Chúc an lạc, bình an cho cả gia đình."),
-          ("Văn khấn ngày rằm","Bài khấn đơn giản khi lễ Phật tại nhà."),
-          ("Lời nguyện hồi hướng","Hồi hướng công đức đến muôn loài."),
-          ("Lời chúc thăm bệnh","Lời động viên an ủi người đang ốm đau.")]),
+ "chua-tinh-xa": dict(file="chua-tinh-xa.html", title="Chùa, Tịnh xá", accent="var(--c3)", tag="Chùa - Tịnh xá",
+   lede="Giới thiệu những ngôi chùa, tịnh xá đẹp, trang nghiêm và thanh tịnh để bạn tìm về chiêm bái, lễ Phật và tu tập.",
+   items=[("Chùa Một Cột","Ngôi chùa có kiến trúc độc đáo giữa lòng Hà Nội."),
+          ("Chùa Thiên Mụ","Ngôi chùa cổ bên dòng sông Hương, Huế."),
+          ("Chùa Bái Đính","Quần thể chùa rộng lớn, thanh tịnh ở Ninh Bình."),
+          ("Chùa Vĩnh Nghiêm","Ngôi chùa quen thuộc của người Phật tử Sài Gòn."),
+          ("Tịnh xá - nơi tu tập thanh tịnh","Tìm hiểu nét riêng của tịnh xá trong truyền thống Khất sĩ."),
+          ("Một ngôi chùa làng","Mái chùa quen thuộc, nơi gìn giữ nếp sống an lành của xóm làng.")]),
  "mon-chay": dict(file="mon-chay.html", title="Món chay", accent="var(--c4)", tag="Món chay",
    lede="Công thức món chay thanh đạm, dễ nấu, phù hợp cho ngày rằm, mùng một và bữa cơm gia đình.",
    items=[("Tôm đậu hũ kho cà chua","Món kho đậm đà với tôm chay, đậu hũ chiên và cà chua, nấu trong khoảng 10 phút.","mon-chay-tom-dau-hu-kho-ca-chua.html"),
@@ -112,7 +113,7 @@ def head(title, desc, active, extra='', crumbs=None):
 FOOT = '''
   <footer>
     <div class="foot-links">
-      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="cau-nguyen.html">Lời chúc - Cầu nguyện</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
+      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
     </div>
     <div class="foot-bottom">
       <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg><span class="fb-sep">/</span>Lạy Phật</a>. Nếu sao chép hay trích dẫn nội dung của trang xin vui lòng ghi rõ nguồn và chỉ sử dụng với mục đích phi thương mại.</span>
@@ -127,22 +128,40 @@ FOOT = '''
 
 
 SAMPLES = {k: [it for it in s["items"] if len(it) == 2] for k, s in SECTIONS.items()}
-LABEL = {"bai-viet": "Bài viết Phật giáo", "kinh-ke": "Bài kinh - kệ", "cau-nguyen": "Lời chúc - Cầu nguyện", "mon-chay": "Món chay"}
-PREFIX = {"bai-viet": "bai-viet-", "kinh-ke": "kinh-", "cau-nguyen": "cau-nguyen-", "mon-chay": "mon-chay-"}
-PH_ICON = {"bai-viet": "bai-viet", "kinh-ke": "cau-nguyen", "cau-nguyen": "cau-nguyen", "mon-chay": "mon-chay"}
+LABEL = {"bai-viet": "Bài viết Phật giáo", "kinh-ke": "Bài kinh - kệ", "chua-tinh-xa": "Chùa, Tịnh xá", "mon-chay": "Món chay"}
+PREFIX = {"bai-viet": "bai-viet-", "kinh-ke": "kinh-", "chua-tinh-xa": "chua-tinh-xa-", "mon-chay": "mon-chay-"}
+PH_ICON = {"bai-viet": "bai-viet", "kinh-ke": "lotus", "chua-tinh-xa": "chua-tinh-xa", "mon-chay": "mon-chay"}
 SITE = "https://layphatvn.web.app"
 ROOT = _os.path.abspath(_os.path.join(OUT, ".."))
 CONTENT = _os.path.join(ROOT, "content")
 
-# Danh mục của trang "Bài viết Phật giáo": (slug, tên, biểu tượng, màu, mô tả ngắn)
-CATS = [
-  ("thien-tong", "Thiền Tông", "enso", "var(--c1)", "Truyền thống nhấn mạnh tu tập thiền định, trực nhận bản tâm."),
-  ("tinh-do-tong", "Tịnh Độ Tông", "lotus", "var(--c3)", "Pháp môn niệm danh hiệu Đức Phật A Di Đà, nguyện vãng sanh cõi Tây phương Cực Lạc."),
-  ("mat-tong", "Mật Tông", "mandala", "var(--c2)", "Truyền thống tu tập với thần chú, thủ ấn và quán tưởng."),
-  ("nguyen-thuy", "Phật giáo Nguyên Thủy", "stupa", "var(--c4)", "Truyền thống lưu giữ lời dạy sớm nhất của Đức Phật, gắn với Tam tạng Pali."),
-  ("dai-thua", "Phật giáo Đại Thừa", "boat", "var(--c2)", "Truyền thống nhấn mạnh con đường Bồ Tát, hạnh từ bi và trí tuệ Bát nhã."),
-  ("kim-cuong-thua", "Kim Cương Thừa", "vajra", "var(--c1)", "Truyền thống Mật thừa, phổ biến ở Tây Tạng và vùng Himalaya."),
+# Danh mục của trang "Bài viết Phật giáo": đọc từ file content/danh-muc.txt (xem hướng dẫn trong file đó).
+# Mỗi dòng: mã | Tên hiển thị | biểu tượng | màu | mô tả | tên cũ 1; tên cũ 2 (không bắt buộc). Thứ tự dòng = thứ tự hiển thị.
+DEFAULT_CATS = [
+  ("nguyen-thuy", "Phật giáo Nguyên Thủy", "stupa", "var(--c4)", "Truyền thống lưu giữ lời dạy sớm nhất của Đức Phật, gắn với Tam tạng Pali.", []),
+  ("dai-thua", "Phật giáo Đại Thừa", "boat", "var(--c2)", "Truyền thống nhấn mạnh con đường Bồ Tát, hạnh từ bi và trí tuệ Bát nhã.", []),
+  ("phat-giao-chung", "Phật giáo chung", "wheel", "var(--c1)", "Những nội dung chung của Phật giáo: giáo lý nền tảng, lịch sử và đời sống tu tập, không riêng một truyền thống nào.", ["Kim Cương Thừa"]),
+  ("thien-tong", "Thiền Tông", "enso", "var(--c1)", "Truyền thống nhấn mạnh tu tập thiền định, trực nhận bản tâm.", []),
+  ("tinh-do-tong", "Tịnh Độ Tông", "lotus", "var(--c3)", "Pháp môn niệm danh hiệu Đức Phật A Di Đà, nguyện vãng sanh cõi Tây phương Cực Lạc.", []),
+  ("mat-tong", "Mật Tông", "mandala", "var(--c2)", "Truyền thống tu tập với thần chú, thủ ấn và quán tưởng.", []),
 ]
+
+def load_cats():
+    path = _os.path.join(CONTENT, "danh-muc.txt")
+    if not _os.path.isfile(path): return DEFAULT_CATS
+    cats = []
+    for n, line in enumerate(open(path, encoding="utf-8-sig").read().replace("\r\n", "\n").split("\n"), 1):
+        line = line.strip()
+        if not line or line.startswith("#"): continue
+        f = [x.strip() for x in line.split("|")]
+        slug = slugify(f[0]) if f else ""
+        if len(f) < 5 or not slug or not f[1] or f[2] not in ICON or not f[3] or not f[4]:
+            warn(path, f"dòng {n} sai định dạng (cần: mã | Tên | biểu tượng | màu | mô tả). Bỏ qua dòng này."); continue
+        if any(c[0] == slug for c in cats): warn(path, f"dòng {n}: trùng mã '{slug}'. Bỏ qua dòng này."); continue
+        olds = [x.strip() for x in f[5].split(";") if x.strip()] if len(f) > 5 else []
+        cats.append((slug, f[1], f[2], f[3], f[4], olds))
+    if not cats: warn(path, "không có danh mục hợp lệ, dùng danh sách mặc định."); return DEFAULT_CATS
+    return cats
 
 import math
 def rot(k, inner, n=8):
@@ -159,8 +178,8 @@ def build_wheel():
     stars = '<circle cx="60" cy="60" r="1.6" fill="#fff" opacity=".45"/><circle cx="345" cy="52" r="1.4" fill="#fff" opacity=".4"/><circle cx="40" cy="340" r="1.4" fill="#fff" opacity=".4"/><circle cx="360" cy="350" r="1.8" fill="#fff" opacity=".45"/>'
     return f'<svg viewBox="0 0 400 400" fill="none" role="img" aria-label="Bánh xe Pháp luân"><g id="w1">{l1}</g><g id="w2">{l2}</g><g id="w3">{l3}</g>{hub}</svg>'
 WHEEL = build_wheel()
-# Các loại nội dung có bộ reactions (thêm "kinh-ke", "cau-nguyen", "mon-chay" để bật cho loại đó)
-REACTION_TYPES = {"bai-viet", "kinh-ke", "cau-nguyen", "mon-chay"}
+# Các loại nội dung có bộ reactions (bỏ tên loại khỏi danh sách để tắt)
+REACTION_TYPES = {"bai-viet", "kinh-ke", "chua-tinh-xa", "mon-chay"}
 
 def reactions_block(key):
     """Khối reactions dùng chung; script reactions.js tự nhận mọi phần tử có data-rx."""
@@ -212,13 +231,9 @@ def slugify(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 TYPE_MAP = {"baiviet": "bai-viet", "baivietphatgiao": "bai-viet", "kinhke": "kinh-ke", "baikinhke": "kinh-ke", "kinh": "kinh-ke",
-            "caunguyen": "cau-nguyen", "loichuc": "cau-nguyen", "loichuccaunguyen": "cau-nguyen", "monchay": "mon-chay"}
+            "chuatinhxa": "chua-tinh-xa", "chua": "chua-tinh-xa", "tinhxa": "chua-tinh-xa", "monchay": "mon-chay"}
 KEY_MAP = {"loai": "type", "danhmuc": "cat", "tieude": "title", "tenngan": "short", "ngay": "date", "anh": "image", "motaanh": "alt",
            "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related", "hienthi": "show"}
-CAT_BY_KEY = {}
-for _slug, _name, *_ in CATS:
-    for _k in {fold(_slug), fold(_name), fold(_name).replace("phatgiao", "")}:
-        CAT_BY_KEY[_k] = _slug
 
 HIDE_VALUES = {"khong", "no", "false", "0", "an", "off"}
 HIDDEN = []
@@ -227,6 +242,12 @@ def warn(path, msg):
     rel = _os.path.relpath(path, ROOT)
     WARNINGS.append(f"{rel}: {msg}")
     print(f"::warning file={rel}::{msg}")
+
+CATS = load_cats()
+CAT_BY_KEY = {}
+for _slug, _name, _ic, _col, _desc, _olds in CATS:
+    for _k in {fold(_slug), fold(_name), fold(_name).replace("phatgiao", "")} | {fold(o) for o in _olds}:
+        CAT_BY_KEY[_k] = _slug
 
 def parse_date(s):
     s = s.strip()
@@ -261,7 +282,7 @@ def load_posts():
     for dp, _dn, fns in _os.walk(CONTENT):
         for fn in sorted(fns):
             stem, ext = _os.path.splitext(fn)
-            if ext.lower() not in (".txt", ".md") or stem.startswith("_") or fold(stem).startswith("huongdan") or fold(stem) == "quote": continue
+            if ext.lower() not in (".txt", ".md") or stem.startswith("_") or fold(stem).startswith("huongdan") or fold(stem) in ("quote", "danhmuc"): continue
             path = _os.path.join(dp, fn)
             raw = open(path, encoding="utf-8-sig").read().replace("\r\n", "\n").replace("\r", "\n")
             parts = re.split(r"^\s*---\s*$", raw, maxsplit=1, flags=re.M)
@@ -275,7 +296,7 @@ def load_posts():
             if fold(meta.get("show", "co")) in HIDE_VALUES:
                 print(f"Ẩn (Hiển thị: Không): {_os.path.relpath(path, ROOT)}"); HIDDEN.append(path); continue
             ptype = TYPE_MAP.get(fold(meta.get("type", "")))
-            if not ptype: warn(path, "thiếu hoặc sai dòng 'Loại:' (bai-viet, kinh-ke, cau-nguyen hoặc mon-chay). Bỏ qua file này."); continue
+            if not ptype: warn(path, "thiếu hoặc sai dòng 'Loại:' (bai-viet, kinh-ke, chua-tinh-xa hoặc mon-chay). Bỏ qua file này."); continue
             if not meta.get("title"): warn(path, "thiếu dòng 'Tiêu đề:'. Bỏ qua file này."); continue
             dt, has_time = parse_date(meta.get("date", ""))
             if not dt: warn(path, "thiếu hoặc sai dòng 'Ngày:' (ví dụ 2026-10-05 hoặc 05/10/2026). Bỏ qua file này."); continue
@@ -287,7 +308,7 @@ def load_posts():
             cat = None
             if meta.get("cat"):
                 cat = CAT_BY_KEY.get(fold(meta["cat"]))
-                if not cat: warn(path, f"danh mục '{meta['cat']}' không có trong danh sách (Thiền Tông, Tịnh Độ Tông, Mật Tông, Phật giáo Nguyên Thủy, Phật giáo Đại Thừa, Kim Cương Thừa).")
+                if not cat: warn(path, f"danh mục '{meta['cat']}' không có trong danh sách ({', '.join(c[1] for c in CATS)}). Xem content/danh-muc.txt.")
             title = meta["title"]
             short = meta.get("short") or re.sub(r"^[^\w]+|[^\w)\]\"”]+$", "", title, flags=re.U).strip() or title
             rel_url, rel_text = None, None
@@ -375,7 +396,7 @@ def post_page(p):
     eyebrow = LABEL[t] + (" · " + next(c[1] for c in CATS if c[0] == p["cat"]) if p["cat"] else "")
     intro = ""
     if t == "mon-chay" and p["summary"]: intro = f'<p class="lede">{html.escape(p["summary"])}</p>'
-    elif t in ("kinh-ke", "cau-nguyen") and p["summary"]: intro = f'<p class="summary">{html.escape(p["summary"])}</p>'
+    elif t in ("kinh-ke", "chua-tinh-xa") and p["summary"]: intro = f'<p class="summary">{html.escape(p["summary"])}</p>'
     extra_end = ""
     if p["signoff"]: extra_end += f'<p class="signoff">{html.escape(p["signoff"])}</p>\n'
     if p["tags"]: extra_end += f'<p class="hashtags">{html.escape(p["tags"])}</p>\n'
@@ -445,7 +466,7 @@ def cat_grid(posts):
     for p in posts:
         if p["type"] == "bai-viet" and p["cat"] and p["cat"] not in latest: latest[p["cat"]] = p
     cards = ""
-    for slug, name, ic, color, desc in CATS:
+    for slug, name, ic, color, desc, _o in CATS:
         p = latest.get(slug)
         if p:
             title = f'<p class="cat-title">{html.escape(p["short"])}</p>'
@@ -460,13 +481,13 @@ def cat_grid(posts):
     </a>
 '''
     return f'''  <section class="cat-zone">
-    <div class="section-head"><h2>Danh mục</h2><span>6 danh mục</span></div>
+    <div class="section-head"><h2>Danh mục</h2><span>{len(CATS)} danh mục</span></div>
     <div class="cat-grid">
 {cards}    </div>
   </section>
 '''
 
-def category_page(slug, name, ic, color, desc, posts):
+def category_page(slug, name, ic, color, desc, _olds, posts):
     mine = [p for p in posts if p["type"] == "bai-viet" and p["cat"] == slug]
     cards = "".join(real_card(p) for p in mine)
     empty = '<p class="empty-note">Chưa có bài viết trong danh mục này. Bài mới sẽ xuất hiện ở đây.</p>' if not mine else ""
@@ -503,9 +524,9 @@ def index_page(posts):
   <section class="hero">
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">Bài viết · Kinh kệ · Cầu nguyện · Món chay</div>
+        <div class="eyebrow">Bài viết · Kinh kệ · Chùa, Tịnh xá · Món chay</div>
         <h1>Một chốn <em>an yên</em> cho tâm hồn.</h1>
-        <p class="lede">Nơi chia sẻ những bài viết về Phật giáo, kinh kệ, lời chúc, lời cầu nguyện và món chay thanh đạm, trình bày rõ ràng, dễ đọc mỗi ngày.</p>
+        <p class="lede">Nơi chia sẻ những bài viết về Phật giáo, kinh kệ, những ngôi chùa, tịnh xá thanh tịnh và món chay thanh đạm, trình bày rõ ràng, dễ đọc mỗi ngày.</p>
         <div class="hero-stats">
           <div class="hero-stat"><b>4</b><span>chuyên mục</span></div>
           <div class="hero-stat"><b>{len(posts)}</b><span>bài đã đăng</span></div>
@@ -534,7 +555,7 @@ def index_page(posts):
 {cards}  </div>
 {quote_block()}  <script type="application/json" id="search-data">{search_json}</script>
 '''
-    return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, lời chúc cầu nguyện và món chay.", "index.html", crumbs=[("Trang chủ", None)]) + body + FOOT
+    return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, chùa, tịnh xá và món chay.", "index.html", crumbs=[("Trang chủ", None)]) + body + FOOT
 
 def parse_quotes():
     """Đọc content/quote.txt. Mỗi câu kết thúc bằng <hr>; dạng: Nội dung - Tác giả <hr>.
@@ -576,6 +597,16 @@ def prayer_page():
     <div class="eyebrow">Cộng đồng</div>
     <h1>Gửi lời cầu nguyện</h1>
     <p class="lede">Chia sẻ một lời nguyện lành. Lời của bạn sẽ được kiểm duyệt trước khi hiển thị công khai để mọi người cùng hồi hướng.</p>
+    <p class="pr-jump"><a href="#pr-form-box">Gửi lời cầu nguyện của bạn &darr;</a></p>
+  </section>
+
+  <section class="pr-wall">
+    <div class="pr-wall-head">
+      <svg class="pr-lotus" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M32 4c6 6 8 14 0 28-8-14-6-22 0-28z"/><path d="M32 32C22 30 14 22 12 12c10 0 18 6 20 20z"/><path d="M32 32c10-2 18-10 20-20-10 0-18 6-20 20z"/><path d="M32 32C18 34 8 28 2 20c10-2 22 0 30 12z"/><path d="M32 32c14 2 24-4 30-12-10-2-22 0-30 12z"/><path d="M14 37h36" stroke-linecap="round"/></svg>
+      <h2>Bảng cầu nguyện</h2>
+      <p>Những lời nguyện lành từ cộng đồng. Xin cùng hồi hướng công đức, nguyện chúng sinh được an lạc.</p>
+    </div>
+    <div id="pr-list" class="pr-list">Đang tải…</div>
   </section>
 
   <section class="pr-box" id="pr-form-box">
@@ -603,24 +634,21 @@ def prayer_page():
     <div id="pr-mine"></div>
   </section>
 
-  <section class="pr-wall">
-    <div class="pr-wall-head">
-      <svg class="pr-lotus" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M32 4c6 6 8 14 0 28-8-14-6-22 0-28z"/><path d="M32 32C22 30 14 22 12 12c10 0 18 6 20 20z"/><path d="M32 32c10-2 18-10 20-20-10 0-18 6-20 20z"/><path d="M32 32C18 34 8 28 2 20c10-2 22 0 30 12z"/><path d="M32 32c14 2 24-4 30-12-10-2-22 0-30 12z"/><path d="M14 37h36" stroke-linecap="round"/></svg>
-      <h2>Bảng cầu nguyện</h2>
-      <p>Những lời nguyện lành từ cộng đồng. Xin cùng hồi hướng công đức, nguyện chúng sinh được an lạc.</p>
-    </div>
-    <div id="pr-list" class="pr-list">Đang tải…</div>
-  </section>
 '''
     page = head("Gửi lời cầu nguyện · Lạy Phật", "Gửi lời cầu nguyện và đọc những lời nguyện lành từ cộng đồng.", "loi-cau-nguyen.html",
                 crumbs=[("Trang chủ", "index.html"), ("Gửi lời cầu nguyện", None)]) + body + FOOT
     return page.replace('<script src="app.js"></script>', '<script src="app.js"></script>\n<script type="module" src="prayer.js"></script>')
 
+LEGACY_PAGES = {"cau-nguyen.html"}  # trang đã đổi tên (cau-nguyen -> chua-tinh-xa)
+
 def remove_stale(keep):
     """Xóa trang bài viết cũ không còn được tạo (bài bị ẩn hoặc đã xóa file .txt), kèm ảnh và PDF của nó."""
-    pat = re.compile(r"^(bai-viet|kinh|cau-nguyen|mon-chay)-(.+)\.html$")
+    pat = re.compile(r"^(bai-viet|kinh|chua-tinh-xa|mon-chay)-(.+)\.html$")
     listing = {s["file"] for s in SECTIONS.values()} | {f"danh-muc-{c[0]}.html" for c in CATS}
+    cat_pages = {f"danh-muc-{c[0]}.html" for c in CATS}
     for f in sorted(_os.listdir(OUT)):
+        if (f in LEGACY_PAGES) or (f.startswith("danh-muc-") and f.endswith(".html") and f not in cat_pages):
+            _os.remove(_os.path.join(OUT, f)); print(f"Đã gỡ trang cũ: {f}"); continue
         m = pat.match(f)
         if not m or f in keep or f in listing: continue
         slug = m.group(2)

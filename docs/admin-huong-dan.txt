@@ -46,3 +46,7 @@ LƯU Ý
 - Đã bật cho: bài viết, bài kinh - kệ, lời chúc - cầu nguyện, món chay và từng lời cầu nguyện đã được duyệt (khóa "loi-<id>").
   Muốn tắt một loại: bỏ nó khỏi REACTION_TYPES trong tools/gen_site.py rồi chạy lại.
 - Tự đặt ở chỗ bất kỳ: <section class="rx" data-rx="khoa-duy-nhat"></section> + <script type="module" src="reactions.js"></script>.
+
+==== DANH MỤC BÀI VIẾT & TRANG "CHÙA, TỊNH XÁ" ====
+- Tên, thứ tự, biểu tượng, màu của các danh mục nằm trong content/danh-muc.txt (xem hướng dẫn đầu file đó). Sửa trên GitHub rồi Commit là web tự cập nhật.
+- Trang "Lời chúc - Cầu nguyện" (cau-nguyen.html) đã đổi thành "Chùa, Tịnh xá" (chua-tinh-xa.html); bài mới ghi "Loại: chua-tinh-xa", thư mục content/chua-tinh-xa/, mẫu content/_MAU-chua-tinh-xa.txt.

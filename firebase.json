@@ -1,11 +1,32 @@
 {
   "hosting": {
     "public": "public",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "headers": [
       {
         "source": "**/*.@(js|css|html)",
-        "headers": [{ "key": "Cache-Control", "value": "no-cache" }]
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
+          }
+        ]
+      }
+    ],
+    "redirects": [
+      {
+        "source": "/cau-nguyen.html",
+        "destination": "/chua-tinh-xa.html",
+        "type": 301
+      },
+      {
+        "source": "/danh-muc-kim-cuong-thua.html",
+        "destination": "/danh-muc-phat-giao-chung.html",
+        "type": 301
       }
     ]
   }

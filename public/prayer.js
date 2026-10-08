@@ -62,6 +62,19 @@ function card(item, words, rxKey) {
   return c;
 }
 
+// Bảng cầu nguyện: xếp từ trái sang phải, từ trên xuống dưới (2 cột trên máy tính, 1 cột trên điện thoại)
+let wallCards = [];
+const wallMq = window.matchMedia('(max-width: 760px)');
+function layoutWall() {
+  const box = $('pr-list');
+  if (!wallCards.length) return;
+  const n = wallMq.matches ? 1 : 2;
+  box.textContent = '';
+  const cols = Array.from({ length: n }, () => { const c = document.createElement('div'); c.className = 'pr-col'; box.appendChild(c); return c; });
+  wallCards.forEach((c, i) => cols[i % n].appendChild(c));
+}
+wallMq.addEventListener('change', layoutWall);
+
 async function loadPublic() {
   const box = $('pr-list');
   try {
@@ -69,7 +82,9 @@ async function loadPublic() {
     const snap = await F.getDocs(q);
     box.textContent = '';
     if (snap.empty) { box.textContent = 'Chưa có lời cầu nguyện nào được đăng. Hãy là người đầu tiên.'; return; }
-    snap.forEach(d => box.appendChild(card(d.data(), settings && settings.badWords, 'loi-' + d.id)));
+    wallCards = [];
+    snap.forEach(d => wallCards.push(card(d.data(), settings && settings.badWords, 'loi-' + d.id)));
+    layoutWall();
     // reactions dùng chung (reactions.js): mỗi lời cầu nguyện có bộ đếm riêng, khóa "loi-<id>"
     await import('./reactions.js'); window.LayPhatReactions.scan();
   } catch (e) { box.textContent = 'Không tải được danh sách lời cầu nguyện.'; console.error(e); }

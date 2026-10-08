@@ -123,7 +123,7 @@ def head(title, desc, active, extra='', crumbs=None):
 FOOT = '''
   <footer>
     <div class="foot-links">
-      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="danh-tang-nhan-vat-phat-giao.html">Danh tăng, Nhân vật</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
+      <a href="index.html">Trang chủ</a><a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="danh-tang-nhan-vat-phat-giao.html">Danh tăng, Nhân vật</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
     </div>
     <div class="foot-bottom">
       <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg><span class="fb-sep">/</span>Lạy Phật</a>. Nếu sao chép hay trích dẫn nội dung của trang xin vui lòng ghi rõ nguồn và chỉ sử dụng với mục đích phi thương mại.</span>
@@ -507,12 +507,13 @@ def post_page(p):
 
 def list_page(title, eyebrow, lede, posts, key, active, extra_top="", extra_bottom=""):
     s = SECTIONS[key]
-    cap = 9 if key == "bai-viet" else 6
+    cap = 9 if key == "bai-viet" else 12
     posts = posts[:cap]
     cards = "".join(real_card(p) for p in posts)
     n_sample = 0
-    if key and len(posts) < cap:
-        fill = SAMPLES[key][: cap - len(posts)]
+    if key and len(posts) < 6:
+        have = {fold(x) for p in posts for x in (p["title"], p["short"])}
+        fill = [it for it in SAMPLES[key] if fold(it[0]) not in have][: 6 - len(posts)]
         cards += "".join(sample_card(key, s, it) for it in fill); n_sample = len(fill)
     note = '<p class="note">Các thẻ có nhãn "Mẫu" chỉ để giữ bố cục, sẽ tự biến mất khi có đủ bài thật.</p>' if n_sample else ""
     empty = '<p class="empty-note">Chưa có bài viết trong danh mục này. Bài mới sẽ xuất hiện ở đây.</p>' if (not posts and not n_sample) else ""
@@ -578,7 +579,7 @@ def index_page(posts):
         d = p["dt"]
         rows.append(f'        <div class="latest-row"><a class="latest-title" href="{p["file"]}">{html.escape(p["title"])}</a>'
                     f'<time class="latest-date" datetime="{d.strftime("%Y-%m-%d")}">{d.day:02d}/{d.month:02d}/{d.year}</time></div>\n')
-    latest_rows = "".join(f'      <div class="latest-col">\n{"".join(rows[i:i+5])}      </div>\n' for i in (0, 5) if rows[i:i+5])
+    latest_rows = f'      <div class="latest-list">\n{"".join(rows)}      </div>\n' if rows else ""
     if not latest_rows: latest_rows = '      <p class="empty-note">Chưa có bài viết nào.</p>\n'
     counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
     cards = ""
@@ -657,6 +658,14 @@ def quote_block():
             f'  <script type="application/json" id="quote-data">{data}</script>\n')
 
 def write(name, content):
+    # Đánh dấu liên kết chân trang tương ứng với mục đang chọn trên thanh menu
+    m = re.search(r'<a href="([^"]+)" class=active>', content)
+    if m and 'class="foot-links"' in content:
+        href = m.group(1)
+        content = content.replace(f'<div class="foot-links">', '<div class="foot-links">', 1)
+        i = content.index('class="foot-links"'); j = content.index("</div>", i)
+        seg = content[i:j].replace(f'<a href="{href}">', f'<a class="active" aria-current="page" href="{href}">', 1)
+        content = content[:i] + seg + content[j:]
     open(_os.path.join(OUT, name), "w", encoding="utf-8").write(content)
 
 def prayer_page():

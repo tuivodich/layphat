@@ -61,3 +61,8 @@ Chèn ảnh bằng một dòng riêng: ![Chú thích](ten-anh.jpg) (ảnh đã t
 
 ==== TRANG DANH TĂNG, NHÂN VẬT ====
 Loại bài "nhan-vat", thư mục content/nhan-vat/, mẫu content/_MAU-nhan-vat.txt, trang danh-tang-nhan-vat-phat-giao.html.
+
+==== GHI CHÚ CẬP NHẬT ====
+- Món "Tôm đậu hũ kho cà chua" đã đổi thành "Đậu hũ kho cà chua" (tên file: dau-hu-kho-ca-chua.txt, địa chỉ mới mon-chay-dau-hu-kho-ca-chua.html).
+- Các trang chuyên mục nay hiển thị tối đa 12 bài mới nhất (bài viết Phật giáo: 9 bài); các thẻ "Mẫu" chỉ hiện khi dưới 6 bài thật.
+- Liên kết chân trang tự tô sáng theo trang đang xem.

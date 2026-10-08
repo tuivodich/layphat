@@ -5,6 +5,7 @@ CÁCH LÀM (không cần dùng lệnh):
 1. Mở https://github.com/tuivodich/layphat  ->  vào thư mục "content"  ->  vào thư mục con đúng loại bài:
      content/bai-viet/   (Bài viết Phật giáo)
      content/kinh-ke/    (Bài kinh - kệ)
+     content/nhan-vat/   (Danh tăng, Nhân vật Phật giáo)
      content/chua-tinh-xa/ (Chùa, Tịnh xá)
      content/mon-chay/   (Món chay)
 2. Bấm "Add file" -> "Upload files" (hoặc "Create new file" rồi dán nội dung).
@@ -22,7 +23,7 @@ Các thẻ "Mẫu" tự biến mất khi đã đủ 6 bài thật.
 CẤU TRÚC FILE
 Phần đầu là các dòng "Tên: giá trị", sau đó một dòng chỉ có ba dấu gạch  ---  rồi đến nội dung.
 
-  Loại:        bai-viet | kinh-ke | chua-tinh-xa | mon-chay   (bắt buộc)
+  Loại:        bai-viet | kinh-ke | nhan-vat | chua-tinh-xa | mon-chay   (bắt buộc)
   Danh mục:    một trong các danh mục ghi ở content/danh-muc.txt (cho bài viết). Muốn đổi tên/thứ tự danh mục: sửa file đó.
   Tiêu đề:     tiêu đề đầy đủ hiện trong bài (bắt buộc)
   Tên ngắn:    tên hiện trên thẻ (nếu bỏ trống sẽ lấy Tiêu đề)
@@ -67,6 +68,13 @@ CÂU TRÍCH DẪN NGẪU NHIÊN Ở TRANG CHỦ (file content/quote.txt)
         ![Chú thích của ảnh](ten-anh.jpg)
     Chú thích hiện ngay dưới ảnh.
   - ẢNH ĐẦU TIÊN trong bài tự động là ảnh đại diện: hiện thu nhỏ trên thẻ ở trang danh sách
-    (với Chùa, Tịnh xá) và nằm trên cùng khi xem bài (kèm chú thích). Các ảnh sau nằm trong nội dung.
+    ở mọi trang chuyên mục và nằm trên cùng khi xem bài (kèm chú thích). Các ảnh sau nằm trong nội dung.
   - Nếu bài đã có dòng "Ảnh:" ở phần đầu thì ảnh đó là ảnh đại diện, mọi ảnh trong nội dung đều là ảnh minh họa.
   - Nên dùng ảnh ngang (tỉ lệ 3:2 hoặc 16:9), rộng từ 1200 px trở lên. Web tự thu nhỏ và nén lại.
+
+  Ghi chú: ảnh ngang (rộng hơn cao) hiện thành ảnh lớn phía trên bài, nội dung một cột; ảnh dọc (chân dung) vẫn hiện bên trái bài như cũ
+  để không bị cắt mất. Ảnh thu nhỏ trên thẻ danh sách luôn có, với ảnh dọc web lấy phần phía trên (thường có khuôn mặt).
+
+BÀI VỀ DANH TĂNG, NHÂN VẬT (loại: nhan-vat)
+  Hãy viết bằng lời văn của chính bạn, không chép nguyên văn từ sách hay website khác; ghi nguồn tham khảo ở cuối bài.
+  Chỉ dùng ảnh tự chụp, ảnh được phép hoặc ảnh thuộc phạm vi công cộng, và ghi nguồn trong chú thích ảnh.

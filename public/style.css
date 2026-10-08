@@ -112,7 +112,7 @@ footer{margin-top:60px; padding-block:34px 46px; border-top:1px solid var(--line
   .navlist a{padding:8px 12px; font-size:13px;}
 }
 @media (max-width:520px){ .grid{grid-template-columns:1fr;} }
-.grid.four{grid-template-columns:repeat(4,1fr);}
+.grid.four{grid-template-columns:repeat(auto-fit,minmax(200px,1fr));}
 @media (max-width:1000px){ .grid.four{grid-template-columns:repeat(2,1fr);} }
 @media (max-width:520px){ .grid.four{grid-template-columns:1fr;} }
 

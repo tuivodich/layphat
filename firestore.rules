@@ -70,10 +70,9 @@ service cloud.firestore {
     match /prayers/{id} {
       allow read: if signedIn() && (resource.data.uid == request.auth.uid || isAdmin());
       allow create: if signedIn() && notBanned()
-        && request.resource.data.keys().hasOnly(['uid', 'email', 'text', 'anonymous', 'name', 'photo', 'status', 'day', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'text', 'anonymous', 'name', 'photo', 'status', 'day', 'createdAt', 'publicId'])
         && request.resource.data.uid == request.auth.uid
         && request.resource.data.email == request.auth.token.email
-        && request.resource.data.status == 'pending'
         && request.resource.data.createdAt == request.time
         && request.resource.data.text is string
         && request.resource.data.text.size() >= 3
@@ -83,8 +82,16 @@ service cloud.firestore {
         && request.resource.data.photo is string && request.resource.data.photo.size() <= 500
         && (request.resource.data.anonymous == false
             || (request.resource.data.name == '' && request.resource.data.photo == ''))
-        && getAfter(/databases/$(database)/documents/prayerCounts/$(request.auth.uid)).data.lastId == id
-        && getAfter(/databases/$(database)/documents/prayerCounts/$(request.auth.uid)).data.day == request.resource.data.day;
+        && (
+          // Quản trị viên: không giới hạn lượt, được đăng thẳng (status 'approved', kèm bản công khai ở publicPrayers)
+          (isAdmin() && request.resource.data.status in ['pending', 'approved'])
+          ||
+          // Người dùng thường: chờ duyệt, phải đi cùng một lần tăng bộ đếm trong cùng lô ghi
+          (request.resource.data.status == 'pending'
+            && !('publicId' in request.resource.data)
+            && getAfter(/databases/$(database)/documents/prayerCounts/$(request.auth.uid)).data.lastId == id
+            && getAfter(/databases/$(database)/documents/prayerCounts/$(request.auth.uid)).data.day == request.resource.data.day)
+        );
       allow update, delete: if isAdmin();
     }
 

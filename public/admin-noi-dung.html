@@ -102,6 +102,7 @@
             <select id="new-type">
               <option value="bai-viet">Bài viết Phật giáo</option>
               <option value="kinh-ke">Bài kinh - kệ</option>
+              <option value="nhan-vat">Danh tăng, Nhân vật Phật giáo</option>
               <option value="chua-tinh-xa">Chùa, Tịnh xá</option>
               <option value="mon-chay">Món chay</option>
             </select>
@@ -146,10 +147,11 @@
 <script type="module">
 const OWNER = 'tuivodich', REPO = 'layphat', BRANCH = 'main';
 const ADMINS = ['xinloi@gmail.com', 'bachoc@gmail.com'];
-const DIRS = { 'bai-viet': 'Bài viết Phật giáo', 'kinh-ke': 'Bài kinh - kệ', 'chua-tinh-xa': 'Chùa, Tịnh xá', 'mon-chay': 'Món chay' };
+const DIRS = { 'bai-viet': 'Bài viết Phật giáo', 'kinh-ke': 'Bài kinh - kệ', 'nhan-vat': 'Danh tăng, Nhân vật Phật giáo', 'chua-tinh-xa': 'Chùa, Tịnh xá', 'mon-chay': 'Món chay' };
 const TEMPLATES = {
   'bai-viet': 'Loại: bai-viet\nDanh mục: Thiền Tông\nTiêu đề: \nTên ngắn: \nNgày: {today}\nẢnh: \nMô tả ảnh: \nNguồn: \nTóm tắt: \nLời kết: \nHashtag: \nHiển thị: Có\n---\nĐoạn văn thứ nhất.\n\nĐoạn văn thứ hai.\n',
   'kinh-ke': 'Loại: kinh-ke\nTiêu đề: \nNgày: {today}\nNguồn: \nTóm tắt: \nHiển thị: Có\n---\n## 1. MỞ ĐẦU\n\nĐoạn hướng dẫn.\n\n> Câu kệ dòng một\n> Câu kệ dòng hai\n',
+  'nhan-vat': 'Loại: nhan-vat\nTiêu đề: \nTên ngắn: \nNgày: {today}\nNguồn: \nTóm tắt: \nHiển thị: Có\n---\n![Chú thích ảnh](ten-anh.jpg)\n\n## Cuộc đời\n\nĐoạn văn.\n\n## Tư tưởng và đóng góp\n\n- Ý chính\n\n## Tài liệu tham khảo\n\n- Tên sách, tác giả, năm\n',
   'chua-tinh-xa': 'Loại: chua-tinh-xa\nTiêu đề: \nTên ngắn: \nNgày: {today}\nẢnh: \nMô tả ảnh: \nNguồn: \nTóm tắt: \nHiển thị: Có\n---\n## Giới thiệu\n\nVài nét về ngôi chùa.\n\n## Địa chỉ và giờ mở cửa\n\n- Địa chỉ: \n- Giờ mở cửa: \n',
   'mon-chay': 'Loại: mon-chay\nTiêu đề: \nNgày: {today}\nNguồn: Sưu tầm\nTóm tắt: \nHiển thị: Có\n---\n## Nguyên liệu\n\n- 200g đậu hũ\n\n## Cách làm\n\n1. Bước một.\n'
 };

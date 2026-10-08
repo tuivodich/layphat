@@ -3,6 +3,8 @@ const $ = id => document.getElementById(id);
 const V = '10.14.1';
 const MAX_LEN = 500;
 let db, F, A, auth, user = null, settings = null;
+const ADMINS = ['xinloi@gmail.com', 'bachoc@gmail.com'];
+const isAdmin = () => !!user && ADMINS.includes((user.email || '').toLowerCase());
 
 const say = (t, cls) => { const m = $('pr-msg'); m.textContent = t || ''; m.className = 'pr-msg ' + (cls || ''); };
 
@@ -92,6 +94,7 @@ async function loadMine() {
 }
 
 async function quota() {
+  if (isAdmin()) { $('pr-quota').textContent = 'Quản trị viên: không giới hạn, lời cầu nguyện được đăng ngay.'; $('pr-send').disabled = false; return 0; }
   if (!user || !settings) return;
   let used = 0;
   try { const s = await F.getDoc(F.doc(db, 'prayerCounts', user.uid)); if (s.exists() && s.data().day === today()) used = s.data().count; } catch (_) {}
@@ -105,45 +108,53 @@ function render() {
   const signed = !!user;
   $('pr-state').hidden = true;
   $('pr-login').hidden = signed;
-  $('pr-form').hidden = !signed || !settings;
-  if (signed && !settings) { $('pr-state').hidden = false; $('pr-state').textContent = 'Chức năng gửi lời cầu nguyện hiện chưa được bật.'; }
+  $('pr-form').hidden = !signed || (!settings && !isAdmin());
+  if (signed && !settings && !isAdmin()) { $('pr-state').hidden = false; $('pr-state').textContent = 'Chức năng gửi lời cầu nguyện hiện chưa được bật.'; }
   if (signed) { $('pr-me-name').textContent = user.displayName || user.email; const ph = safePhoto(user.photoURL); $('pr-me-photo').hidden = !ph; if (ph) $('pr-me-photo').src = ph; quota(); }
   loadMine();
 }
 
 async function submit(ev) {
   ev.preventDefault();
-  if (!user || !settings) return;
+  if (!user || (!settings && !isAdmin())) return;
   let text = $('pr-text').value.replace(/\s+\n/g, '\n').trim();
   if (text.length < 3) { say('Hãy viết lời cầu nguyện (ít nhất 3 ký tự).', 'err'); return; }
   if (text.length > MAX_LEN) { say('Lời cầu nguyện tối đa ' + MAX_LEN + ' ký tự.', 'err'); return; }
   const anon = document.querySelector('input[name="pr-show"]:checked').value === 'anon';
-  text = maskWords(text, settings.badWords);
+  text = maskWords(text, settings ? settings.badWords : []);
   $('pr-send').disabled = true; say('Đang gửi…');
   try {
-    const cref = F.doc(db, 'prayerCounts', user.uid);
-    const cs = await F.getDoc(cref);
     const day = today();
-    const used = cs.exists() && cs.data().day === day ? cs.data().count : 0;
-    if (used >= settings.maxPerDay) { say('Hôm nay bạn đã dùng hết ' + settings.maxPerDay + ' lượt gửi.', 'err'); await quota(); return; }
     const pref = F.doc(F.collection(db, 'prayers'));
     const batch = F.writeBatch(db);
-    batch.set(cref, { uid: user.uid, day, count: used + 1, lastId: pref.id });
-    batch.set(pref, {
+    const base = {
       uid: user.uid, email: user.email, text, anonymous: anon,
       name: anon ? '' : (user.displayName || '').slice(0, 100),
       photo: anon ? '' : safePhoto(user.photoURL).slice(0, 500),
-      status: 'pending', day, createdAt: F.serverTimestamp()
-    });
+      day, createdAt: F.serverTimestamp()
+    };
+    if (isAdmin()) {
+      // Quản trị viên: đăng thẳng, không cần duyệt, không tính lượt
+      const pub = F.doc(F.collection(db, 'publicPrayers'));
+      batch.set(pub, { text, anonymous: anon, name: base.name, photo: base.photo, createdAt: F.serverTimestamp() });
+      batch.set(pref, { ...base, status: 'approved', publicId: pub.id });
+    } else {
+      const cref = F.doc(db, 'prayerCounts', user.uid);
+      const cs = await F.getDoc(cref);
+      const used = cs.exists() && cs.data().day === day ? cs.data().count : 0;
+      if (used >= settings.maxPerDay) { say('Hôm nay bạn đã dùng hết ' + settings.maxPerDay + ' lượt gửi.', 'err'); await quota(); return; }
+      batch.set(cref, { uid: user.uid, day, count: used + 1, lastId: pref.id });
+      batch.set(pref, { ...base, status: 'pending' });
+    }
     await batch.commit();
     $('pr-text').value = '';
-    say('Cảm ơn bạn. Lời cầu nguyện đã được gửi và đang chờ duyệt.', 'ok');
-    await quota(); loadMine();
+    say(isAdmin() ? 'Đã đăng lời cầu nguyện.' : 'Cảm ơn bạn. Lời cầu nguyện đã được gửi và đang chờ duyệt.', 'ok');
+    await quota(); loadMine(); if (isAdmin()) loadPublic();
   } catch (e) {
     console.error(e);
     say(e.code === 'permission-denied' ? 'Không gửi được: có thể bạn đã hết lượt hôm nay hoặc tài khoản đang bị hạn chế.' : 'Không gửi được: ' + (e.code || e.message), 'err');
     quota();
-  } finally { if ($('pr-send').disabled && settings) quota(); }
+  } finally { if ($('pr-send').disabled && (settings || isAdmin())) quota(); }
 }
 
 async function boot() {

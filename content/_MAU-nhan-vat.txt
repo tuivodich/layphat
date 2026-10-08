@@ -1,0 +1,26 @@
+Loại: nhan-vat
+Tiêu đề: Tôn giả / Thiền sư ... (tên đầy đủ)
+Tên ngắn: Tên thường gọi
+Ngày: 2026-10-05
+Nguồn: Tài liệu tham khảo (ghi tên sách, trang web) - nội dung đã được viết lại bằng lời văn riêng
+Tóm tắt: Một hai câu giới thiệu: thời kỳ, truyền thống và điểm nổi bật của nhân vật.
+Hiển thị: Có
+---
+![Chú thích: ghi rõ nguồn ảnh, ví dụ Tượng ... (ảnh tự chụp / ảnh phạm vi công cộng)](ten-anh.jpg)
+
+## Cuộc đời
+
+Tóm tắt các cột mốc chính: sinh ra, xuất gia, tu học, hoằng pháp, viên tịch (nêu niên đại nếu có sử liệu rõ).
+
+## Tư tưởng và đóng góp
+
+- Điểm chính thứ nhất, diễn đạt bằng lời văn riêng
+- Điểm chính thứ hai
+
+## Ảnh hưởng
+
+Vai trò của nhân vật đối với Phật giáo và với người học Phật hôm nay.
+
+## Tài liệu tham khảo
+
+- Tên sách / bài viết, tác giả, năm xuất bản

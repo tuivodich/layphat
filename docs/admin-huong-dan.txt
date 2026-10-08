@@ -54,3 +54,10 @@ LƯU Ý
 ==== NHIỀU ẢNH TRONG BÀI ====
 Chèn ảnh bằng một dòng riêng: ![Chú thích](ten-anh.jpg) (ảnh đã tải lên content/images/). Ảnh đầu tiên là ảnh đại diện
 (thu nhỏ trên danh sách Chùa, Tịnh xá và nằm trên cùng bài). Chi tiết xem content/HUONG-DAN.txt.
+
+==== QUẢN TRỊ VIÊN GỬI LỜI CẦU NGUYỆN ====
+- Dán lại firestore.rules mới > Publish.
+- Khi quản trị viên (2 email admin) đăng nhập và gửi lời ở trang Gửi lời cầu nguyện thì lời được đăng ngay, không cần duyệt, không tính giới hạn lượt mỗi ngày.
+
+==== TRANG DANH TĂNG, NHÂN VẬT ====
+Loại bài "nhan-vat", thư mục content/nhan-vat/, mẫu content/_MAU-nhan-vat.txt, trang danh-tang-nhan-vat-phat-giao.html.

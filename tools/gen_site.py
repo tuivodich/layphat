@@ -7,6 +7,7 @@ NAV = [
   ("index.html","Trang chủ"),
   ("bai-viet.html","Bài viết Phật giáo"),
   ("kinh-ke.html","Bài kinh - kệ"),
+  ("danh-tang-nhan-vat-phat-giao.html","Danh tăng, Nhân vật"),
   ("chua-tinh-xa.html","Chùa, Tịnh xá"),
   ("mon-chay.html","Món chay"),
   ("loi-cau-nguyen.html","Gửi lời cầu nguyện"),
@@ -16,6 +17,7 @@ ICON = {
  "bai-viet":'<path d="M12 2.5c.6 3.2 5.6 4.6 6.6 9.2a6.6 6.6 0 01-13.2 0c1-4.6 6-6 6.6-9.2z"/><path d="M12 7v13.5"/><path d="M12 12l3-2M12 15l-3-2"/>',
  "kinh-ke":'<path d="M7 4h10a2 2 0 012 2v12a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2z"/><path d="M9 9h6M9 12.5h6M9 16h3"/>',
  "chua-tinh-xa":'<path d="M3 9.5l9-5.5 9 5.5"/><path d="M5.5 9.5h13"/><path d="M6.5 9.5V18M17.5 9.5V18M3.5 18h17"/><path d="M10 18v-3.5a2 2 0 014 0V18"/>',
+ "nhan-vat":'<circle cx="12" cy="7.5" r="3.2"/><path d="M5.5 20c0-4 2.8-6.6 6.5-6.6s6.5 2.6 6.5 6.6"/><path d="M12 3.2V2M9.4 4l-.8-.8M14.6 4l.8-.8"/>',
  "wheel":'<circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.6"/><path d="M12 3.5v6M12 14.5v6M3.5 12h6M14.5 12h6M6 6l4.2 4.2M13.8 13.8L18 18M18 6l-4.2 4.2M10.2 13.8L6 18"/>',
  "mon-chay":'<path d="M4 12h16a8 8 0 01-16 0z"/><path d="M12 3.5c2.4 1 3.2 3.4 2 5.6-2.4-1-3.2-3.4-2-5.6z"/><path d="M8.5 5.5c-.8 1-.8 2 0 3"/>',
  # biểu tượng danh mục
@@ -47,6 +49,14 @@ SECTIONS = {
           ("Kinh Pháp Cú","Những bài kệ ngắn về đạo đức và tu tập."),
           ("Phẩm Phổ Môn","Phẩm nói về Bồ Tát Quán Thế Âm."),
           ("Kinh Vu Lan Báo Hiếu","Bài kinh về lòng hiếu thảo với cha mẹ.")]),
+ "nhan-vat": dict(file="danh-tang-nhan-vat-phat-giao.html", title="Danh tăng, Nhân vật Phật giáo", accent="var(--c4)", tag="Danh tăng",
+   lede="Tiểu sử và tư tưởng của các bậc cao tăng, thiền sư, cư sĩ tiêu biểu trong lịch sử Phật giáo, viết lại bằng lời văn riêng và có ghi nguồn tham khảo.",
+   items=[("Tôn giả Xá Lợi Phất","Vị đệ tử được tôn xưng là bậc nhất về trí tuệ của Đức Phật."),
+          ("Tôn giả A Nan","Vị thị giả của Đức Phật, nổi tiếng về đa văn."),
+          ("Bồ Đề Đạt Ma","Vị tổ được truyền thống tôn là sơ tổ của Thiền tông Trung Hoa."),
+          ("Pháp sư Huyền Trang","Nhà sư Trung Hoa sang Ấn Độ thỉnh kinh và dịch thuật."),
+          ("Thiền sư Vạn Hạnh","Vị thiền sư có công lớn trong buổi đầu nhà Lý."),
+          ("Trần Nhân Tông","Vua nhà Trần xuất gia, được tôn là sơ tổ Thiền phái Trúc Lâm.")]),
  "chua-tinh-xa": dict(file="chua-tinh-xa.html", title="Chùa, Tịnh xá", accent="var(--c3)", tag="Chùa - Tịnh xá",
    lede="Giới thiệu những ngôi chùa, tịnh xá đẹp, trang nghiêm và thanh tịnh để bạn tìm về chiêm bái, lễ Phật và tu tập.",
    items=[("Chùa Một Cột","Ngôi chùa có kiến trúc độc đáo giữa lòng Hà Nội."),
@@ -113,7 +123,7 @@ def head(title, desc, active, extra='', crumbs=None):
 FOOT = '''
   <footer>
     <div class="foot-links">
-      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
+      <a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="danh-tang-nhan-vat-phat-giao.html">Danh tăng, Nhân vật</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
     </div>
     <div class="foot-bottom">
       <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg><span class="fb-sep">/</span>Lạy Phật</a>. Nếu sao chép hay trích dẫn nội dung của trang xin vui lòng ghi rõ nguồn và chỉ sử dụng với mục đích phi thương mại.</span>
@@ -128,9 +138,9 @@ FOOT = '''
 
 
 SAMPLES = {k: [it for it in s["items"] if len(it) == 2] for k, s in SECTIONS.items()}
-LABEL = {"bai-viet": "Bài viết Phật giáo", "kinh-ke": "Bài kinh - kệ", "chua-tinh-xa": "Chùa, Tịnh xá", "mon-chay": "Món chay"}
-PREFIX = {"bai-viet": "bai-viet-", "kinh-ke": "kinh-", "chua-tinh-xa": "chua-tinh-xa-", "mon-chay": "mon-chay-"}
-PH_ICON = {"bai-viet": "bai-viet", "kinh-ke": "lotus", "chua-tinh-xa": "chua-tinh-xa", "mon-chay": "mon-chay"}
+LABEL = {"bai-viet": "Bài viết Phật giáo", "kinh-ke": "Bài kinh - kệ", "chua-tinh-xa": "Chùa, Tịnh xá", "nhan-vat": "Danh tăng, Nhân vật Phật giáo", "mon-chay": "Món chay"}
+PREFIX = {"bai-viet": "bai-viet-", "kinh-ke": "kinh-", "chua-tinh-xa": "chua-tinh-xa-", "nhan-vat": "nhan-vat-", "mon-chay": "mon-chay-"}
+PH_ICON = {"bai-viet": "bai-viet", "kinh-ke": "lotus", "chua-tinh-xa": "chua-tinh-xa", "nhan-vat": "nhan-vat", "mon-chay": "mon-chay"}
 SITE = "https://layphatvn.web.app"
 ROOT = _os.path.abspath(_os.path.join(OUT, ".."))
 CONTENT = _os.path.join(ROOT, "content")
@@ -179,7 +189,7 @@ def build_wheel():
     return f'<svg viewBox="0 0 400 400" fill="none" role="img" aria-label="Bánh xe Pháp luân"><g id="w1">{l1}</g><g id="w2">{l2}</g><g id="w3">{l3}</g>{hub}</svg>'
 WHEEL = build_wheel()
 # Các loại nội dung có bộ reactions (bỏ tên loại khỏi danh sách để tắt)
-REACTION_TYPES = {"bai-viet", "kinh-ke", "chua-tinh-xa", "mon-chay"}
+REACTION_TYPES = {"bai-viet", "kinh-ke", "chua-tinh-xa", "nhan-vat", "mon-chay"}
 
 def reactions_block(key):
     """Khối reactions dùng chung; script reactions.js tự nhận mọi phần tử có data-rx."""
@@ -231,7 +241,7 @@ def slugify(s):
     return re.sub(r"[^a-z0-9]+", "-", s.lower()).strip("-")
 
 TYPE_MAP = {"baiviet": "bai-viet", "baivietphatgiao": "bai-viet", "kinhke": "kinh-ke", "baikinhke": "kinh-ke", "kinh": "kinh-ke",
-            "chuatinhxa": "chua-tinh-xa", "chua": "chua-tinh-xa", "tinhxa": "chua-tinh-xa", "monchay": "mon-chay"}
+            "nhanvat": "nhan-vat", "danhtang": "nhan-vat", "danhtangnhanvat": "nhan-vat", "nhanvatphatgiao": "nhan-vat", "chuatinhxa": "chua-tinh-xa", "chua": "chua-tinh-xa", "tinhxa": "chua-tinh-xa", "monchay": "mon-chay"}
 KEY_MAP = {"loai": "type", "danhmuc": "cat", "tieude": "title", "tenngan": "short", "ngay": "date", "anh": "image", "motaanh": "alt",
            "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related", "hienthi": "show"}
 
@@ -301,7 +311,7 @@ def load_posts():
             if fold(meta.get("show", "co")) in HIDE_VALUES:
                 print(f"Ẩn (Hiển thị: Không): {_os.path.relpath(path, ROOT)}"); HIDDEN.append(path); continue
             ptype = TYPE_MAP.get(fold(meta.get("type", "")))
-            if not ptype: warn(path, "thiếu hoặc sai dòng 'Loại:' (bai-viet, kinh-ke, chua-tinh-xa hoặc mon-chay). Bỏ qua file này."); continue
+            if not ptype: warn(path, "thiếu hoặc sai dòng 'Loại:' (bai-viet, kinh-ke, nhan-vat, chua-tinh-xa hoặc mon-chay). Bỏ qua file này."); continue
             if not meta.get("title"): warn(path, "thiếu dòng 'Tiêu đề:'. Bỏ qua file này."); continue
             dt, has_time = parse_date(meta.get("date", ""))
             if not dt: warn(path, "thiếu hoặc sai dòng 'Ngày:' (ví dụ 2026-10-05 hoặc 05/10/2026). Bỏ qua file này."); continue
@@ -336,8 +346,8 @@ def load_posts():
 
 # ---------------- Ảnh ----------------
 PRODUCED = set()   # các ảnh -thumb / -anhN do lần chạy này tạo ra (để dọn ảnh thừa)
-THUMB_TYPES = {"chua-tinh-xa"}   # loại có ảnh thu nhỏ trên thẻ danh sách
-WIDE_TYPES = {"chua-tinh-xa"}    # loại có ảnh đầu bài rộng, nội dung một cột
+THUMB_TYPES = set(SECTIONS)   # loại có ảnh thu nhỏ trên thẻ danh sách (nếu bài có ảnh)
+WIDE_NO_IMAGE = {"chua-tinh-xa", "nhan-vat"}   # loại luôn dùng bố cục một cột, kể cả khi bài chưa có ảnh
 
 def _open_image(p, name):
     src = _os.path.join(CONTENT, "images", name)
@@ -352,6 +362,7 @@ def _save(im, rel, quality=82):
 
 def process_image(p):
     p["img"] = p["og"] = p["size"] = p["thumb"] = None
+    p["wide"] = p["type"] in WIDE_NO_IMAGE
     p["gallery"] = {}
     from PIL import Image
     _os.makedirs(_os.path.join(OUT, "images"), exist_ok=True)
@@ -371,7 +382,9 @@ def process_image(p):
     im = _open_image(p, p["image"])
     if im is None:
         print("   -> bài sẽ dùng khung ảnh trang trí."); return
-    maxw = 1200 if p["type"] in WIDE_TYPES else 900
+    landscape = im.width >= im.height * 1.15   # ảnh ngang -> bố cục một cột; ảnh dọc -> ảnh bên trái như cũ
+    p["wide"] = landscape
+    maxw = 1200 if landscape else 900
     w = min(maxw, im.width); h = round(im.height * w / im.width)
     main_rel, og_rel = f"images/{p['slug']}.jpg", f"images/{p['slug']}-og.jpg"
     if _os.path.abspath(src) != _os.path.abspath(_os.path.join(OUT, main_rel)):
@@ -387,7 +400,7 @@ def process_image(p):
         tw, th = 640, 400
         r = max(tw / im.width, th / im.height)
         t = im.resize((max(tw, round(im.width * r)), max(th, round(im.height * r))), Image.LANCZOS)
-        l, tp = (t.width - tw) // 2, (t.height - th) // 2
+        l, tp = (t.width - tw) // 2, round((t.height - th) * (0.5 if landscape else 0.2))   # ảnh dọc: lấy phần phía trên (thường có khuôn mặt)
         rel = f"images/{p['slug']}-thumb.jpg"
         _save(t.crop((l, tp, l + tw, tp + th)), rel, 80); PRODUCED.add(rel); p["thumb"] = rel
 
@@ -451,7 +464,7 @@ def post_page(p):
     eyebrow = LABEL[t] + (" · " + next(c[1] for c in CATS if c[0] == p["cat"]) if p["cat"] else "")
     intro = ""
     if t == "mon-chay" and p["summary"]: intro = f'<p class="lede">{html.escape(p["summary"])}</p>'
-    elif t in ("kinh-ke", "chua-tinh-xa") and p["summary"]: intro = f'<p class="summary">{html.escape(p["summary"])}</p>'
+    elif t in ("kinh-ke", "chua-tinh-xa", "nhan-vat") and p["summary"]: intro = f'<p class="summary">{html.escape(p["summary"])}</p>'
     extra_end = ""
     if p["signoff"]: extra_end += f'<p class="signoff">{html.escape(p["signoff"])}</p>\n'
     if p["tags"]: extra_end += f'<p class="hashtags">{html.escape(p["tags"])}</p>\n'
@@ -464,7 +477,7 @@ def post_page(p):
         core = re.sub(r"^[\s🌸]+|[\s🌸]+$", "", p["title"])
         h1_title = f"🌸 {core} 🌸"
     body = f"""
-  <article class="post{" wide" if t in WIDE_TYPES else ""}">
+  <article class="post{" wide" if p.get("wide") else ""}">
     {cover}
     <div class="post-body">
       <div class="eyebrow">{html.escape(eyebrow)}</div>
@@ -579,11 +592,11 @@ def index_page(posts):
   <section class="hero">
     <div class="hero-grid">
       <div>
-        <div class="eyebrow">Bài viết · Kinh kệ · Chùa, Tịnh xá · Món chay</div>
+        <div class="eyebrow">Bài viết · Kinh kệ · Danh tăng · Chùa · Món chay</div>
         <h1>Một chốn <em>an yên</em> cho tâm hồn.</h1>
-        <p class="lede">Nơi chia sẻ những bài viết về Phật giáo, kinh kệ, những ngôi chùa, tịnh xá thanh tịnh và món chay thanh đạm, trình bày rõ ràng, dễ đọc mỗi ngày.</p>
+        <p class="lede">Nơi chia sẻ những bài viết về Phật giáo, kinh kệ, danh tăng, những ngôi chùa, tịnh xá thanh tịnh và món chay thanh đạm, trình bày rõ ràng, dễ đọc mỗi ngày.</p>
         <div class="hero-stats">
-          <div class="hero-stat"><b>4</b><span>chuyên mục</span></div>
+          <div class="hero-stat"><b>{len(SECTIONS)}</b><span>chuyên mục</span></div>
           <div class="hero-stat"><b>{len(posts)}</b><span>bài đã đăng</span></div>
           <div class="hero-stat"><b>VI</b><span>tiếng Việt</span></div>
         </div>
@@ -605,7 +618,7 @@ def index_page(posts):
       <h2 class="latest-h">Các bài viết</h2>
 {latest_rows}    </div>
   </section>
-  <section class="section-head"><h2>Các chuyên mục</h2><span>4 chuyên mục</span></section>
+  <section class="section-head"><h2>Các chuyên mục</h2><span>{len(SECTIONS)} chuyên mục</span></section>
   <div class="grid four">
 {cards}  </div>
 {quote_block()}  <script type="application/json" id="search-data">{search_json}</script>
@@ -698,7 +711,7 @@ LEGACY_PAGES = {"cau-nguyen.html"}  # trang đã đổi tên (cau-nguyen -> chua
 
 def remove_stale(keep):
     """Xóa trang bài viết cũ không còn được tạo (bài bị ẩn hoặc đã xóa file .txt), kèm ảnh và PDF của nó."""
-    pat = re.compile(r"^(bai-viet|kinh|chua-tinh-xa|mon-chay)-(.+)\.html$")
+    pat = re.compile(r"^(bai-viet|kinh|chua-tinh-xa|nhan-vat|mon-chay)-(.+)\.html$")
     listing = {s["file"] for s in SECTIONS.values()} | {f"danh-muc-{c[0]}.html" for c in CATS}
     for f in sorted(_os.listdir(_os.path.join(OUT, "images"))) if _os.path.isdir(_os.path.join(OUT, "images")) else []:
         if re.search(r"-(thumb|anh\d+)\.jpg$", f) and f"images/{f}" not in PRODUCED:

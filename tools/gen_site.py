@@ -574,13 +574,21 @@ def category_page(slug, name, ic, color, desc, _olds, posts):
 
 def index_page(posts):
     search_json = json.dumps([{"t": p["title"], "f": p["file"], "l": LABEL[p["type"]], "d": f'{p["dt"].day:02d}/{p["dt"].month:02d}/{p["dt"].year}', "k": search_key(p)} for p in posts], ensure_ascii=False).replace("<", "\\u003c")
-    rows = []
-    for p in posts[:10]:
-        d = p["dt"]
-        rows.append(f'        <div class="latest-row"><a class="latest-title" href="{p["file"]}">{html.escape(p["title"])}</a>'
-                    f'<time class="latest-date" datetime="{d.strftime("%Y-%m-%d")}">{d.day:02d}/{d.month:02d}/{d.year}</time></div>\n')
-    latest_rows = f'      <div class="latest-list">\n{"".join(rows)}      </div>\n' if rows else ""
-    if not latest_rows: latest_rows = '      <p class="empty-note">Chưa có bài viết nào.</p>\n'
+    def col(key):
+        sec = SECTIONS[key]
+        mine = [p for p in posts if p["type"] == key]   # posts đã sắp xếp mới nhất trước
+        rows = "".join(
+            f'        <div class="latest-row"><a class="latest-title" href="{p["file"]}">{html.escape(p["title"])}</a>'
+            f'<time class="latest-date" datetime="{p["dt"].strftime("%Y-%m-%d")}">{p["dt"].day:02d}/{p["dt"].month:02d}/{p["dt"].year}</time></div>\n'
+            for p in mine[:5])
+        if not rows: rows = '        <p class="latest-empty">Sắp có bài mới.</p>\n'
+        more = f'        <a class="latest-more" href="{sec["file"]}">Xem thêm…</a>\n' if len(mine) > 5 else ""
+        return (f'      <div class="latest-col">\n        <h3 class="latest-col-h"><a href="{sec["file"]}">{html.escape(sec["title"])}</a></h3>\n'
+                f'{rows}{more}      </div>\n')
+    # Mỗi hàng 2 cột; giữa các hàng có một đường kẻ mờ kéo dài
+    groups = [("bai-viet", "kinh-ke"), ("nhan-vat", "chua-tinh-xa"), ("mon-chay",)]
+    latest_rows = '      <hr class="latest-sep" aria-hidden="true">\n'.join(
+        '      <div class="latest-group">\n' + "".join(col(k) for k in g) + '      </div>\n' for g in groups)
     counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
     cards = ""
     for k, s in SECTIONS.items():
@@ -599,7 +607,7 @@ def index_page(posts):
         <div class="hero-stats">
           <div class="hero-stat"><b>{len(SECTIONS)}</b><span>chuyên mục</span></div>
           <div class="hero-stat"><b>{len(posts)}</b><span>bài đã đăng</span></div>
-          <div class="hero-stat"><b>VI</b><span>tiếng Việt</span></div>
+          <div class="hero-stat hero-clock"><b id="hs-date">--/--/----</b><span id="hs-clock">--:--:--</span></div>
         </div>
       </div>
       <div class="wheel-box">

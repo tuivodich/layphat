@@ -50,3 +50,7 @@ LƯU Ý
 ==== DANH MỤC BÀI VIẾT & TRANG "CHÙA, TỊNH XÁ" ====
 - Tên, thứ tự, biểu tượng, màu của các danh mục nằm trong content/danh-muc.txt (xem hướng dẫn đầu file đó). Sửa trên GitHub rồi Commit là web tự cập nhật.
 - Trang "Lời chúc - Cầu nguyện" (cau-nguyen.html) đã đổi thành "Chùa, Tịnh xá" (chua-tinh-xa.html); bài mới ghi "Loại: chua-tinh-xa", thư mục content/chua-tinh-xa/, mẫu content/_MAU-chua-tinh-xa.txt.
+
+==== NHIỀU ẢNH TRONG BÀI ====
+Chèn ảnh bằng một dòng riêng: ![Chú thích](ten-anh.jpg) (ảnh đã tải lên content/images/). Ảnh đầu tiên là ảnh đại diện
+(thu nhỏ trên danh sách Chùa, Tịnh xá và nằm trên cùng bài). Chi tiết xem content/HUONG-DAN.txt.

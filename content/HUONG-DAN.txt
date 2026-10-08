@@ -60,3 +60,13 @@ CÂU TRÍCH DẪN NGẪU NHIÊN Ở TRANG CHỦ (file content/quote.txt)
   Nếu câu có nhiều dấu "-" thì dấu "-" CUỐI CÙNG tách nội dung và tác giả
   (tác giả có gạch nối như Jean-Paul vẫn đúng nếu trước và sau dấu "-" tách có khoảng trắng).
   Mỗi lần mở trang chủ sẽ hiện ngẫu nhiên một câu. Sửa file rồi Commit là web tự cập nhật.
+
+ĐƯA NHIỀU ẢNH VÀO BÀI (đặc biệt cho trang "Chùa, Tịnh xá")
+  - Tải các ảnh .jpg/.png lên content/images/ (tên không dấu).
+  - Trong phần nội dung, chèn ảnh bằng MỘT dòng riêng, cách các đoạn khác một dòng trống:
+        ![Chú thích của ảnh](ten-anh.jpg)
+    Chú thích hiện ngay dưới ảnh.
+  - ẢNH ĐẦU TIÊN trong bài tự động là ảnh đại diện: hiện thu nhỏ trên thẻ ở trang danh sách
+    (với Chùa, Tịnh xá) và nằm trên cùng khi xem bài (kèm chú thích). Các ảnh sau nằm trong nội dung.
+  - Nếu bài đã có dòng "Ảnh:" ở phần đầu thì ảnh đó là ảnh đại diện, mọi ảnh trong nội dung đều là ảnh minh họa.
+  - Nên dùng ảnh ngang (tỉ lệ 3:2 hoặc 16:9), rộng từ 1200 px trở lên. Web tự thu nhỏ và nén lại.

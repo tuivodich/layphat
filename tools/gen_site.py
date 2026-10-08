@@ -263,6 +263,8 @@ def parse_date(s):
     except ValueError:
         return None, False
 
+IMG_RE = re.compile(r"^!\[(.*?)\]\((.+?)\)$")   # ![Chú thích](ten-anh.jpg)
+
 def parse_body(text):
     items = []
     for blk in re.split(r"\n\s*\n", text.strip()):
@@ -270,7 +272,10 @@ def parse_body(text):
         while lines and lines[0].startswith("## "):
             items.append(("h2", lines.pop(0)[3:].strip()))
         if not lines: continue
-        if all(l.startswith("> ") or l == ">" for l in lines): items.append(("verse", [l[2:] if l.startswith("> ") else "" for l in lines]))
+        if all(IMG_RE.match(l.strip()) for l in lines):
+            for l in lines:
+                m = IMG_RE.match(l.strip()); items.append(("img", (m.group(1).strip(), m.group(2).strip())))
+        elif all(l.startswith("> ") or l == ">" for l in lines): items.append(("verse", [l[2:] if l.startswith("> ") else "" for l in lines]))
         elif all(l.startswith("- ") for l in lines): items.append(("ul", [l[2:].strip() for l in lines]))
         elif all(re.match(r"^\d+[.)]\s+", l) for l in lines): items.append(("ol", [re.sub(r"^\d+[.)]\s+", "", l) for l in lines]))
         else: items.append(("p", " ".join(l.strip() for l in lines)))
@@ -316,28 +321,61 @@ def load_posts():
                 bits = [b.strip() for b in meta["related"].split("|", 1)]
                 rel_url = bits[0]; rel_text = bits[1] if len(bits) > 1 and bits[1] else title
             body = parse_body(parts[1])
+            image, alt, cover_cap = meta.get("image"), meta.get("alt") or short, ""
+            if not image:   # không có dòng "Ảnh:" -> ảnh đầu tiên trong nội dung là ảnh đại diện (thumbnail + ảnh đầu bài)
+                k0 = next((i for i, (k, _v) in enumerate(body) if k == "img"), None)
+                if k0 is not None:
+                    cover_cap, image = body[k0][1]; alt = cover_cap or short; del body[k0]
             first_p = next((v for k, v in body if k == "p"), "")
             posts.append(dict(type=ptype, cat=cat, title=title, short=short, dt=dt, has_time=has_time, slug=slug, file=fname,
-                              image=meta.get("image"), alt=meta.get("alt") or short, source=meta.get("source"),
+                              image=image, alt=alt, cover_cap=cover_cap, source=meta.get("source"),
                               summary=meta.get("summary") or first_p[:160], signoff=meta.get("signoff"), tags=meta.get("tags"),
                               related=(rel_url, rel_text), body=body, path=path))
     posts.sort(key=lambda p: (p["dt"], p["title"]), reverse=True)
     return posts
 
 # ---------------- Ảnh ----------------
+PRODUCED = set()   # các ảnh -thumb / -anhN do lần chạy này tạo ra (để dọn ảnh thừa)
+THUMB_TYPES = {"chua-tinh-xa"}   # loại có ảnh thu nhỏ trên thẻ danh sách
+WIDE_TYPES = {"chua-tinh-xa"}    # loại có ảnh đầu bài rộng, nội dung một cột
+
+def _open_image(p, name):
+    src = _os.path.join(CONTENT, "images", name)
+    if not _os.path.isfile(src):
+        warn(p["path"], f"không thấy ảnh '{name}' trong content/images/."); return None
+    from PIL import Image
+    return Image.open(src).convert("RGB")
+
+def _save(im, rel, quality=82):
+    from PIL import Image
+    im.save(_os.path.join(OUT, rel), quality=quality, optimize=True, progressive=True)
+
 def process_image(p):
-    p["img"] = p["og"] = p["size"] = None
+    p["img"] = p["og"] = p["size"] = p["thumb"] = None
+    p["gallery"] = {}
+    from PIL import Image
+    _os.makedirs(_os.path.join(OUT, "images"), exist_ok=True)
+    # ảnh trong nội dung
+    n = 0
+    for k, v in p["body"]:
+        if k != "img": continue
+        im = _open_image(p, v[1])
+        if im is None: continue
+        n += 1
+        w = min(1100, im.width); h = round(im.height * w / im.width)
+        rel = f"images/{p['slug']}-anh{n}.jpg"
+        _save(im.resize((w, h), Image.LANCZOS), rel); PRODUCED.add(rel)
+        p["gallery"][v[1]] = (rel, w, h)
     if not p["image"]: return
     src = _os.path.join(CONTENT, "images", p["image"])
-    if not _os.path.isfile(src):
-        warn(p["path"], f"không thấy ảnh '{p['image']}' trong content/images/. Bài sẽ dùng khung ảnh trang trí."); return
-    from PIL import Image
-    im = Image.open(src).convert("RGB")
-    w = min(900, im.width); h = round(im.height * w / im.width)
-    out = _os.path.join(OUT, "images"); _os.makedirs(out, exist_ok=True)
+    im = _open_image(p, p["image"])
+    if im is None:
+        print("   -> bài sẽ dùng khung ảnh trang trí."); return
+    maxw = 1200 if p["type"] in WIDE_TYPES else 900
+    w = min(maxw, im.width); h = round(im.height * w / im.width)
     main_rel, og_rel = f"images/{p['slug']}.jpg", f"images/{p['slug']}-og.jpg"
     if _os.path.abspath(src) != _os.path.abspath(_os.path.join(OUT, main_rel)):
-        im.resize((w, h), Image.LANCZOS).save(_os.path.join(OUT, main_rel), quality=82, optimize=True, progressive=True)
+        _save(im.resize((w, h), Image.LANCZOS), main_rel)
     og_src = _os.path.join(CONTENT, "images", _os.path.splitext(p["image"])[0] + "-og.jpg")
     if _os.path.isfile(og_src):
         if _os.path.abspath(og_src) != _os.path.abspath(_os.path.join(OUT, og_rel)): shutil.copyfile(og_src, _os.path.join(OUT, og_rel))
@@ -345,6 +383,13 @@ def process_image(p):
         cw, ch = im.width, round(im.width * 630 / 1200)
         im.crop((0, 0, cw, min(ch, im.height))).resize((1200, 630), Image.LANCZOS).save(_os.path.join(OUT, og_rel), quality=82, optimize=True)
     p["img"], p["og"], p["size"] = main_rel, og_rel, (w, h)
+    if p["type"] in THUMB_TYPES:   # ảnh thu nhỏ 16:10, cắt giữa
+        tw, th = 640, 400
+        r = max(tw / im.width, th / im.height)
+        t = im.resize((max(tw, round(im.width * r)), max(th, round(im.height * r))), Image.LANCZOS)
+        l, tp = (t.width - tw) // 2, (t.height - th) // 2
+        rel = f"images/{p['slug']}-thumb.jpg"
+        _save(t.crop((l, tp, l + tw, tp + th)), rel, 80); PRODUCED.add(rel); p["thumb"] = rel
 
 # =====================================================================
 #  TẠO TRANG
@@ -356,8 +401,12 @@ def fmt_date(p):
 
 def real_card(p):
     s = SECTIONS[p["type"]]
-    return f'''    <a class="feature link" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}" data-search="{html.escape(search_key(p))}"><span class="tag">{s["tag"]}</span>
-      <div class="badge">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</div>
+    if p.get("thumb"):
+        top = f'<div class="thumb"><img src="{p["thumb"]}" alt="{html.escape(p["alt"])}" width="640" height="400" loading="lazy" decoding="async"></div>'
+    else:
+        top = f'<div class="badge">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</div>'
+    return f'''    <a class="feature link{" has-thumb" if p.get("thumb") else ""}" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}" data-search="{html.escape(search_key(p))}"><span class="tag">{s["tag"]}</span>
+      {top}
       <h3>{html.escape(p["short"])}</h3><p>{html.escape(p["summary"])}</p></a>
 '''
 
@@ -372,7 +421,8 @@ def post_page(p):
     t = p["type"]; s = SECTIONS[t]
     if p["img"]:
         wd, ht = p["size"]
-        cover = f'<figure class="post-cover"><img src="{p["img"]}" alt="{html.escape(p["alt"])}" width="{wd}" height="{ht}" decoding="async"></figure>'
+        cap = f'<figcaption>{html.escape(p["cover_cap"])}</figcaption>' if p.get("cover_cap") else ""
+        cover = f'<figure class="post-cover"><img src="{p["img"]}" alt="{html.escape(p["alt"])}" width="{wd}" height="{ht}" decoding="async">{cap}</figure>'
     else:
         cover = f'<figure class="post-cover ph" style="--accent:{s["accent"]}"><div class="ph-art">{icon(PH_ICON[t])}</div></figure>'
     # nội dung
@@ -389,6 +439,11 @@ def post_page(p):
             out.append(f'<section class="{"recipe-block" if recipe else "kinh-sec"}" id="muc-{si}"><h2>{html.escape(val)}</h2>'); sec_open = True
         elif kind == "p": out.append(f"<p>{html.escape(val)}</p>")
         elif kind == "verse": out.append('<p class="verse">' + "<br>\n".join(html.escape(x) for x in val) + "</p>")
+        elif kind == "img":
+            g = p["gallery"].get(val[1])
+            if g:
+                cap = f"<figcaption>{html.escape(val[0])}</figcaption>" if val[0] else ""
+                out.append(f'<figure class="post-fig"><img src="{g[0]}" alt="{html.escape(val[0])}" width="{g[1]}" height="{g[2]}" loading="lazy" decoding="async">{cap}</figure>')
         elif kind == "ul": out.append(f'<ul class="{"ingredients" if recipe else "chant"}">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ul>")
         elif kind == "ol": out.append('<ol class="steps">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ol>")
     if sec_open: out.append("</section>")
@@ -409,7 +464,7 @@ def post_page(p):
         core = re.sub(r"^[\s🌸]+|[\s🌸]+$", "", p["title"])
         h1_title = f"🌸 {core} 🌸"
     body = f"""
-  <article class="post">
+  <article class="post{" wide" if t in WIDE_TYPES else ""}">
     {cover}
     <div class="post-body">
       <div class="eyebrow">{html.escape(eyebrow)}</div>
@@ -645,6 +700,9 @@ def remove_stale(keep):
     """Xóa trang bài viết cũ không còn được tạo (bài bị ẩn hoặc đã xóa file .txt), kèm ảnh và PDF của nó."""
     pat = re.compile(r"^(bai-viet|kinh|chua-tinh-xa|mon-chay)-(.+)\.html$")
     listing = {s["file"] for s in SECTIONS.values()} | {f"danh-muc-{c[0]}.html" for c in CATS}
+    for f in sorted(_os.listdir(_os.path.join(OUT, "images"))) if _os.path.isdir(_os.path.join(OUT, "images")) else []:
+        if re.search(r"-(thumb|anh\d+)\.jpg$", f) and f"images/{f}" not in PRODUCED:
+            _os.remove(_os.path.join(OUT, "images", f)); print(f"Đã gỡ ảnh không còn dùng: images/{f}")
     cat_pages = {f"danh-muc-{c[0]}.html" for c in CATS}
     for f in sorted(_os.listdir(OUT)):
         if (f in LEGACY_PAGES) or (f.startswith("danh-muc-") and f.endswith(".html") and f not in cat_pages):

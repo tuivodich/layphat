@@ -47,14 +47,14 @@
   // Năm hiện tại ở chân trang
   var y = new Date().getFullYear();
   document.querySelectorAll('.yr').forEach(function (el) { el.textContent = y; });
-  // Ngày và đồng hồ ở trang chủ (giờ của thiết bị người xem), định dạng dd/mm/yyyy và hh-mm-ss
+  // Ngày và đồng hồ ở trang chủ (giờ của thiết bị người xem), định dạng dd/mm/yyyy và hh:mm:ss
   var dEl = document.getElementById('hs-date'), cEl = document.getElementById('hs-clock');
   if (dEl && cEl) {
     var p2 = function (n) { return (n < 10 ? '0' : '') + n; };
     var tick = function () {
       var n = new Date();
       dEl.textContent = p2(n.getDate()) + '/' + p2(n.getMonth() + 1) + '/' + n.getFullYear();
-      cEl.textContent = p2(n.getHours()) + '-' + p2(n.getMinutes()) + '-' + p2(n.getSeconds());
+      cEl.textContent = p2(n.getHours()) + ':' + p2(n.getMinutes()) + ':' + p2(n.getSeconds());
     };
     tick(); setInterval(tick, 1000);
   }

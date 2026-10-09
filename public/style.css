@@ -217,6 +217,9 @@ body::after{content:""; position:fixed; inset:0; z-index:-1; pointer-events:none
 .kinh-sec h2{font-size:26px; color:var(--gold-soft); font-weight:600; margin-bottom:12px; padding-bottom:8px; border-bottom:1px solid var(--line);}
 .kinh-sec .verse{font-family:'Cormorant Garamond',Georgia,serif; font-size:22px; line-height:1.75; font-style:italic; color:var(--fg); text-align:center; padding:14px 10px; margin:0 0 16px; max-width:none;}
 .chant{list-style:none; margin:0 0 16px; padding:0; display:grid; gap:8px;}
+.chant.dash{gap:6px;}
+.chant.dash li{padding:2px 0 2px 20px; position:relative; background:none; border:0; border-radius:0; font-size:17px; line-height:1.7;}
+.chant.dash li::before{content:"-"; position:absolute; left:4px; color:var(--gold-soft);}
 .chant li{padding:11px 16px; background:var(--card); border:1px solid var(--line); border-radius:12px; font-size:16.5px; line-height:1.6;}
 
 

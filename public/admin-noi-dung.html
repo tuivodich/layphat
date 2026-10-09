@@ -42,11 +42,19 @@
   .qt-msg.ok{color:#6fc39a;} .qt-msg.err{color:#e59ab0;}
   .qt-tok{display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;}
   .qt-tok input{flex:1 1 240px; font:inherit; font-size:14px; color:var(--fg); background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:10px; padding:8px 10px;}
+  .qt-nav{display:flex; gap:8px; margin-bottom:14px;}
+  .qt-nav a,.qt-nav button{display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; border:1px solid var(--line); background:rgba(0,0,0,.25); color:var(--fg); cursor:pointer; padding:0;}
+  .qt-nav a:hover,.qt-nav button:hover{border-color:var(--gold); color:var(--gold-soft);}
+  .qt-nav svg{width:20px; height:20px;}
   [hidden]{display:none !important;}
 </style>
 </head>
 <body>
 <main class="qt">
+  <div class="qt-nav">
+    <button type="button" id="qt-back" title="Quay lại trang trước" aria-label="Quay lại trang trước"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5"/><path d="M11 6l-6 6 6 6"/></svg></button>
+    <a href="index.html" title="Về trang chủ" aria-label="Về trang chủ"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></svg></a>
+  </div>
   <h1>Quản trị nội dung</h1>
   <p class="sub">Sửa các file .txt của bài viết. Mỗi lần lưu, web tự deploy lại sau khoảng 1–2 phút.</p>
 
@@ -143,6 +151,7 @@
     </div>
   </section>
 </main>
+<script>document.getElementById('qt-back').addEventListener('click',function(){ if(history.length>1) history.back(); else location.href='index.html'; });</script>
 
 <script type="module">
 const OWNER = 'tuivodich', REPO = 'layphat', BRANCH = 'main';

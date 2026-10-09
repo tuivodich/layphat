@@ -457,7 +457,7 @@ def post_page(p):
             if g:
                 cap = f"<figcaption>{html.escape(val[0])}</figcaption>" if val[0] else ""
                 out.append(f'<figure class="post-fig"><img src="{g[0]}" alt="{html.escape(val[0])}" width="{g[1]}" height="{g[2]}" loading="lazy" decoding="async">{cap}</figure>')
-        elif kind == "ul": out.append(f'<ul class="{"ingredients" if recipe else "chant"}">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ul>")
+        elif kind == "ul": out.append(f'<ul class="{"ingredients" if recipe else ("chant dash" if t in ("kinh-ke","chua-tinh-xa","nhan-vat") else "chant")}">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ul>")
         elif kind == "ol": out.append('<ol class="steps">' + "".join(f"<li>{html.escape(x)}</li>" for x in val) + "</ol>")
     if sec_open: out.append("</section>")
     prose = "\n".join(out)

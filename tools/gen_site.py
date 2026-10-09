@@ -10,7 +10,7 @@ NAV = [
   ("danh-tang-nhan-vat-phat-giao.html","Danh tăng, Nhân vật"),
   ("chua-tinh-xa.html","Chùa, Tịnh xá"),
   ("mon-chay.html","Món chay"),
-  ("loi-cau-nguyen.html","Gửi lời cầu nguyện"),
+  ("loi-cau-nguyen.html","Lời cầu nguyện"),
 ]
 
 ICON = {
@@ -123,7 +123,7 @@ def head(title, desc, active, extra='', crumbs=None):
 FOOT = '''
   <footer>
     <div class="foot-links">
-      <a href="index.html">Trang chủ</a><a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="danh-tang-nhan-vat-phat-giao.html">Danh tăng, Nhân vật</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Gửi lời cầu nguyện</a>
+      <a href="index.html">Trang chủ</a><a href="bai-viet.html">Bài viết Phật giáo</a><a href="kinh-ke.html">Bài kinh - kệ</a><a href="danh-tang-nhan-vat-phat-giao.html">Danh tăng, Nhân vật</a><a href="chua-tinh-xa.html">Chùa, Tịnh xá</a><a href="mon-chay.html">Món chay</a><a href="loi-cau-nguyen.html">Lời cầu nguyện</a>
     </div>
     <div class="foot-bottom">
       <span class="copyright">© 2024 - <span class="yr">2026</span> Bản quyền thuộc <a class="fb-link" href="https://facebook.com/layphatvn" target="_blank" rel="noopener noreferrer"><svg class="fb-ico" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M22 12a10 10 0 10-11.56 9.88v-6.99H7.9V12h2.54V9.8c0-2.5 1.49-3.89 3.78-3.89 1.09 0 2.24.2 2.24.2v2.46h-1.26c-1.24 0-1.63.77-1.63 1.56V12h2.78l-.44 2.89h-2.34v6.99A10 10 0 0022 12z"/></svg><span class="fb-sep">/</span>Lạy Phật</a>. Nếu sao chép hay trích dẫn nội dung của trang xin vui lòng ghi rõ nguồn và chỉ sử dụng với mục đích phi thương mại.</span>
@@ -616,7 +616,7 @@ def index_page(posts):
     </div>
     <form class="card search-card" onsubmit="return false">
       <h2>Tìm bài viết</h2>
-      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tìm theo tiêu đề, tóm tắt, tên file, có dấu hoặc không dấu).</p>
+      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tìm theo tiêu đề, tóm tắt, có dấu hoặc không dấu)…</p>
       <div class="field-row one">
         <div class="field"><label>Từ khóa</label><input id="q" placeholder="Ví dụ: thiền, Vu Lan, đậu hũ..." /></div>
       </div>
@@ -680,7 +680,7 @@ def prayer_page():
     body = '''
   <section class="page-hero">
     <div class="eyebrow">Cộng đồng</div>
-    <h1>Gửi lời cầu nguyện</h1>
+    <h1>Lời cầu nguyện</h1>
     <p class="lede">Chia sẻ một lời nguyện lành. Lời của bạn sẽ được kiểm duyệt trước khi hiển thị công khai để mọi người cùng hồi hướng.</p>
     <p class="pr-jump"><a href="#pr-form-box">Gửi lời cầu nguyện của bạn &darr;</a></p>
   </section>
@@ -688,7 +688,7 @@ def prayer_page():
   <section class="pr-wall">
     <div class="pr-wall-head">
       <svg class="pr-lotus" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M32 4c6 6 8 14 0 28-8-14-6-22 0-28z"/><path d="M32 32C22 30 14 22 12 12c10 0 18 6 20 20z"/><path d="M32 32c10-2 18-10 20-20-10 0-18 6-20 20z"/><path d="M32 32C18 34 8 28 2 20c10-2 22 0 30 12z"/><path d="M32 32c14 2 24-4 30-12-10-2-22 0-30 12z"/><path d="M14 37h36" stroke-linecap="round"/></svg>
-      <h2>Bảng cầu nguyện</h2>
+      <h2>Các lời cầu nguyện</h2>
       <p>Những lời nguyện lành từ cộng đồng. Xin cùng hồi hướng công đức, nguyện chúng sinh được an lạc.</p>
     </div>
     <div id="pr-list" class="pr-list">Đang tải…</div>
@@ -720,8 +720,8 @@ def prayer_page():
   </section>
 
 '''
-    page = head("Gửi lời cầu nguyện · Lạy Phật", "Gửi lời cầu nguyện và đọc những lời nguyện lành từ cộng đồng.", "loi-cau-nguyen.html",
-                crumbs=[("Trang chủ", "index.html"), ("Gửi lời cầu nguyện", None)]) + body + FOOT
+    page = head("Lời cầu nguyện · Lạy Phật", "Lời cầu nguyện và đọc những lời nguyện lành từ cộng đồng.", "loi-cau-nguyen.html",
+                crumbs=[("Trang chủ", "index.html"), ("Lời cầu nguyện", None)]) + body + FOOT
     return page.replace('<script src="app.js"></script>', '<script src="app.js"></script>\n<script type="module" src="prayer.js"></script>')
 
 LEGACY_PAGES = {"cau-nguyen.html"}  # trang đã đổi tên (cau-nguyen -> chua-tinh-xa)

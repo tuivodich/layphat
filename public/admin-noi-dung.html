@@ -46,6 +46,9 @@
   .qt-nav a,.qt-nav button{display:inline-flex; align-items:center; justify-content:center; width:40px; height:40px; border-radius:10px; border:1px solid var(--line); background:rgba(0,0,0,.25); color:var(--fg); cursor:pointer; padding:0;}
   .qt-nav a:hover,.qt-nav button:hover{border-color:var(--gold); color:var(--gold-soft);}
   .qt-nav svg{width:20px; height:20px;}
+  .qt-find{width:100%; font:inherit; font-size:14px; color:var(--fg); background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:10px;}
+  .qt-more{display:block; width:100%; text-align:center; background:none; border:0; color:var(--gold-soft); font:inherit; font-size:13px; padding:6px; cursor:pointer;}
+  .qt-more:hover{text-decoration:underline;}
   [hidden]{display:none !important;}
 </style>
 </head>
@@ -96,7 +99,10 @@
       </span>
     </div>
     <div class="qt-grid" id="pane-files">
-      <div class="qt-list" id="list">Đang tải danh sách…</div>
+      <div class="qt-listwrap">
+        <input id="q-find" class="qt-find" type="search" placeholder="Tìm bài viết (có dấu hoặc không dấu)…" aria-label="Tìm bài viết" autocomplete="off">
+        <div class="qt-list" id="list">Đang tải danh sách…</div>
+      </div>
       <div class="qt-edit" id="edit" hidden>
         <div class="qt-bar">
           <span class="qt-path" id="path"></span>
@@ -204,21 +210,45 @@ async function loadList() {
   }
 }
 
+const PAGE = 5, shown = {};
+const fold = x => String(x || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'd').toLowerCase().replace(/\s+/g, ' ').trim();
+
+function itemBtn(f) {
+  const b = document.createElement('button'); b.type = 'button'; b.className = 'qt-item' + (cur && cur.path === f.path ? ' on' : '');
+  const t = document.createElement('span'); t.textContent = f.title;
+  const s = document.createElement('small'); s.textContent = f.name + ' · ' + (f.date || '—') + ' · ';
+  const st = document.createElement('span'); st.textContent = f.off ? 'ĐANG ẨN' : 'đang hiển thị'; if (f.off) st.className = 'off'; s.appendChild(st);
+  b.append(t, s); b.onclick = () => openFile(f); return b;
+}
+
 function renderList() {
   const box = $('list'); box.textContent = '';
+  const q = fold($('q-find') ? $('q-find').value : '');
+  if (q) {
+    const words = q.split(' ');
+    const hits = files.filter(f => { const k = fold(f.title + ' ' + f.name); return words.every(w => k.includes(w)); })
+      .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    const g = document.createElement('div'); g.className = 'qt-grp'; g.textContent = 'Kết quả tìm kiếm (' + hits.length + ')'; box.appendChild(g);
+    if (!hits.length) { const p = document.createElement('div'); p.style.cssText = 'color:var(--muted);font-size:13px;padding:4px 10px'; p.textContent = 'Không tìm thấy bài viết nào.'; box.appendChild(p); }
+    hits.forEach(f => box.appendChild(itemBtn(f)));
+    return;
+  }
   for (const d of Object.keys(DIRS)) {
     const g = document.createElement('div'); g.className = 'qt-grp'; g.textContent = DIRS[d]; box.appendChild(g);
     const mine = files.filter(f => f.dir === d).sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    if (!mine.length) { const p = document.createElement('div'); p.style.cssText = 'color:var(--muted);font-size:13px;padding:4px 10px'; p.textContent = '(chưa có file)'; box.appendChild(p); }
-    for (const f of mine) {
-      const b = document.createElement('button'); b.type = 'button'; b.className = 'qt-item' + (cur && cur.path === f.path ? ' on' : '');
-      const t = document.createElement('span'); t.textContent = f.title;
-      const s = document.createElement('small'); s.textContent = f.name + ' · ' + (f.date || '—') + ' · ';
-      const st = document.createElement('span'); st.textContent = f.off ? 'ĐANG ẨN' : 'đang hiển thị'; if (f.off) st.className = 'off'; s.appendChild(st);
-      b.append(t, s); b.onclick = () => openFile(f); box.appendChild(b);
+    if (!mine.length) { const p = document.createElement('div'); p.style.cssText = 'color:var(--muted);font-size:13px;padding:4px 10px'; p.textContent = '(chưa có file)'; box.appendChild(p); continue; }
+    let n = shown[d] || PAGE;
+    // giữ bài đang mở luôn nằm trong phần đã hiển thị
+    if (cur && cur.dir === d) { const k = mine.findIndex(f => f.path === cur.path); if (k >= n) n = k + 1; }
+    shown[d] = n;
+    mine.slice(0, n).forEach(f => box.appendChild(itemBtn(f)));
+    if (mine.length > n) {
+      const m = document.createElement('button'); m.type = 'button'; m.className = 'qt-more'; m.textContent = 'Xem thêm';
+      m.onclick = () => { shown[d] = n + PAGE; renderList(); }; box.appendChild(m);
     }
   }
 }
+document.addEventListener('input', e => { if (e.target && e.target.id === 'q-find') renderList(); });
 
 function confirmLeave() { return !dirty || confirm('Bạn có thay đổi chưa lưu. Bỏ thay đổi và tiếp tục?'); }
 

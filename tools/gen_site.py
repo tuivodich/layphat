@@ -614,7 +614,7 @@ def index_page(posts):
     groups = [("bai-viet", "kinh-ke"), ("nhan-vat", "chua-tinh-xa"), ("mon-chay",)]
     latest_rows = '      <hr class="latest-sep" aria-hidden="true">\n'.join(
         '      <div class="latest-group">\n' + "".join(col(k) for k in g) + '      </div>\n' for g in groups)
-    feat = [p for p in posts if p.get("featured")]   # posts đã mới nhất trước
+    feat = [p for p in posts if p.get("featured")][:5]   # tối đa 5 bài nổi bật mới nhất (posts đã mới nhất trước)
     slides = ""
     for p in feat:
         sc = SECTIONS[p["type"]]

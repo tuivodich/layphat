@@ -83,6 +83,17 @@
     var fsDots = [].slice.call(document.querySelectorAll('.fs-dot'));
     var fsGo = function (i) { fsTrack.scrollTo({ left: i * fsTrack.clientWidth, behavior: 'smooth' }); };
     fsDots.forEach(function (d, i) { d.addEventListener('click', function () { fsGo(i); }); });
+    // Tự chuyển bài mỗi 3 giây; tạm dừng khi rê chuột / chạm / tab ẩn
+    if (fsDots.length > 1 && !(window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches)) {
+      var fsPause = false, fsCur = function () { return Math.round(fsTrack.scrollLeft / Math.max(1, fsTrack.clientWidth)); };
+      var fsBox = fsTrack.parentNode;
+      ['mouseenter', 'focusin', 'touchstart'].forEach(function (ev) { fsBox.addEventListener(ev, function () { fsPause = true; }, { passive: true }); });
+      ['mouseleave', 'focusout', 'touchend'].forEach(function (ev) { fsBox.addEventListener(ev, function () { fsPause = false; }, { passive: true }); });
+      setInterval(function () {
+        if (fsPause || document.hidden) return;
+        fsGo((fsCur() + 1) % fsDots.length);
+      }, 3000);
+    }
     var fsT;
     fsTrack.addEventListener('scroll', function () {
       clearTimeout(fsT);

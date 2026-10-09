@@ -529,3 +529,35 @@ body{background:transparent;}
 .post.full .prose p{max-width:none;}
 .post.full .post-fig{max-width:820px; margin-inline:auto;}
 .post.wide.full .post-cover img{object-position:center 20%;}
+
+/* ===== Slide bài nổi bật: giao diện ấn tượng ===== */
+.featured{position:relative; margin-top:40px;}
+.featured::before{content:""; position:absolute; inset:-14px -10px; z-index:-1; border-radius:34px; background:radial-gradient(60% 80% at 15% 20%, color-mix(in srgb, var(--gold) 20%, transparent), transparent 70%), radial-gradient(50% 70% at 90% 90%, color-mix(in srgb, var(--c4, var(--gold)) 22%, transparent), transparent 70%); filter:blur(14px); opacity:.9;}
+.fs-track{position:relative; border:1px solid transparent; border-radius:26px;
+  background:
+    linear-gradient(135deg, rgba(8,28,22,.94), rgba(5,16,13,.96)) padding-box,
+    linear-gradient(135deg, var(--gold-soft), color-mix(in srgb, var(--gold) 20%, transparent) 40%, var(--gold) 70%, color-mix(in srgb, var(--gold-soft) 40%, transparent)) border-box;
+  box-shadow:0 30px 70px -34px rgba(0,0,0,.85), 0 0 0 1px rgba(255,255,255,.03) inset;}
+.fs-slide{position:relative; padding:30px 34px; gap:40px; isolation:isolate; overflow:hidden;}
+.fs-slide::before{content:""; position:absolute; inset:0; z-index:-1; background:radial-gradient(70% 90% at 0% 0%, color-mix(in srgb, var(--accent, var(--gold)) 26%, transparent), transparent 62%), radial-gradient(40% 60% at 100% 100%, color-mix(in srgb, var(--gold) 14%, transparent), transparent 70%);}
+.fs-slide::after{content:"❀"; position:absolute; right:-18px; bottom:-52px; z-index:-1; font-size:240px; line-height:1; color:var(--gold); opacity:.06; transform:rotate(-12deg); pointer-events:none;}
+.fs-thumb{position:relative; border-radius:18px; box-shadow:0 0 0 1px color-mix(in srgb, var(--gold) 55%, transparent), 0 0 0 7px rgba(255,255,255,.04), 0 26px 48px -22px rgba(0,0,0,.9), 0 0 60px -18px color-mix(in srgb, var(--accent, var(--gold)) 70%, transparent);}
+.fs-thumb::after{content:""; position:absolute; inset:0; border-radius:inherit; background:linear-gradient(180deg, transparent 55%, rgba(0,0,0,.38)); pointer-events:none;}
+.fs-tag{align-self:flex-start; padding:5px 14px; border-radius:999px; font-size:11.5px; font-weight:600; letter-spacing:1.6px; color:var(--on-gold); background:linear-gradient(135deg, var(--gold-soft), var(--gold));}
+.fs-title{font-size:38px; line-height:1.14; background:linear-gradient(180deg, #fff 30%, var(--gold-soft)); -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; color:transparent; text-shadow:none;}
+.fs-slide:hover .fs-title{color:transparent;}
+.fs-sum{font-size:15.5px; color:color-mix(in srgb, var(--fg) 78%, transparent); padding-left:16px; border-left:2px solid color-mix(in srgb, var(--gold) 60%, transparent);}
+.fs-cta{align-self:flex-start; margin-top:6px; display:inline-flex; align-items:center; gap:8px; padding:9px 20px; border-radius:999px; font-size:14px; font-weight:600; color:var(--gold-soft); border:1px solid color-mix(in srgb, var(--gold) 60%, transparent); background:rgba(0,0,0,.2); transition:background .2s, color .2s, gap .2s;}
+.fs-cta b{font-weight:400; transition:transform .2s;}
+.fs-slide:hover .fs-cta{background:linear-gradient(135deg, var(--gold-soft), var(--gold)); color:var(--on-gold); border-color:transparent;}
+.fs-slide:hover .fs-cta b{transform:translateX(4px);}
+.fs-dots{gap:8px; margin-top:18px;}
+.fs-dot{position:relative; width:12px; height:12px; border-radius:999px; border:0; background:color-mix(in srgb, var(--gold) 35%, transparent); overflow:hidden; transition:width .35s ease, background .3s;}
+.fs-dot i{position:absolute; inset:0; width:100%; background:var(--gold-soft); transform:scaleX(0); transform-origin:left;}
+.fs-dot.on{width:54px;}
+.fs-dot.on i{animation:fs-fill 5s linear forwards;}
+.featured:hover .fs-dot.on i,.featured:focus-within .fs-dot.on i{animation-play-state:paused;}
+@keyframes fs-fill{from{transform:scaleX(0);}to{transform:scaleX(1);}}
+@media (prefers-reduced-motion:reduce){ .fs-dot.on i{animation:none; transform:scaleX(1);} }
+@media (max-width:760px){ .fs-slide{padding:18px; gap:18px;} .fs-title{font-size:27px;} .fs-slide::after{font-size:160px;} }
+.pr-intro{margin-top:44px; padding-bottom:0;}

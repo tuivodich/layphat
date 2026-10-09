@@ -622,8 +622,8 @@ def index_page(posts):
               else f'<span class="fs-ph">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</span>')
         slides += (f'      <a class="fs-slide" href="{p["file"]}" style="--accent:{sc["accent"]}"><span class="fs-thumb">{th}</span>'
                    f'<span class="fs-body"><span class="fs-tag">{sc["tag"]} · Nổi bật</span><span class="fs-title">{html.escape(p["title"])}</span>'
-                   f'<span class="fs-sum">{html.escape(p["summary"])}</span></span></a>\n')
-    dots = "".join(f'<button type="button" class="fs-dot{" on" if i == 0 else ""}" aria-label="Bài nổi bật {i+1}"></button>' for i in range(len(feat))) if len(feat) > 1 else ""
+                   f'<span class="fs-sum">{html.escape(p["summary"])}</span><span class="fs-cta">Đọc bài viết <b aria-hidden="true">→</b></span></span></a>\n')
+    dots = "".join(f'<button type="button" class="fs-dot{" on" if i == 0 else ""}" aria-label="Bài nổi bật {i+1}"><i></i></button>' for i in range(len(feat))) if len(feat) > 1 else ""
     featured_block = (f'    <section class="featured" aria-label="Bài viết nổi bật">\n      <div class="fs-track">\n{slides}      </div>\n'
                       + (f'      <div class="fs-dots">{dots}</div>\n' if dots else "") + '    </section>\n') if feat else ""
     counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
@@ -709,13 +709,6 @@ def write(name, content):
 
 def prayer_page():
     body = '''
-  <section class="page-hero">
-    <div class="eyebrow">Cộng đồng</div>
-    <h1>Lời cầu nguyện</h1>
-    <p class="lede">Chia sẻ một lời nguyện lành. Lời của bạn sẽ được kiểm duyệt trước khi hiển thị công khai để mọi người cùng hồi hướng.</p>
-    <p class="pr-jump"><a href="#pr-form-box">Gửi lời cầu nguyện của bạn &darr;</a></p>
-  </section>
-
   <section class="pr-wall">
     <div class="pr-wall-head">
       <svg class="pr-lotus" viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round" aria-hidden="true"><path d="M32 4c6 6 8 14 0 28-8-14-6-22 0-28z"/><path d="M32 32C22 30 14 22 12 12c10 0 18 6 20 20z"/><path d="M32 32c10-2 18-10 20-20-10 0-18 6-20 20z"/><path d="M32 32C18 34 8 28 2 20c10-2 22 0 30 12z"/><path d="M32 32c14 2 24-4 30-12-10-2-22 0-30 12z"/><path d="M14 37h36" stroke-linecap="round"/></svg>
@@ -723,6 +716,12 @@ def prayer_page():
       <p>Những lời nguyện lành từ cộng đồng. Xin cùng hồi hướng công đức, nguyện chúng sinh được an lạc.</p>
     </div>
     <div id="pr-list" class="pr-list">Đang tải…</div>
+  </section>
+
+  <section class="page-hero pr-intro">
+    <div class="eyebrow">Cộng đồng</div>
+    <h1>Lời cầu nguyện</h1>
+    <p class="lede">Chia sẻ một lời nguyện lành. Lời của bạn sẽ được kiểm duyệt trước khi hiển thị công khai để mọi người cùng hồi hướng.</p>
   </section>
 
   <section class="pr-box" id="pr-form-box">

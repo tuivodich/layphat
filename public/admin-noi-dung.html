@@ -47,6 +47,8 @@
   .qt-nav a:hover,.qt-nav button:hover{border-color:var(--gold); color:var(--gold-soft);}
   .qt-nav svg{width:20px; height:20px;}
   .qt-find{width:100%; font:inherit; font-size:14px; color:var(--fg); background:rgba(0,0,0,.25); border:1px solid var(--line); border-radius:10px; padding:9px 12px; margin-bottom:10px;}
+  .qt-chk{display:inline-flex; align-items:center; gap:6px; cursor:pointer; white-space:nowrap;}
+  .qt-star{color:var(--gold-soft); font-weight:600;}
   .qt-more{display:block; width:100%; text-align:center; background:none; border:0; color:var(--gold-soft); font:inherit; font-size:13px; padding:6px; cursor:pointer;}
   .qt-more:hover{text-decoration:underline;}
   [hidden]{display:none !important;}
@@ -109,6 +111,7 @@
           <label>Hiển thị
             <select id="sel-show"><option value="Có">Có</option><option value="Không">Không</option></select>
           </label>
+          <label class="qt-chk"><input type="checkbox" id="chk-feat"> Nổi bật</label>
           <button id="btn-save" class="qt-btn primary" type="button">Lưu (Ctrl+S)</button>
         </div>
         <div class="qt-bar" id="newbar" hidden>
@@ -190,6 +193,8 @@ const enc = s => { const b = new TextEncoder().encode(s); let t = ''; b.forEach(
 const meta = (txt, re) => { const m = txt.match(re); return m ? m[1].trim() : ''; };
 const isHidden = txt => /^(khong|no|false|0|an|off)$/i.test(meta(txt, /^[ \t]*Hi[eể]n\s*th[iị][ \t]*:(.*)$/im).normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd'));
 
+const isFeat = txt => /^(co|yes|true|1|x|on)$/i.test(fold(meta(txt, /^[ \t]*N[oổ]i\s*b[aậ]t[ \t]*:(.*)$/im)));
+
 function msg(t, cls) { const m = $('msg'); m.textContent = t || ''; m.className = 'qt-msg ' + (cls || ''); }
 
 async function loadList() {
@@ -201,7 +206,7 @@ async function loadList() {
       try { arr = await gh('/contents/content/' + d + '?ref=' + BRANCH); } catch (e) { if (e.status !== 404) throw e; }
       const items = arr.filter(f => f.type === 'file' && /\.(txt|md)$/i.test(f.name) && !f.name.startsWith('_'));
       const full = await Promise.all(items.map(f => gh('/contents/' + f.path + '?ref=' + BRANCH)));
-      full.forEach((f, i) => { const t = dec(f.content); files.push({ dir: d, path: items[i].path, name: items[i].name, sha: f.sha, text: t, title: meta(t, /^[ \t]*Ti[eê]u\s*đ[eề][ \t]*:(.*)$/im) || items[i].name, date: meta(t, /^[ \t]*Ng[aà]y[ \t]*:(.*)$/im), off: isHidden(t) }); });
+      full.forEach((f, i) => { const t = dec(f.content); files.push({ dir: d, path: items[i].path, name: items[i].name, sha: f.sha, text: t, title: meta(t, /^[ \t]*Ti[eê]u\s*đ[eề][ \t]*:(.*)$/im) || items[i].name, date: meta(t, /^[ \t]*Ng[aà]y[ \t]*:(.*)$/im), off: isHidden(t), feat: isFeat(t) }); });
     }
     renderList();
   } catch (e) {
@@ -218,6 +223,7 @@ function itemBtn(f) {
   const t = document.createElement('span'); t.textContent = f.title;
   const s = document.createElement('small'); s.textContent = f.name + ' · ' + (f.date || '—') + ' · ';
   const st = document.createElement('span'); st.textContent = f.off ? 'ĐANG ẨN' : 'đang hiển thị'; if (f.off) st.className = 'off'; s.appendChild(st);
+  if (f.feat) { const star = document.createElement('span'); star.className = 'qt-star'; star.textContent = ' · ★ Nổi bật'; s.appendChild(star); }
   b.append(t, s); b.onclick = () => openFile(f); return b;
 }
 
@@ -256,7 +262,7 @@ function openFile(f) {
   if (!confirmLeave()) return;
   cur = { ...f, isNew: false };
   $('edit').hidden = false; $('newbar').hidden = true;
-  $('path').textContent = f.path; $('txt').value = f.text; $('sel-show').value = f.off ? 'Không' : 'Có';
+  $('path').textContent = f.path; $('txt').value = f.text; $('sel-show').value = f.off ? 'Không' : 'Có'; $('chk-feat').checked = isFeat(f.text);
   dirty = false; msg(''); renderList();
 }
 
@@ -266,7 +272,7 @@ function newFile() {
   $('edit').hidden = false; $('newbar').hidden = false;
   $('new-type').value = 'bai-viet'; $('new-name').value = '';
   $('txt').value = TEMPLATES['bai-viet'].replace('{today}', new Date().toISOString().slice(0, 10));
-  $('path').textContent = '(file mới)'; $('sel-show').value = 'Có'; dirty = false; msg(''); renderList();
+  $('path').textContent = '(file mới)'; $('sel-show').value = 'Có'; $('chk-feat').checked = false; dirty = false; msg(''); renderList();
 }
 
 // đổi "Hiển thị" ngay trong nội dung file
@@ -276,6 +282,16 @@ function setShow(val) {
   if (re.test(t)) t = t.replace(re, 'Hiển thị: ' + val);
   else if (/^\s*---\s*$/m.test(t)) t = t.replace(/^\s*---\s*$/m, 'Hiển thị: ' + val + '\n---');
   else t = 'Hiển thị: ' + val + '\n' + t;
+  $('txt').value = t; dirty = true;
+}
+
+// đổi "Nổi bật" ngay trong nội dung file
+function setFeat(on) {
+  let t = $('txt').value;
+  const re = /^[ \t]*N[oổ]i\s*b[aậ]t[ \t]*:.*$/im, v = 'Nổi bật: ' + (on ? 'Có' : 'Không');
+  if (re.test(t)) t = t.replace(re, v);
+  else if (/^\s*---\s*$/m.test(t)) t = t.replace(/^\s*---\s*$/m, v + '\n---');
+  else t = v + '\n' + t;
   $('txt').value = t; dirty = true;
 }
 
@@ -296,7 +312,7 @@ async function save() {
     const r = await gh('/contents/' + path, { method: 'PUT', body: JSON.stringify(body) });
     dirty = false;
     const f = { dir: path.split('/')[1], path, name: path.split('/').pop(), sha: r.content.sha, text,
-      title: meta(text, /^[ \t]*Ti[eê]u\s*đ[eề][ \t]*:(.*)$/im) || path.split('/').pop(), date: meta(text, /^[ \t]*Ng[aà]y[ \t]*:(.*)$/im), off: isHidden(text) };
+      title: meta(text, /^[ \t]*Ti[eê]u\s*đ[eề][ \t]*:(.*)$/im) || path.split('/').pop(), date: meta(text, /^[ \t]*Ng[aà]y[ \t]*:(.*)$/im), off: isHidden(text), feat: isFeat(text) };
     files = files.filter(x => x.path !== path); files.push(f);
     cur = { ...f, isNew: false }; $('path').textContent = path; $('newbar').hidden = true; renderList();
     msg('Đã lưu. Web sẽ cập nhật sau khoảng 1–2 phút (xem tiến trình ở tab Actions của GitHub).', 'ok');
@@ -448,7 +464,8 @@ $('btn-new').onclick = newFile;
 $('btn-reload').onclick = () => { if (confirmLeave()) loadList(); };
 $('btn-save').onclick = save;
 $('sel-show').onchange = e => setShow(e.target.value);
-$('txt').oninput = () => { dirty = true; };
+$('chk-feat').onchange = e => setFeat(e.target.checked);
+$('txt').oninput = () => { dirty = true; $('chk-feat').checked = isFeat($('txt').value); };
 $('new-type').onchange = e => { if (!dirty || confirm('Đổi loại sẽ thay nội dung mẫu. Tiếp tục?')) { $('txt').value = TEMPLATES[e.target.value].replace('{today}', new Date().toISOString().slice(0, 10)); dirty = false; } else { /* giữ nguyên */ } };
 document.addEventListener('keydown', e => { if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's' && !$('v-app').hidden && !$('edit').hidden) { e.preventDefault(); save(); } });
 window.addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });

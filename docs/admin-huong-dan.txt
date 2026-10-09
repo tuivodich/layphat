@@ -28,6 +28,7 @@ BƯỚC 4 - Lưu khóa vào Firestore (để 2 quản trị viên dùng được
 LƯU Ý
   - Ai có khóa GitHub này đều sửa được file trong kho. Đừng gửi khóa qua tin nhắn; khi hết hạn hoặc nghi lộ, tạo khóa mới và sửa lại giá trị token.
   - Muốn ẩn bài: mở bài -> Hiển thị: Không -> Lưu. Muốn hiện lại: Hiển thị: Có.
+  - Bài nổi bật: mở bài -> tick ô "Nổi bật" -> Lưu. Bài nổi bật hiện ở slide đầu trang chủ và lên đầu danh sách chuyên mục (bỏ tick để gỡ). Nhiều bài nổi bật thì sắp xếp bài mới nhất lên trước.
   - Trang không có đường dẫn từ menu và có thẻ noindex; nhưng ai biết địa chỉ vẫn thấy màn hình đăng nhập (không xem được nội dung nếu không phải quản trị viên).
 
 ==== LỜI CẦU NGUYỆN (trang loi-cau-nguyen.html) ====

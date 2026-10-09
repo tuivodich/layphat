@@ -90,7 +90,7 @@ def crumbs_html(items):
         li.append(f'<li>{inner}</li>')
     return '  <nav class="crumb" aria-label="Vị trí trang"><ol>' + "".join(li) + '</ol></nav>\n'
 
-def head(title, desc, active, extra='', crumbs=None):
+def head(title, desc, active, extra='', crumbs=None, topbar_extra=''):
     nav = "".join(f'<a href="{f}"{" class=active" if f==active else ""}>{html.escape(t)}</a>' for f,t in NAV)
     return f'''<!doctype html>
 <html lang="vi" data-theme="sen" data-bg="{BG}">
@@ -115,7 +115,7 @@ def head(title, desc, active, extra='', crumbs=None):
     <a class="brand" href="index.html">
       <svg class="brand-mark spin" viewBox="0 0 40 40" fill="none"><circle cx="20" cy="20" r="18" stroke="var(--gold)" stroke-width="1.4"/><circle cx="20" cy="20" r="6" stroke="var(--gold)" stroke-width="1.2"/><circle cx="20" cy="20" r="2.2" fill="var(--gold)"/><g stroke="var(--gold)" stroke-width="1.3" stroke-linecap="round"><line x1="20" y1="4" x2="20" y2="14"/><line x1="20" y1="26" x2="20" y2="36"/><line x1="4" y1="20" x2="14" y2="20"/><line x1="26" y1="20" x2="36" y2="20"/><line x1="8.7" y1="8.7" x2="15.8" y2="15.8"/><line x1="24.2" y1="24.2" x2="31.3" y2="31.3"/><line x1="31.3" y1="8.7" x2="24.2" y2="15.8"/><line x1="15.8" y1="24.2" x2="8.7" y2="31.3"/></g></svg>
       Lạy&nbsp;Phật
-    </a>
+    </a>{topbar_extra}
   </header>
   <nav class="navbar"><div class="navlist">{nav}</div></nav>
 {crumbs_html(crumbs) if crumbs else ""}'''
@@ -243,7 +243,7 @@ def slugify(s):
 TYPE_MAP = {"baiviet": "bai-viet", "baivietphatgiao": "bai-viet", "kinhke": "kinh-ke", "baikinhke": "kinh-ke", "kinh": "kinh-ke",
             "nhanvat": "nhan-vat", "danhtang": "nhan-vat", "danhtangnhanvat": "nhan-vat", "nhanvatphatgiao": "nhan-vat", "chuatinhxa": "chua-tinh-xa", "chua": "chua-tinh-xa", "tinhxa": "chua-tinh-xa", "monchay": "mon-chay"}
 KEY_MAP = {"loai": "type", "danhmuc": "cat", "tieude": "title", "tenngan": "short", "ngay": "date", "anh": "image", "motaanh": "alt",
-           "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related", "hienthi": "show"}
+           "nguon": "source", "tomtat": "summary", "loiket": "signoff", "hashtag": "tags", "bailienquan": "related", "hienthi": "show", "noibat": "featured"}
 
 HIDE_VALUES = {"khong", "no", "false", "0", "an", "off"}
 HIDDEN = []
@@ -340,7 +340,8 @@ def load_posts():
             posts.append(dict(type=ptype, cat=cat, title=title, short=short, dt=dt, has_time=has_time, slug=slug, file=fname,
                               image=image, alt=alt, cover_cap=cover_cap, source=meta.get("source"),
                               summary=meta.get("summary") or first_p[:160], signoff=meta.get("signoff"), tags=meta.get("tags"),
-                              related=(rel_url, rel_text), body=body, path=path))
+                              related=(rel_url, rel_text), body=body, path=path,
+                              featured=fold(meta.get("featured", "")) in {"co", "yes", "true", "1", "x", "on"}))
     posts.sort(key=lambda p: (p["dt"], p["title"]), reverse=True)
     return posts
 
@@ -412,13 +413,15 @@ def fmt_date(p):
     s = f"{d.day:02d}/{d.month:02d}/{d.year}"
     return s + (f" lúc {d.hour:02d}:{d.minute:02d}" if p["has_time"] else "")
 
+RIBBON = '<span class="ribbon" aria-hidden="true"><i>Nổi bật</i></span>'
+
 def real_card(p):
     s = SECTIONS[p["type"]]
     if p.get("thumb"):
         top = f'<div class="thumb"><img src="{p["thumb"]}" alt="{html.escape(p["alt"])}" width="640" height="400" loading="lazy" decoding="async"></div>'
     else:
         top = f'<div class="badge">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</div>'
-    return f'''    <a class="feature link{" has-thumb" if p.get("thumb") else ""}" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}" data-search="{html.escape(search_key(p))}"><span class="tag">{s["tag"]}</span>
+    return f'''    <a class="feature link{" has-thumb" if p.get("thumb") else ""}" href="{p["file"]}" style="--accent:{s["accent"]}" data-title="{html.escape(p["short"].lower())}" data-search="{html.escape(search_key(p))}"><span class="tag">{s["tag"]}</span>{RIBBON if p.get("featured") else ""}
       {top}
       <h3>{html.escape(p["short"])}</h3><p>{html.escape(p["summary"])}</p></a>
 '''
@@ -508,7 +511,7 @@ def post_page(p):
 def list_page(title, eyebrow, lede, posts, key, active, extra_top="", extra_bottom=""):
     s = SECTIONS[key]
     cap = 9 if key == "bai-viet" else 12
-    posts = posts[:cap]
+    posts = sorted(posts, key=lambda p: not p.get("featured"))[:cap]   # bài nổi bật lên đầu (sort ổn định: giữ thứ tự mới nhất)
     cards = "".join(real_card(p) for p in posts)
     n_sample = 0
     if key and len(posts) < 6:
@@ -577,10 +580,17 @@ def index_page(posts):
     def col(key):
         sec = SECTIONS[key]
         mine = [p for p in posts if p["type"] == key]   # posts đã sắp xếp mới nhất trước
-        rows = "".join(
+        def first(p):
+            th = (f'<img src="{p["thumb"]}" alt="" width="96" height="60" loading="lazy" decoding="async">' if p.get("thumb")
+                  else icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet"))
+            return (f'        <a class="latest-first" href="{p["file"]}" style="--accent:{sec["accent"]}"><span class="lf-thumb">{th}</span>'
+                    f'<span class="lf-body"><span class="lf-title">{html.escape(p["title"])}</span>'
+                    f'<span class="lf-sum">{html.escape(p["summary"])}</span>'
+                    f'<time class="latest-date" datetime="{p["dt"].strftime("%Y-%m-%d")}">{p["dt"].day:02d}/{p["dt"].month:02d}/{p["dt"].year}</time></span></a>\n')
+        rows = "".join(first(p) if i == 0 else
             f'        <div class="latest-row"><a class="latest-title" href="{p["file"]}">{html.escape(p["title"])}</a>'
             f'<time class="latest-date" datetime="{p["dt"].strftime("%Y-%m-%d")}">{p["dt"].day:02d}/{p["dt"].month:02d}/{p["dt"].year}</time></div>\n'
-            for p in mine[:5])
+            for i, p in enumerate(mine[:5]))
         if not rows: rows = '        <p class="latest-empty">Sắp có bài mới.</p>\n'
         more = f'        <a class="latest-more" href="{sec["file"]}">Xem thêm…</a>\n' if len(mine) > 5 else ""
         return (f'      <div class="latest-col">\n        <h3 class="latest-col-h"><a href="{sec["file"]}">{html.escape(sec["title"])}</a></h3>\n'
@@ -589,6 +599,18 @@ def index_page(posts):
     groups = [("bai-viet", "kinh-ke"), ("nhan-vat", "chua-tinh-xa"), ("mon-chay",)]
     latest_rows = '      <hr class="latest-sep" aria-hidden="true">\n'.join(
         '      <div class="latest-group">\n' + "".join(col(k) for k in g) + '      </div>\n' for g in groups)
+    feat = [p for p in posts if p.get("featured")]   # posts đã mới nhất trước
+    slides = ""
+    for p in feat:
+        sc = SECTIONS[p["type"]]
+        th = (f'<img src="{p["thumb"]}" alt="{html.escape(p["alt"])}" width="640" height="400" decoding="async">' if p.get("thumb")
+              else f'<span class="fs-ph">{icon(PH_ICON[p["type"]] if p["type"] != "bai-viet" else "bai-viet")}</span>')
+        slides += (f'      <a class="fs-slide" href="{p["file"]}" style="--accent:{sc["accent"]}"><span class="fs-thumb">{th}</span>'
+                   f'<span class="fs-body"><span class="fs-tag">{sc["tag"]} · Nổi bật</span><span class="fs-title">{html.escape(p["title"])}</span>'
+                   f'<span class="fs-sum">{html.escape(p["summary"])}</span></span></a>\n')
+    dots = "".join(f'<button type="button" class="fs-dot{" on" if i == 0 else ""}" aria-label="Bài nổi bật {i+1}"></button>' for i in range(len(feat))) if len(feat) > 1 else ""
+    featured_block = (f'    <section class="featured" aria-label="Bài viết nổi bật">\n      <div class="fs-track">\n{slides}      </div>\n'
+                      + (f'      <div class="fs-dots">{dots}</div>\n' if dots else "") + '    </section>\n') if feat else ""
     counts = {k: sum(1 for p in posts if p["type"] == k) for k in SECTIONS}
     cards = ""
     for k, s in SECTIONS.items():
@@ -598,6 +620,7 @@ def index_page(posts):
       <h3>{s["title"]}</h3><p>{html.escape(s["lede"])}</p></a>
 '''
     body = f'''
+  <div id="search-results" aria-live="polite"></div>
   <section class="hero">
     <div class="hero-grid">
       <div>
@@ -614,16 +637,7 @@ def index_page(posts):
         {WHEEL}
       </div>
     </div>
-    <form class="card search-card" onsubmit="return false">
-      <h2>Tìm bài viết</h2>
-      <p class="sub">Nhập từ khóa để tìm trong các chuyên mục (tìm theo tiêu đề, tóm tắt, có dấu hoặc không dấu)…</p>
-      <div class="field-row one">
-        <div class="field"><label>Từ khóa</label><input id="q" placeholder="Ví dụ: thiền, Vu Lan, đậu hũ..." /></div>
-      </div>
-      <div class="cta-row"><button class="btn-primary" type="button" id="go">Tìm kiếm</button><span class="cta-note">Gõ có dấu hoặc không dấu</span></div>
-      <div id="search-results" aria-live="polite"></div>
-    </form>
-    <div class="latest">
+{featured_block}    <div class="latest">
       <h2 class="latest-h">Các bài viết</h2>
 {latest_rows}    </div>
   </section>
@@ -632,7 +646,9 @@ def index_page(posts):
 {cards}  </div>
 {quote_block()}  <script type="application/json" id="search-data">{search_json}</script>
 '''
-    return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, chùa, tịnh xá và món chay.", "index.html", crumbs=[("Trang chủ", None)]) + body + FOOT
+    topbar = '''
+    <form class="top-search" onsubmit="return false" role="search"><input id="q" type="search" placeholder="Ví dụ: thiền, Vu Lan, đậu hũ..." aria-label="Tìm bài viết" autocomplete="off"><button class="btn-primary" type="button" id="go">Tìm kiếm</button></form>'''
+    return head("Lạy Phật", "Trang chia sẻ bài viết Phật giáo, kinh kệ, chùa, tịnh xá và món chay.", "index.html", crumbs=[("Trang chủ", None)], topbar_extra=topbar) + body + FOOT
 
 def parse_quotes():
     """Đọc content/quote.txt. Mỗi câu kết thúc bằng <hr>; dạng: Nội dung - Tác giả <hr>.

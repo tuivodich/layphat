@@ -29,6 +29,7 @@ Phần đầu là các dòng "Tên: giá trị", sau đó một dòng chỉ có 
   Tên ngắn:    tên hiện trên thẻ (nếu bỏ trống sẽ lấy Tiêu đề)
   Ngày:        2026-10-05  hoặc  05/10/2026  (có thể thêm giờ: 2026-10-05 08:30)  (bắt buộc)
   Hiển thị:    Có | Không   (Không = ẩn bài khỏi danh sách, tìm kiếm, và trang bài bị gỡ; giữ file để bật lại sau. Bỏ trống = Có)
+  Nổi bật:     Có | Không   (Có = bài hiện ở slide "nổi bật" đầu trang chủ và nằm trên đầu danh sách chuyên mục, có dải chéo "Nổi bật". Bỏ trống = Không. Trong trang admin chỉ cần tick ô "Nổi bật")
   Ảnh:         ten-anh.jpg   (không bắt buộc)
   Mô tả ảnh:   mô tả ngắn cho ảnh
   Nguồn:       Sưu tầm / tên tác giả

@@ -77,6 +77,21 @@
       });
     });
   }
+  // Slide bài viết nổi bật
+  var fsTrack = document.querySelector('.fs-track');
+  if (fsTrack) {
+    var fsDots = [].slice.call(document.querySelectorAll('.fs-dot'));
+    var fsGo = function (i) { fsTrack.scrollTo({ left: i * fsTrack.clientWidth, behavior: 'smooth' }); };
+    fsDots.forEach(function (d, i) { d.addEventListener('click', function () { fsGo(i); }); });
+    var fsT;
+    fsTrack.addEventListener('scroll', function () {
+      clearTimeout(fsT);
+      fsT = setTimeout(function () {
+        var i = Math.round(fsTrack.scrollLeft / Math.max(1, fsTrack.clientWidth));
+        fsDots.forEach(function (d, k) { d.classList.toggle('on', k === i); });
+      }, 60);
+    }, { passive: true });
+  }
   // Ô tìm kiếm trang chủ: tạm chuyển đến trang bài viết
   var go = document.getElementById('go');
   var qIn = document.getElementById('q'), resBox = document.getElementById('search-results'), sData = document.getElementById('search-data');

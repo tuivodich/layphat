@@ -275,20 +275,35 @@ def parse_date(s):
 
 IMG_RE = re.compile(r"^!\[(.*?)\]\((.+?)\)$")   # ![Chú thích](ten-anh.jpg)
 
+ANH_RE = re.compile(r"^[ \t]*[ẢảAa][nN]?[hH]?[ \t]*:[ \t]*[\"“”]?(.+?\.(?:jpe?g|png|webp|gif))[\"“”]?(?:[ \t]*\|[ \t]*(.*))?$", re.I)   # Ảnh: ten-anh.jpg | chú thích (tùy chọn)
+
+def _img_line(l):
+    l = l.strip()
+    m = IMG_RE.match(l)
+    if m: return (m.group(1).strip(), m.group(2).strip())
+    m = ANH_RE.match(l) if re.match(r"^\s*[ẢảAa]nh\s*:", l, re.I) else None
+    if m: return ((m.group(2) or "").strip(), m.group(1).strip())
+    return None
+
 def parse_body(text):
     items = []
+    def flush(lines):
+        if not lines: return
+        if all(l.startswith("> ") or l == ">" for l in lines): items.append(("verse", [l[2:] if l.startswith("> ") else "" for l in lines]))
+        elif all(l.startswith("- ") for l in lines): items.append(("ul", [l[2:].strip() for l in lines]))
+        elif all(re.match(r"^\d+[.)]\s+", l) for l in lines): items.append(("ol", [re.sub(r"^\d+[.)]\s+", "", l) for l in lines]))
+        else: items.append(("p", " ".join(l.strip() for l in lines)))
     for blk in re.split(r"\n\s*\n", text.strip()):
         lines = [l.rstrip() for l in blk.split("\n") if l.strip()]
         while lines and lines[0].startswith("## "):
             items.append(("h2", lines.pop(0)[3:].strip()))
-        if not lines: continue
-        if all(IMG_RE.match(l.strip()) for l in lines):
-            for l in lines:
-                m = IMG_RE.match(l.strip()); items.append(("img", (m.group(1).strip(), m.group(2).strip())))
-        elif all(l.startswith("> ") or l == ">" for l in lines): items.append(("verse", [l[2:] if l.startswith("> ") else "" for l in lines]))
-        elif all(l.startswith("- ") for l in lines): items.append(("ul", [l[2:].strip() for l in lines]))
-        elif all(re.match(r"^\d+[.)]\s+", l) for l in lines): items.append(("ol", [re.sub(r"^\d+[.)]\s+", "", l) for l in lines]))
-        else: items.append(("p", " ".join(l.strip() for l in lines)))
+        run = []
+        for l in lines:
+            im = _img_line(l)
+            if im:   # dòng ảnh (![chú thích](ảnh.jpg) hoặc "Ảnh: ảnh.jpg") luôn là một mục riêng
+                flush(run); run = []; items.append(("img", im))
+            else: run.append(l)
+        flush(run)
     return items
 
 def load_posts():
@@ -384,7 +399,7 @@ def process_image(p):
     if im is None:
         print("   -> bài sẽ dùng khung ảnh trang trí."); return
     landscape = im.width >= im.height * 1.15   # ảnh ngang -> bố cục một cột; ảnh dọc -> ảnh bên trái như cũ
-    p["wide"] = landscape
+    p["wide"] = landscape or p["type"] in WIDE_NO_IMAGE   # chùa/nhân vật luôn một cột, nội dung rộng bằng ảnh đầu bài
     maxw = 1200 if landscape else 900
     w = min(maxw, im.width); h = round(im.height * w / im.width)
     main_rel, og_rel = f"images/{p['slug']}.jpg", f"images/{p['slug']}-og.jpg"
@@ -480,7 +495,7 @@ def post_page(p):
         core = re.sub(r"^[\s🌸]+|[\s🌸]+$", "", p["title"])
         h1_title = f"🌸 {core} 🌸"
     body = f"""
-  <article class="post{" wide" if p.get("wide") else ""}">
+  <article class="post{" wide" if p.get("wide") else ""}{" full" if p["type"] in WIDE_NO_IMAGE else ""}">
     {cover}
     <div class="post-body">
       <div class="eyebrow">{html.escape(eyebrow)}</div>

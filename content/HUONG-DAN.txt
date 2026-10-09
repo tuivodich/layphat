@@ -79,3 +79,10 @@ CÂU TRÍCH DẪN NGẪU NHIÊN Ở TRANG CHỦ (file content/quote.txt)
 BÀI VỀ DANH TĂNG, NHÂN VẬT (loại: nhan-vat)
   Hãy viết bằng lời văn của chính bạn, không chép nguyên văn từ sách hay website khác; ghi nguồn tham khảo ở cuối bài.
   Chỉ dùng ảnh tự chụp, ảnh được phép hoặc ảnh thuộc phạm vi công cộng, và ghi nguồn trong chú thích ảnh.
+
+ẢNH TRONG NỘI DUNG (chùa, tịnh xá, danh tăng, nhân vật...)
+  Ảnh đầu tiên là ảnh đại diện đầu bài. Muốn chèn thêm ảnh ở giữa bài, viết một dòng riêng:
+      Ảnh: chua-tra-3.jpg
+  hoặc kèm chú thích:
+      Ảnh: chua-tra-3.jpg | Chánh điện chùa Trà
+  (hoặc cú pháp cũ ![Chú thích](chua-tra-3.jpg)). File ảnh đặt trong content/images/ cùng thư mục với ảnh đầu bài; web tự thu nhỏ cho vừa bài.

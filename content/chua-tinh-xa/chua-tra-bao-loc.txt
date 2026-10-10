@@ -7,7 +7,7 @@ Mô tả ảnh: Hình ảnh chùa Trà yên bình và thanh tịnh giữa đồi
 Nguồn: Tổng hợp
 Tóm tắt: 
 Hiển thị: Có
-Nổi bật: Có
+Nổi bật: Không
 ---
 ## Giới thiệu
 

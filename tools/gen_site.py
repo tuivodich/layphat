@@ -363,7 +363,8 @@ def load_posts():
 # ---------------- Ảnh ----------------
 PRODUCED = set()   # các ảnh -thumb / -anhN do lần chạy này tạo ra (để dọn ảnh thừa)
 THUMB_TYPES = set(SECTIONS)   # loại có ảnh thu nhỏ trên thẻ danh sách (nếu bài có ảnh)
-WIDE_NO_IMAGE = {"chua-tinh-xa", "nhan-vat"}   # loại luôn dùng bố cục một cột, kể cả khi bài chưa có ảnh
+WIDE_NO_IMAGE = {"chua-tinh-xa"}   # loại luôn dùng bố cục một cột (ảnh trên, nội dung rộng bằng ảnh), kể cả khi bài chưa có ảnh
+SIDE_ONLY = {"nhan-vat"}   # loại luôn dùng bố cục ảnh bên trái, nội dung bên phải (như trang kinh kệ), kể cả ảnh ngang
 
 def _open_image(p, name):
     src = _os.path.join(CONTENT, "images", name)
@@ -399,7 +400,7 @@ def process_image(p):
     if im is None:
         print("   -> bài sẽ dùng khung ảnh trang trí."); return
     landscape = im.width >= im.height * 1.15   # ảnh ngang -> bố cục một cột; ảnh dọc -> ảnh bên trái như cũ
-    p["wide"] = landscape or p["type"] in WIDE_NO_IMAGE   # chùa/nhân vật luôn một cột, nội dung rộng bằng ảnh đầu bài
+    p["wide"] = (landscape or p["type"] in WIDE_NO_IMAGE) and p["type"] not in SIDE_ONLY
     maxw = 1200 if landscape else 900
     w = min(maxw, im.width); h = round(im.height * w / im.width)
     main_rel, og_rel = f"images/{p['slug']}.jpg", f"images/{p['slug']}-og.jpg"

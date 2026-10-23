@@ -37,7 +37,7 @@ jobs:
 
       # Bản chạy song song trên GitHub Pages (https://tuivodich.github.io/layphat/)
       - name: Đóng gói thư mục public cho GitHub Pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: public
 

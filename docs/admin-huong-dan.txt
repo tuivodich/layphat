@@ -67,3 +67,8 @@ Loại bài "nhan-vat", thư mục content/nhan-vat/, mẫu content/_MAU-nhan-va
 - Món "Tôm đậu hũ kho cà chua" đã đổi thành "Đậu hũ kho cà chua" (tên file: dau-hu-kho-ca-chua.txt, địa chỉ mới mon-chay-dau-hu-kho-ca-chua.html).
 - Các trang chuyên mục nay hiển thị tối đa 12 bài mới nhất (bài viết Phật giáo: 9 bài); các thẻ "Mẫu" chỉ hiện khi dưới 6 bài thật.
 - Liên kết chân trang tự tô sáng theo trang đang xem.
+
+BẢO MẬT (ghi chú)
+  - Trang web là web tĩnh trên Firebase Hosting, không chạy Node.js phía máy chủ; Node chỉ xuất hiện trong môi trường build của GitHub Actions do GitHub quản lý.
+  - firebase.json đã thêm các tiêu đề bảo mật. Mục Content-Security-Policy-Report-Only chỉ GHI CẢNH BÁO vào Console của trình duyệt (F12), chưa chặn. Sau vài ngày dùng thử đăng nhập Google, bình luận cảm xúc, trang admin mà Console không báo vi phạm thì có thể chuyển thành chế độ chặn.
+  - Khóa GitHub dán vào trang admin: dùng fine-grained token chỉ cấp quyền Contents (Read and write) cho đúng kho layphat, có ngày hết hạn; không dùng token toàn quyền.

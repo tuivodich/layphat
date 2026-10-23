@@ -1,0 +1,7 @@
+# Tự động đề xuất cập nhật các action dùng trong .github/workflows (đã gồm bản vá bảo mật)
+version: 2
+updates:
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

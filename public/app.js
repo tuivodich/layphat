@@ -112,7 +112,7 @@
       var hits = items.filter(function (it) { return toks.every(function (t) { return it.k.indexOf(t) !== -1; }); });
       resBox.innerHTML = hits.length
         ? '<p class="sr-count">Tìm thấy ' + hits.length + ' bài</p>' + hits.map(function (it) {
-            return '<div class="latest-row"><a class="latest-title" href="' + it.f + '">' + esc(it.t) + '</a><span class="latest-date">' + it.l + ' · ' + it.d + '</span></div>';
+            return '<div class="latest-row"><a class="latest-title" href="' + esc(it.f) + '">' + esc(it.t) + '</a><span class="latest-date">' + esc(it.l) + ' · ' + esc(it.d) + '</span></div>';
           }).join('')
         : '<p class="sr-count">Không tìm thấy bài nào phù hợp.</p>';
     };

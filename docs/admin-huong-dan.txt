@@ -71,4 +71,5 @@ Loại bài "nhan-vat", thư mục content/nhan-vat/, mẫu content/_MAU-nhan-va
 BẢO MẬT (ghi chú)
   - Trang web là web tĩnh trên Firebase Hosting, không chạy Node.js phía máy chủ; Node chỉ xuất hiện trong môi trường build của GitHub Actions do GitHub quản lý.
   - firebase.json đã thêm các tiêu đề bảo mật. Mục Content-Security-Policy-Report-Only chỉ GHI CẢNH BÁO vào Console của trình duyệt (F12), chưa chặn. Sau vài ngày dùng thử đăng nhập Google, bình luận cảm xúc, trang admin mà Console không báo vi phạm thì có thể chuyển thành chế độ chặn.
+  - Bản chạy song song GitHub Pages: xem phần hướng dẫn trong tin nhắn; cần tạo public/firebase-config.json (cấu hình web Firebase, các giá trị này công khai) và thêm tuivodich.github.io vào Authentication > Settings > Authorized domains.
   - Khóa GitHub dán vào trang admin: dùng fine-grained token chỉ cấp quyền Contents (Read and write) cho đúng kho layphat, có ngày hết hạn; không dùng token toàn quyền.

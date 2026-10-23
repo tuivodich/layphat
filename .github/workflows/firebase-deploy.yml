@@ -34,3 +34,24 @@ jobs:
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
           channelId: live
           projectId: layphatvn
+
+      # Bản chạy song song trên GitHub Pages (https://tuivodich.github.io/layphat/)
+      - name: Đóng gói thư mục public cho GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+  pages:
+    # Chỉ chạy được sau khi bật Settings > Pages > Source: GitHub Actions; chưa bật thì job này báo lỗi nhưng KHÔNG ảnh hưởng bản Firebase
+    needs: deploy
+    runs-on: ubuntu-24.04
+    continue-on-error: true
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.pages.outputs.page_url }}
+    steps:
+      - id: pages
+        uses: actions/deploy-pages@v4

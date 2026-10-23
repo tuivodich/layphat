@@ -20,7 +20,7 @@ function ensureSdk() {
   sdk = (async () => {
     let cfg = null;
     try { cfg = JSON.parse(localStorage.getItem('lp_fb_cfg') || 'null'); } catch (_) {}
-    if (!cfg || !cfg.apiKey) { try { const r = await fetch('/__/firebase/init.json'); if (r.ok) cfg = await r.json(); } catch (_) {} }
+    if (!cfg || !cfg.apiKey) { for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (r.ok) { const c = await r.json(); if (c && c.apiKey) { cfg = c; break; } } } catch (_) {} } }
     if (!cfg || !cfg.apiKey) throw new Error('no-config');
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
     const A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');

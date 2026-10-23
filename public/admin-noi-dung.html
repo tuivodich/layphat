@@ -336,7 +336,7 @@ function parseCfg(txt) {
 
 async function getConfig() {
   try { const c = JSON.parse(localStorage.getItem('lp_fb_cfg') || 'null'); if (c && c.apiKey) return c; } catch (_) {}
-  try { const r = await fetch('/__/firebase/init.json'); if (r.ok) { const c = await r.json(); if (c && c.apiKey) return c; } } catch (_) {}
+  for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (r.ok) { const c = await r.json(); if (c && c.apiKey) return c; } } catch (_) {} }
   return null;
 }
 

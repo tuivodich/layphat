@@ -175,7 +175,7 @@ async function submit(ev) {
 async function boot() {
   let cfg = null;
   try { cfg = JSON.parse(localStorage.getItem('lp_fb_cfg') || 'null'); } catch (_) {}
-  if (!cfg || !cfg.apiKey) { try { const r = await fetch('/__/firebase/init.json'); if (r.ok) cfg = await r.json(); } catch (_) {} }
+  if (!cfg || !cfg.apiKey) { for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (r.ok) { const c = await r.json(); if (c && c.apiKey) { cfg = c; break; } } } catch (_) {} } }
   if (!cfg || !cfg.apiKey) { $('pr-state').textContent = 'Chưa thể kết nối. Vui lòng thử lại sau.'; $('pr-list').textContent = ''; return; }
   const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
   A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');

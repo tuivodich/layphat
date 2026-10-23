@@ -172,11 +172,13 @@ async function submit(ev) {
   } finally { if ($('pr-send').disabled && (settings || isAdmin())) quota(); }
 }
 
+const lenientCfg = t => { try { return JSON.parse(t); } catch (_) {} try { const b = t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1).replace(/([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)\s*:/g, '$1"$2":').replace(/'/g, '"').replace(/,\s*}/g, '}'); return JSON.parse(b); } catch (_) { return null; } };
+
 async function boot() {
-  let cfg = null;
+  let cfg = null; const why = [];
   try { cfg = JSON.parse(localStorage.getItem('lp_fb_cfg') || 'null'); } catch (_) {}
-  if (!cfg || !cfg.apiKey) { for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (r.ok) { const c = await r.json(); if (c && c.apiKey) { cfg = c; break; } } } catch (_) {} } }
-  if (!cfg || !cfg.apiKey) { $('pr-state').textContent = 'Chưa thể kết nối. Vui lòng thử lại sau.'; $('pr-list').textContent = ''; return; }
+  if (!cfg || !cfg.apiKey) { for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (!r.ok) { why.push(u + ' → HTTP ' + r.status); continue; } const c = lenientCfg(await r.text()); if (c && c.apiKey) { cfg = c; break; } why.push(u + ' → nội dung không đọc được hoặc thiếu apiKey'); } catch (e) { why.push(u + ' → ' + (e.message || e)); } } }
+  if (!cfg || !cfg.apiKey) { console.warn('Không lấy được cấu hình Firebase:', why); $('pr-state').textContent = 'Chưa thể kết nối. Vui lòng thử lại sau.'; $('pr-list').textContent = ''; return; }
   const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
   A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');
   F = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js');

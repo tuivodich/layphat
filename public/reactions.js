@@ -15,13 +15,14 @@ const KEY_OK = /^[A-Za-z0-9._-]{1,100}$/;
 let sdk = null, user = null;
 const subs = new Set();   // các khối đang hiển thị, để cập nhật khi đăng nhập/đăng xuất
 
+const lenientCfg = t => { try { return JSON.parse(t); } catch (_) {} try { const b = t.slice(t.indexOf('{'), t.lastIndexOf('}') + 1).replace(/([{,]\s*)([A-Za-z_][A-Za-z0-9_]*)\s*:/g, '$1"$2":').replace(/'/g, '"').replace(/,\s*}/g, '}'); return JSON.parse(b); } catch (_) { return null; } };
 function ensureSdk() {
   if (sdk) return sdk;
   sdk = (async () => {
-    let cfg = null;
+    let cfg = null; const why = [];
     try { cfg = JSON.parse(localStorage.getItem('lp_fb_cfg') || 'null'); } catch (_) {}
-    if (!cfg || !cfg.apiKey) { for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (r.ok) { const c = await r.json(); if (c && c.apiKey) { cfg = c; break; } } } catch (_) {} } }
-    if (!cfg || !cfg.apiKey) throw new Error('no-config');
+    if (!cfg || !cfg.apiKey) { for (const u of ['/__/firebase/init.json', 'firebase-config.json', 'https://layphatvn.web.app/__/firebase/init.json']) { try { const r = await fetch(u); if (!r.ok) { why.push(u + ' → HTTP ' + r.status); continue; } const c = lenientCfg(await r.text()); if (c && c.apiKey) { cfg = c; break; } why.push(u + ' → nội dung không đọc được hoặc thiếu apiKey'); } catch (e) { why.push(u + ' → ' + (e.message || e)); } } }
+    if (!cfg || !cfg.apiKey) { console.warn('Không lấy được cấu hình Firebase:', why); throw new Error('no-config'); }
     const { initializeApp } = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-app.js');
     const A = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-auth.js');
     const F = await import('https://www.gstatic.com/firebasejs/' + V + '/firebase-firestore.js');
